@@ -1,8 +1,6 @@
 package structs
 
-import (
-	"github.com/replicasystem/utils"
-)
+import "github.com/replicasystem/utils"
 
 type Request struct {
 	Requestid   string
@@ -18,6 +16,21 @@ type Reply struct {
 	Balance     int    `json:"balance"`
 	Transaction string `json:"Transaction"`
 }
+
+// type Chain struct {
+// 	Head   string
+// 	Tail   string
+// 	list   []string
+// 	next   string
+// 	server string
+// 	ishead bool
+// 	istail bool
+// }
+//
+// func Makechain(series, length int) *Chain{
+// 	start := series * 1000
+//
+// }
 
 func Genrequest(balance int, typet string) *Request {
 	req := &Request{

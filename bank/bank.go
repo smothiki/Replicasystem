@@ -2,6 +2,7 @@ package bank
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/replicasystem/structs"
 )
@@ -37,6 +38,7 @@ type account struct {
 }
 
 func (a *account) getbalance() int {
+
 	return a.balance
 }
 
@@ -55,7 +57,7 @@ func (a *account) withdraw(amount int) error {
 }
 
 type Bank struct {
-	amap     map[string]account
+	amap     map[string]*account
 	bankname string
 	bankid   string
 	t        *transaction
@@ -63,7 +65,7 @@ type Bank struct {
 
 func Initbank(name, Id string) *Bank {
 	var b = Bank{
-		amap:     make(map[string]account),
+		amap:     make(map[string]*account),
 		bankname: name,
 		bankid:   Id,
 		t:        inittransaction(),
@@ -72,13 +74,18 @@ func Initbank(name, Id string) *Bank {
 }
 
 func (b *Bank) CheckId(accountId string) {
-	if _, ok := b.amap[accountId]; !ok {
-		var newaccnt = account{
+	if _, ok := b.amap[accountId]; ok != true {
+		fmt.Println("checkid")
+		fmt.Println(ok)
+		newaccnt := &account{
 			accountid: accountId,
 			balance:   0,
 		}
-		b.amap["accountId"] = newaccnt
+		fmt.Println(newaccnt)
+		b.amap[accountId] = newaccnt
 	}
+	fmt.Println("out-checkid")
+	fmt.Println(b)
 }
 
 func (b *Bank) Deposit(req *structs.Request) *structs.Reply {
@@ -108,8 +115,10 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Reply {
 }
 
 func (b *Bank) Set(rep *structs.Reply) {
-	b.CheckId(rep.ReqID)
+	b.CheckId(rep.AccountNum)
 	a := b.amap[rep.AccountNum]
+	fmt.Println(rep.AccountNum)
+	fmt.Println(a)
 	a.balance = rep.Balance
 	b.t.recordtransaction(rep.ReqID, rep.Transaction)
 }
@@ -117,6 +126,8 @@ func (b *Bank) Set(rep *structs.Reply) {
 func (b *Bank) GetBalance(req *structs.Request) *structs.Reply {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
+	fmt.Println("getbalacne")
+	fmt.Println(a)
 	b.t.recordtransaction(req.Requestid, "getbalance")
 	return structs.Makereply(req.Requestid, req.Account, "processed", "getbalance", a.getbalance())
 }
