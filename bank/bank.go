@@ -88,7 +88,7 @@ func (b *Bank) CheckId(accountId string) {
 	fmt.Println(b)
 }
 
-func (b *Bank) Deposit(req *structs.Request) *structs.Reply {
+func (b *Bank) Deposit(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
 	resp := b.t.checktransaction(req.Requestid, "deposit")
@@ -100,7 +100,7 @@ func (b *Bank) Deposit(req *structs.Request) *structs.Reply {
 	return structs.Makereply(req.Requestid, req.Account, resp, "deposit", a.getbalance())
 }
 
-func (b *Bank) Withdraw(req *structs.Request) *structs.Reply {
+func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
 	resp := b.t.checktransaction(req.Requestid, "withdraw")
@@ -114,16 +114,16 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Reply {
 	return structs.Makereply(req.Requestid, req.Account, resp, "withdraw", a.getbalance())
 }
 
-func (b *Bank) Set(rep *structs.Reply) {
-	b.CheckId(rep.AccountNum)
-	a := b.amap[rep.AccountNum]
-	fmt.Println(rep.AccountNum)
+func (b *Bank) Set(rep *structs.Request) {
+	b.CheckId(rep.Account)
+	a := b.amap[rep.Account]
+	fmt.Println(rep.Account)
 	fmt.Println(a)
 	a.balance = rep.Balance
-	b.t.recordtransaction(rep.ReqID, rep.Transaction)
+	b.t.recordtransaction(rep.Requestid, rep.Transaction)
 }
 
-func (b *Bank) GetBalance(req *structs.Request) *structs.Reply {
+func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
 	fmt.Println("getbalacne")

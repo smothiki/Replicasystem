@@ -1,0 +1,54 @@
+from structs import Request
+from bank import Bank
+
+class Server(process):
+   def setup(servers,serve,client,name,id1):
+     self.bankobj=Bank(name,id1)
+
+   def main():
+     #while True:
+       await(some(received(("request",request,),from_=p)))
+
+
+   # when receiving request from others, enque and reply
+   def receive(msg=("request",request),from_=p):
+     if request.outcome in ["processed","inconsistent","insufficientfunds"]:
+       self.bankobj.set(request)
+     elif request.transaction == "deposit":
+       request=self.bankobj.deposit(request)
+     elif request.transaction == "withdraw":
+       request=self.bankobj.deposit(request)
+     elif request.transaction == "getbalance":
+       request=self.bankobj.getbalance(request)
+     output(request.outcome)
+     if serve != 4:
+       send(("request",request,),to=servers[serve+1])
+     else :
+       output("sending to client")
+       send(("reply",request),to=client)
+       output("sent to client")
+
+
+class Client(process):
+   def setup(chain):
+     self.request=Request("1234","1234",12,"deposit","none")
+
+   def main():
+     send(("request",request,),to=chain[0])
+     output("sending to server")
+     await(some(received(("reply",request),from_=p)))
+     output("finished request")
+
+   def receive(msg=('reply',request),from_=p):
+     output("sprint message")
+     output(request.outcome)
+
+
+def main():
+   servers = list(new(Server, num=5))
+   client = list(new(Client, num=1))
+   for i,p in enumerate(list(servers)):
+     setup(p,(servers,i,client,"wells","123",))
+   start(servers)
+   setup(client, [servers])
+   start(client)
