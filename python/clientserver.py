@@ -19,11 +19,11 @@ class Server(da.DistProcess):
         self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_0', PatternExpr_0, sources=[PatternExpr_1], destinations=None, timestamps=None, record_history=True, handlers=[]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_1', PatternExpr_3, sources=[PatternExpr_4], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_0])])
 
     def setup(self, servers, serve, client, name, id1):
+        self.id1 = id1
+        self.servers = servers
         self.serve = serve
         self.client = client
-        self.servers = servers
         self.name = name
-        self.id1 = id1
         self.bankobj = Bank(self.name, self.id1)
 
     def main(self):
@@ -45,7 +45,7 @@ class Server(da.DistProcess):
                 super()._label('_st_label_8', block=True)
                 _st_label_8 -= 1
 
-    def _Server_handler_0(self, p, request):
+    def _Server_handler_0(self, request, p):
         if (request.outcome in ['processed', 'inconsistent', 'insufficientfunds']):
             self.bankobj.set(request)
         elif (request.transaction == 'deposit'):
@@ -78,10 +78,10 @@ class Client(da.DistProcess):
     def main(self):
         self._send(('request', self.request), self.chain[0])
         self.output('sending to server')
-        request = p = None
+        p = request = None
 
         def ExistentialOpExpr_1():
-            nonlocal request, p
+            nonlocal p, request
             for (_, (_, _, p), (_ConstantPattern28_, request)) in self._ClientReceivedEvent_0:
                 if (_ConstantPattern28_ == 'reply'):
                     if True:
@@ -97,14 +97,13 @@ class Client(da.DistProcess):
                 _st_label_30 -= 1
         self.output('finished request')
 
-    def _Client_handler_1(self, request, p):
+    def _Client_handler_1(self, p, request):
         self.output('sprint message')
         self.output(request.outcome)
     _Client_handler_1._labels = None
     _Client_handler_1._notlabels = None
 
 def main():
-    nprocs = 4
     servers = list(da.api.new(Server, num=5))
     client = list(da.api.new(Client, num=1))
     for (i, p) in enumerate(list(servers)):

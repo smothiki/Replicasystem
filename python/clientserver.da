@@ -2,7 +2,7 @@ from structs import Request
 from bank import Bank
 
 class Server(process):
-   def setup(servers,serve,client,name,id1):
+   def setup(servers,index,client,name,id1):
      self.bankobj=Bank(name,id1)
 
    def main():
@@ -21,12 +21,11 @@ class Server(process):
      elif request.transaction == "getbalance":
        request=self.bankobj.getbalance(request)
      output(request.outcome)
-     if serve != 4:
+     if index != 4:
        send(("request",request,),to=servers[serve+1])
      else :
        output("sending to client")
        send(("reply",request),to=client)
-       output("sent to client")
 
 
 class Client(process):
@@ -48,7 +47,7 @@ def main():
    servers = list(new(Server, num=5))
    client = list(new(Client, num=1))
    for i,p in enumerate(list(servers)):
-     setup(p,(servers,i,client,"wells","123",))
+     setup(p,(servers,i,client,"wells","123"))
    start(servers)
    setup(client, [servers])
    start(client)

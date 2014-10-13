@@ -36,7 +36,7 @@ func Makechain(series, server, length int) *Chain {
 	if server == start {
 		chain.Ishead = true
 	}
-	if server == start+length {
+	if server == start+length-1 {
 		chain.Istail = true
 	}
 	return chain

@@ -18,8 +18,9 @@ type ChainList struct {
 
 func SendRequest(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
+	fmt.Println(server + "iam")
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://"+server+"/query", bytes.NewBuffer(res1B))
+	req, _ := http.NewRequest("POST", "http://"+server+"/update", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
@@ -32,8 +33,8 @@ func SendRequest(server string, request *structs.Request) {
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello, client")
 	if r.Method == "POST" {
-		fmt.Fprint(w, "Hello, query")
 		body, _ := ioutil.ReadAll(r.Body)
 		fmt.Println(body)
 		res := &structs.Request{}
@@ -45,16 +46,18 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	list := make([]ChainList, 2)
 	chain1 := ChainList{
-		head: "localhost:4000",
-		tail: "localhost:4002",
+		head: "localhost:4001",
+		tail: "localhost:4003",
 	}
 	list = append(list, chain1)
-	res1D := structs.Genrequest(0, "getbalance")
+	res1D := structs.Genrequest(12, "deposit")
 	fmt.Println(res1D)
 	//res1D.Account = "f12da044"
-	SendRequest(list[0].head, res1D)
+	fmt.Println(list[0].head)
+	go SendRequest("localhost:4001", res1D)
+	fmt.Println("start servver")
 	http.HandleFunc("/sync", synchandler)
-	err := http.ListenAndServe("localhost:12345", nil)
+	err := http.ListenAndServe("localhost:10001", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -7,6 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"time"
 
 	gson "github.com/bitly/go-simplejson"
 	bank "github.com/replicasystem/bank"
@@ -16,16 +19,16 @@ import (
 func SendRequest(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://"+server+"/sync", bytes.NewBuffer(res1B))
+	req, _ := http.NewRequest("POST", "http://"+server+"/sync", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	resp, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
 		fmt.Printf("Error : %s", err)
 	}
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
+	// body, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println(string(body))
 }
 
 func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
@@ -54,6 +57,7 @@ func updatehandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *
 		fmt.Println(res)
 		if res.Transaction == "deposit" {
 			res1D := b.Deposit(res)
+			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res1D)
 		}
 		if res.Transaction == "withdraw" {
@@ -66,6 +70,7 @@ func updatehandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *
 
 func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
 	fmt.Fprint(w, "Hello, sync")
+	fmt.Println("hello syncss")
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
@@ -73,17 +78,21 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 		fmt.Println(res)
 		b.Set(res)
 		if chain.Istail {
-			SendRequest("localhost:12345", res)
+			fmt.Println("inside clientsent" + chain.Next)
+			time.Sleep(6000 * time.Millisecond)
+			SendRequest("localhost:10001", res)
 		} else {
+			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res)
 		}
-		//fmt.Println(b.GetBalance())
+		fmt.Println(b.GetBalance(res))
 	}
 }
 
 func main() {
 	b := bank.Initbank("wellsfargo", "wells")
-	chain := structs.Makechain(4, 4001, 3)
+	port, _ := strconv.Atoi(os.Args[1])
+	chain := structs.Makechain(4, port, 2)
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
 		queryhandler(w, r, b)
 	})
