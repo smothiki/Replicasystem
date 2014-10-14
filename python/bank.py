@@ -24,7 +24,9 @@ class Bank():
 
 
   def getbalance(self,request):
-    return self.amap[accountid]
+    self.checkaccountid(request.accountid)
+    return Request(request.requestid,request.accountid,self.amap[request.accountid],"getbalance","processed")
+
 
   def deposit(self,request):
     self.checkaccountid(request.accountid)

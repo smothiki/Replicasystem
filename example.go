@@ -6,9 +6,23 @@ import (
 	"net/http"
 	"regexp"
 	"time"
+	// "io/ioutil"
+	// "net/http"
+	// "regexp"
+	// "time"
 )
 
+type jaffa struct {
+	a int
+}
+
 func main() {
+
+	a := []jaffa{
+		jaffa{a: 1},
+		jaffa{a: 2},
+		jaffa{a: 3},
+	}
 
 	// FIXME: sleep a bit before curling
 	time.Sleep(2000 * time.Millisecond)

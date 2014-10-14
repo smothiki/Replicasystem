@@ -128,6 +128,6 @@ func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
 	a := b.amap[req.Account]
 	fmt.Println("getbalacne")
 	fmt.Println(a)
-	b.t.recordtransaction(req.Requestid, "getbalance")
+	//b.t.recordtransaction(req.Requestid, "getbalance")
 	return structs.Makereply(req.Requestid, req.Account, "processed", "getbalance", a.getbalance())
 }

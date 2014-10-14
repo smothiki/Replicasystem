@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"time"
 
-	gson "github.com/bitly/go-simplejson"
 	bank "github.com/replicasystem/bank"
 	"github.com/replicasystem/structs"
+	"github.com/replicasystem/utils"
 )
 
 func SendRequest(server string, request *structs.Request) {
@@ -27,45 +27,39 @@ func SendRequest(server string, request *structs.Request) {
 	if err != nil {
 		fmt.Printf("Error : %s", err)
 	}
-	// body, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Println(string(body))
 }
 
 func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	if r.Method == "GET" {
 		fmt.Fprint(w, "Hello, query")
 		body, _ := ioutil.ReadAll(r.Body)
-		fmt.Println(body)
-		js, _ := gson.NewJson(body)
+
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		jaf, _ := js.Get("Requestid").String()
-		fmt.Println(res)
-		fmt.Println(jaf)
-		fmt.Println(b.GetBalance(res))
+		utils.Logoutput("tail", res.Requestid, res.Outcome, res.Balance)
+		SendRequest("localhost:10001", res)
 	}
 }
 
 func updatehandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
 	fmt.Fprint(w, "Hello, update")
-
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
-		fmt.Println(body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		fmt.Println(res)
 		if res.Transaction == "deposit" {
 			res1D := b.Deposit(res)
 			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res1D)
+			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance)
 		}
 		if res.Transaction == "withdraw" {
-			fmt.Println(b.Withdraw(res))
+			res1D := b.Withdraw(res)
+			fmt.Println("inside deposit" + chain.Next)
+			SendRequest(chain.Next, res1D)
+			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance)
 		}
-		//fmt.Println(b.GetBalance(res))
 	}
-
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
@@ -77,6 +71,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 		json.Unmarshal(body, &res)
 		fmt.Println(res)
 		b.Set(res)
+		utils.Logoutput(chain.Server, res.Requestid, res.Outcome, res.Balance)
 		if chain.Istail {
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)
@@ -85,14 +80,15 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res)
 		}
-		fmt.Println(b.GetBalance(res))
 	}
 }
 
 func main() {
 	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
-	chain := structs.Makechain(4, port, 2)
+	series, _ := strconv.Atoi(utils.Getvalue("chian1series"))
+	lenservers, _ := strconv.Atoi(utils.Getvalue("chainlength"))
+	chain := structs.Makechain(series, port, lenservers)
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
 		queryhandler(w, r, b)
 	})

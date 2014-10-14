@@ -1,15 +1,14 @@
 from structs import Request
 from bank import Bank
-import json
-
-
 
 class Server(process):
    def setup(servers,index,client,name,id1):
      self.bankobj=Bank(name,id1)
 
    def main():
-     await(some(received(("request",request,),from_=p)))
+     while True:
+       await(some(received(("request",request),from_=p)))
+
 
    # when receiving request from others, enque and reply
    def receive(msg=("request",request),from_=p):
@@ -21,16 +20,17 @@ class Server(process):
        request=self.bankobj.deposit(request)
      elif request.transaction == "getbalance":
        request=self.bankobj.getbalance(request)
+     output(request.outcome)
      if index != 2:
+       output("sending to next server")
        send(("request",request,),to=servers[index+1])
      else :
-       output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
+       output("sending to client")
        send(("reply",request),to=client)
 
 
 class Client(process):
    def setup(chain):
-     self.requestqueue = set()
      self.requests=[]
      requests.append(Request("123","1",0,"getbalance","none"))
      requests.append(Request("124","2",10,"deposit","none"))
@@ -43,35 +43,30 @@ class Client(process):
 
    def main():
      for request in requests:
-       output("inside for")
        if request.transaction == "getbalance" :
-         send(("request",request,),to=chain[2])
-         await(request.requestid in requestqueue)
-         requestqueue.remove(request.requestid)
-       else :
+         send(("request",request),to=chain[2])
+       else:
          send(("request",request),to=chain[0])
-         await(request.requestid in requestqueue)
-         requestqueue.remove(request.requestid)
-    #  output("sending to server")
-    #  await(some(received(("reply",request),from_=p)))
-       #output("finished request")
-
+     while True:
+       await(some(received(("reply",request),from_=p)))
 
    def receive(msg=('reply',request),from_=p):
      output("sprint message")
-     requestqueue.add(request.requestid)
-     output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
+     output(request.outcome)
 
 
 def main():
-   config = json.loads(open("../config.json").read())
-   Nserver = int(config["chainlength"])
-   Nclient = int(config["clients"])
-   config(channel="fifo")
-   servers = list(new(Server, num=Nserver))
-   client = list(new(Client, num=Nclient))
-   for i,p in enumerate(list(servers)):
-     setup(p,(servers,i,client,"wells","123"))
-   start(servers)
-   setup(client, [servers])
-   start(client)
+   servers1 = list(new(Server, num=3))
+   client1 = list(new(Client, num=1))
+   for i,p in enumerate(list(servers1)):
+     setup(p,(servers1,i,client1,"wells","123"))
+   start(servers1)
+   setup(client1, [servers1])
+   start(client1)
+  #  servers2 = list(new(Server, num=3))
+  #  client2 = list(new(Client, num=1))
+  #  for i,p in enumerate(list(servers2)):
+  #    setup(p,(servers2,i,client2,"wells","123"))
+  #  start(servers2)
+  #  setup(client2, [servers2])
+  #  start(client2)
