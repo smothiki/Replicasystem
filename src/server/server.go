@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"time"
 
-	bank "github.com/replicasystem/bank"
-	"github.com/replicasystem/structs"
-	"github.com/replicasystem/utils"
+	bank "github.com/replicasystem/src/commons/bank"
+	"github.com/replicasystem/src/commons/structs"
+	"github.com/replicasystem/src/commons/utils"
 )
 
 func SendRequest(server string, request *structs.Request) {

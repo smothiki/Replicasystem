@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/replicasystem/structs"
-	"github.com/replicasystem/utils"
+	"github.com/replicasystem/src/commons/structs"
+	"github.com/replicasystem/src/commons/utils"
 )
 
 type ChainList struct {

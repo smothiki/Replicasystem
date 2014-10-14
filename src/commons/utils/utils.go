@@ -21,7 +21,13 @@ func NewID() string {
 }
 
 func Logoutput(server, reqid, outcome string, balance int) {
-	f, _ := os.OpenFile("logs", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	var name string
+	if server == "client" {
+		name = "../logs/clogs"
+	} else {
+		name = "../logs/slogs"
+	}
+	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	log.SetOutput(f)
 	log.Printf("%s :%s-%s-%d", server, reqid, outcome, balance)

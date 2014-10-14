@@ -45,9 +45,10 @@ class Bank():
     if resp == "new":
       resp="processed"
       bal=self.amap[request.accountid]
-      if bal-amount < 0 :
+      if bal-request.balance < 0 :
+        self.tmap[request.requestid]="withdraw"
         return Request(request.requestid,request.accountid,self.amap[request.accountid],"withdraw","insufficientfunds")
-      bal =bal - amount
+      bal =bal - request.balance
       self.amap[request.accountid]=bal
       self.tmap[request.requestid]="withdraw"
     return Request(request.requestid,request.accountid,self.amap[request.accountid],"withdraw",resp)
@@ -56,3 +57,23 @@ class Bank():
     self.checkaccountid(request.accountid)
     self.amap[request.accountid]=request.balance
     self.tmap[request.requestid]=request.transaction
+
+
+# bankobj=Bank("wells","wells")
+# requests=[]
+# requests.append(Request("123","1",0,"getbalance","none"))
+# requests.append(Request("124","2",10,"deposit","none"))
+# requests.append(Request("124","2",10,"deposit","none"))
+# requests.append(Request("125","3",1,"deposit","none"))
+# requests.append(Request("126","3",2,"withdraw","none"))
+# requests.append(Request("126","3",3,"deposit","none"))
+# requests.append(Request("127","4",0,"getbalance","none"))
+# requests.append(Request("128","5",0,"getbalance","none"))
+# for request in requests:
+#   if request.transaction == "getbalance" :
+#     reply=bankobj.getbalance(request)
+#   elif request.transaction == "withdraw":
+#     reply=bankobj.withdraw(request)
+#   elif request.transaction == "deposit":
+#     reply=bankobj.deposit(request)
+#   print(reply.requestid,reply.outcome,reply.balance)

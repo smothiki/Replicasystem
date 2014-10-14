@@ -1,15 +1,19 @@
 from structs import Request
 from bank import Bank
 import json
+import sys
+import time
 
 
 
 class Server(process):
    def setup(servers,index,client,name,id1):
      self.bankobj=Bank(name,id1)
+     output(str(index))
 
    def main():
-     await(some(received(("request",request,),from_=p)))
+     await(some(received(("request",request),from_=p)))
+     await(False)
 
    # when receiving request from others, enque and reply
    def receive(msg=("request",request),from_=p):
@@ -18,19 +22,21 @@ class Server(process):
      elif request.transaction == "deposit":
        request=self.bankobj.deposit(request)
      elif request.transaction == "withdraw":
-       request=self.bankobj.deposit(request)
+       request=self.bankobj.withdraw(request)
      elif request.transaction == "getbalance":
        request=self.bankobj.getbalance(request)
      if index != 2:
-       send(("request",request,),to=servers[index+1])
+       send(("request",request),to=servers[index+1])
+      #  output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
      else :
-       output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
+      #  output("sending reply to client")
+      #  output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
        send(("reply",request),to=client)
 
 
 class Client(process):
-   def setup(chain):
-     self.requestqueue = set()
+   def setup(chain,timed):
+     self.waitfor = set()
      self.requests=[]
      requests.append(Request("123","1",0,"getbalance","none"))
      requests.append(Request("124","2",10,"deposit","none"))
@@ -40,38 +46,44 @@ class Client(process):
      requests.append(Request("126","3",3,"deposit","none"))
      requests.append(Request("127","4",0,"getbalance","none"))
      requests.append(Request("128","5",0,"getbalance","none"))
+     self.done = False
 
    def main():
-     for request in requests:
-       output("inside for")
+     for request in self.requests:
+       if request.requestid in waitfor:
+         waitfor.remove(request.requestid)
+       waitfor.add(request.requestid)
        if request.transaction == "getbalance" :
          send(("request",request,),to=chain[2])
-         await(request.requestid in requestqueue)
-         requestqueue.remove(request.requestid)
        else :
          send(("request",request),to=chain[0])
-         await(request.requestid in requestqueue)
-         requestqueue.remove(request.requestid)
-    #  output("sending to server")
-    #  await(some(received(("reply",request),from_=p)))
-       #output("finished request")
+
+     if await(False):pass
+     elif timeout(timed):
+       output("timeout")
+     output("finished request")
 
 
    def receive(msg=('reply',request),from_=p):
-     output("sprint message")
-     requestqueue.add(request.requestid)
+     if request.requestid in waitfor:
+       waitfor.remove(request.requestid)
+     output("client")
      output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
+     if len(waitfor) == 0:
+       done =True
+
 
 
 def main():
-   config = json.loads(open("../config.json").read())
-   Nserver = int(config["chainlength"])
-   Nclient = int(config["clients"])
+   configs = json.loads(open("../config.json").read())
+   Nserver = int(configs["chainlength"])
+   Nclient = int(configs["clients"])
+   timeout = 1
    config(channel="fifo")
    servers = list(new(Server, num=Nserver))
    client = list(new(Client, num=Nclient))
    for i,p in enumerate(list(servers)):
      setup(p,(servers,i,client,"wells","123"))
    start(servers)
-   setup(client, [servers])
+   setup(client, [servers,timeout])
    start(client)

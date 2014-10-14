@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/replicasystem/structs"
+	"github.com/replicasystem/src/commons/structs"
 )
 
 type transaction struct {

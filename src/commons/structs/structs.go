@@ -3,7 +3,7 @@ package structs
 import (
 	"strconv"
 
-	"github.com/replicasystem/utils"
+	"github.com/replicasystem/src/commons/utils"
 )
 
 type Request struct {
