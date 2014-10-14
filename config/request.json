@@ -1,0 +1,180 @@
+{
+  "requests": {
+    "getbalance": [
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "124",
+        "account": "2",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "125",
+        "account": "3",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "126",
+        "account": "4",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "127",
+        "account": "5",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      }
+    ],
+    "deposit": [
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "124",
+        "account": "2",
+        "balance": "20",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "125",
+        "account": "3",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "126",
+        "account": "4",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "127",
+        "account": "5",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      }
+    ],
+    "withdraw": [
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "20",
+        "transaction": "withdraw",
+        "outcome": "none"
+      },
+      {
+        "requestid": "124",
+        "account": "2",
+        "balance": "4",
+        "transaction": "withdraw",
+        "outcome": "none"
+      },
+      {
+        "requestid": "125",
+        "account": "3",
+        "balance": "10",
+        "transaction": "withdraw",
+        "outcome": "none"
+      },
+      {
+        "requestid": "126",
+        "account": "4",
+        "balance": "6",
+        "transaction": "withdraw",
+        "outcome": "none"
+      },
+      {
+        "requestid": "127",
+        "account": "5",
+        "balance": "7",
+        "transaction": "withdraw",
+        "outcome": "none"
+      }
+    ],
+    "tests": [
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "124",
+        "account": "2",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "124",
+        "account": "2",
+        "balance": "10",
+        "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      },
+      {
+        "requestid": "123",
+        "account": "1",
+        "balance": "0",
+        "transaction": "getbalance",
+        "outcome": "none"
+      }
+    ]
+  }
+}

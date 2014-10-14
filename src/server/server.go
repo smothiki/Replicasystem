@@ -33,11 +33,11 @@ func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	if r.Method == "GET" {
 		fmt.Fprint(w, "Hello, query")
 		body, _ := ioutil.ReadAll(r.Body)
-
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		utils.Logoutput("tail", res.Requestid, res.Outcome, res.Balance)
-		SendRequest("localhost:10001", res)
+		res1D := b.GetBalance(res)
+		utils.Logoutput("tail", res1D.Requestid, res1D.Outcome, res1D.Balance)
+		SendRequest("localhost:10001", res1D)
 	}
 }
 

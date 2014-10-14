@@ -19,21 +19,30 @@ type ChainList struct {
 }
 
 func SendRequest(server, method, api string, request *structs.Request) {
-	//time.Sleep(4000 * time.Millisecond)
-	res1B, err := json.Marshal(request)
+	res1B, _ := json.Marshal(request)
 	client := &http.Client{}
 	req, _ := http.NewRequest(method, "http://"+server+"/"+api, bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Printf("Error : %s", err)
+	if api == "query" {
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Printf("Error : %s", err)
+		}
+		body, _ := ioutil.ReadAll(resp.Body)
+		res := &structs.Request{}
+		json.Unmarshal(body, &res)
+		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
+	} else {
+		go func() {
+			_, err := client.Do(req)
+			if err != nil {
+				fmt.Printf("Error : %s", err)
+			}
+		}()
 	}
-	body, _ := ioutil.ReadAll(resp.Body)
-	res := &structs.Request{}
-	json.Unmarshal(body, &res)
-	utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
+
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request) {
@@ -48,72 +57,17 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 
 func simulate(chain *ChainList) {
 
-	listreqs := []structs.Request{
-		structs.Request{
-			Requestid:   "123",
-			Account:     "1",
-			Balance:     0,
-			Transaction: "getbalance",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "124",
-			Account:     "2",
-			Balance:     10,
-			Transaction: "deposit",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "124",
-			Account:     "2",
-			Balance:     10,
-			Transaction: "deposit",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "125",
-			Account:     "3",
-			Balance:     1,
-			Transaction: "deposit",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "126",
-			Account:     "3",
-			Balance:     2,
-			Transaction: "withdraw",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "126",
-			Account:     "3",
-			Balance:     3,
-			Transaction: "deposit",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "127",
-			Account:     "4",
-			Balance:     0,
-			Transaction: "getbalance",
-			Outcome:     "none",
-		},
-		structs.Request{
-			Requestid:   "128",
-			Account:     "5",
-			Balance:     0,
-			Transaction: "getbalance",
-			Outcome:     "none",
-		},
-	}
-	for _, request := range listreqs {
+	listreqs := structs.GetrequestList(3, "getbalance")
+	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
-			err := utils.Timeout("timeout", time.Duration(1)*time.Second, func() { SendRequest(chain.tail, "GET", "query", &request) })
+			// SendRequest(chain.tail, "GET", "query", &request)
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendRequest(chain.tail, "GET", "query", &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}
 		} else {
-			err := utils.Timeout("timeout", time.Duration(1)*time.Second, func() { SendRequest(chain.head, "POST", "update", &request) })
+			//SendRequest(chain.head, "POST", "update", &request)
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendRequest(chain.head, "POST", "update", &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}

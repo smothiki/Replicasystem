@@ -23,9 +23,9 @@ func NewID() string {
 func Logoutput(server, reqid, outcome string, balance int) {
 	var name string
 	if server == "client" {
-		name = "../logs/clogs"
+		name = "../../logs/clogs"
 	} else {
-		name = "../logs/slogs"
+		name = "../../logs/slogs"
 	}
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
@@ -43,14 +43,13 @@ func GetFileBytes(filename string) []byte {
 }
 
 func Getvalue(data string) string {
-	js, _ := gson.NewJson(GetFileBytes("../config.json"))
+	js, _ := gson.NewJson(GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
 	command, _ := js.Get(data).String()
 	return command
 }
 
 func Timeout(msg string, seconds time.Duration, f func()) error {
 	c := make(chan bool)
-	// Make sure we are not too long
 	go func() {
 		time.Sleep(seconds)
 		c <- true

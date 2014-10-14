@@ -1,0 +1,467 @@
+[2014-10-14 18:05:04,421]da.api:INFO: Running iteration 1 ...
+[2014-10-14 18:05:04,783]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: TcpEndPoint ('sivarams-MacBook-Pro.local', 21510) initialization complete
+[2014-10-14 18:05:04,888]da.api:DEBUG: Current process is ('sivarams-MacBook-Pro.local', 21510)
+[2014-10-14 18:05:04,888]da.api:DEBUG: Creating 3 instances of <class 'clientserver.Server'>..
+[2014-10-14 18:05:04,897]da.api:DEBUG: 3 instances of Server created.
+[2014-10-14 18:05:04,897]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_35877):DEBUG: TcpEndPoint ('sivarams-MacBook-Pro.local', 35877) initialization complete
+[2014-10-14 18:05:04,899]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: Sending id to parent...
+[2014-10-14 18:05:04,899]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_34587):DEBUG: TcpEndPoint ('sivarams-MacBook-Pro.local', 34587) initialization complete
+[2014-10-14 18:05:04,900]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: Sending id to parent...
+[2014-10-14 18:05:04,901]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_29726):DEBUG: TcpEndPoint ('sivarams-MacBook-Pro.local', 29726) initialization complete
+[2014-10-14 18:05:04,903]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: Sending id to parent...
+[2014-10-14 18:05:04,904]da.api:DEBUG: Current process is ('sivarams-MacBook-Pro.local', 21510)
+[2014-10-14 18:05:04,904]da.api:DEBUG: Creating 1 instances of <class 'clientserver.Client'>..
+[2014-10-14 18:05:04,906]da.api:DEBUG: 1 instances of Client created.
+[2014-10-14 18:05:04,910]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_25606):DEBUG: TcpEndPoint ('sivarams-MacBook-Pro.local', 25606) initialization complete
+[2014-10-14 18:05:04,911]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: Sending id to parent...
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: Running setup..
+[2014-10-14 18:05:04,913]da.api:DEBUG: Starting [<Server('sivarams-MacBook-Pro.local', 35877)>, <Server('sivarams-MacBook-Pro.local', 29726)>, <Server('sivarams-MacBook-Pro.local', 34587)>]...
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: Running setup..
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: Running setup..
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 35877)]:INFO: 0
+[2014-10-14 18:05:04,913]da.api:DEBUG: Starting [<Client('sivarams-MacBook-Pro.local', 25606)>]...
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 29726)]:INFO: 1
+[2014-10-14 18:05:04,913]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: Running setup..
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: 'start' command received, commencing...
+[2014-10-14 18:05:04,913]da.api:INFO: Terminating...
+[2014-10-14 18:05:04,914]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: 'start' command received, commencing...
+[2014-10-14 18:05:04,913]Server[('sivarams-MacBook-Pro.local', 34587)]:INFO: 2
+[2014-10-14 18:05:04,914]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: 'start' command received, commencing...
+[2014-10-14 18:05:04,915]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: 'start' command received, commencing...
+[2014-10-14 18:05:04,917]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782ac8>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,917]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777780>)>
+[2014-10-14 18:05:04,917]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037826a0>)>
+[2014-10-14 18:05:04,918]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,918]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782b70>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,919]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037777f0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,919]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103782898>)>
+[2014-10-14 18:05:04,919]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777518>)>
+[2014-10-14 18:05:04,919]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,919]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782c18>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,920]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037826a0>)>
+[2014-10-14 18:05:04,920]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,920]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,920]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782cc0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,920]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,920]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777a58>)>
+[2014-10-14 18:05:04,920]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103782898>)>
+[2014-10-14 18:05:04,921]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,921]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782d68>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,921]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037777b8>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,921]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037826a0>)>
+[2014-10-14 18:05:04,921]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777dd8>)>
+[2014-10-14 18:05:04,921]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,921]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,921]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,921]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037776d8>)>
+[2014-10-14 18:05:04,922]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782e10>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,922]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103782438>)>
+[2014-10-14 18:05:04,922]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037777f0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,922]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037774a8>)>
+[2014-10-14 18:05:04,922]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,922]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,923]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,923]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782eb8>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,923]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777cf8>)>
+[2014-10-14 18:05:04,923]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103782898>)>
+[2014-10-14 18:05:04,923]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,923]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777f28>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,923]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782f28>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,923]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103782518>)>
+[2014-10-14 18:05:04,923]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777dd8>)>
+[2014-10-14 18:05:04,924]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,924]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,924]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,924]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777ef0>)>
+[2014-10-14 18:05:04,924]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782f60>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,924]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037779e8>)>
+[2014-10-14 18:05:04,924]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037777f0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,925]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,925]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777dd8>)>
+[2014-10-14 18:05:04,925]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782f98>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,925]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,925]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777e80>)>
+[2014-10-14 18:05:04,925]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,925]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,925]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037840b8>)>
+[2014-10-14 18:05:04,925]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103782fd0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,926]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777e80>)>
+[2014-10-14 18:05:04,926]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777f28>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,926]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,926]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784780>)>
+[2014-10-14 18:05:04,926]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,926]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,926]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783048>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,926]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784198>)>
+[2014-10-14 18:05:04,926]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777e80>)>
+[2014-10-14 18:05:04,927]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,927]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037777f0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,927]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777d68>)>
+[2014-10-14 18:05:04,927]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,927]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,927]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784390>)>
+[2014-10-14 18:05:04,927]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037832e8>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,928]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777f98>)>
+[2014-10-14 18:05:04,928]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037779e8>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,928]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777588>)>
+[2014-10-14 18:05:04,928]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777fd0>)>
+[2014-10-14 18:05:04,928]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,928]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,928]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783390>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,928]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,928]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784470>)>
+[2014-10-14 18:05:04,928]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783518>)>
+[2014-10-14 18:05:04,929]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,929]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777f28>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,929]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777d68>)>
+[2014-10-14 18:05:04,929]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783400>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,929]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,929]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,929]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037836d8>)>
+[2014-10-14 18:05:04,929]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784518>)>
+[2014-10-14 18:05:04,929]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777550>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,930]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,930]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x1037779e8>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,930]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777a90>)>
+[2014-10-14 18:05:04,930]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777fd0>)>
+[2014-10-14 18:05:04,930]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777978>)>
+[2014-10-14 18:05:04,930]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783438>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,930]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,930]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,930]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037846a0>)>
+[2014-10-14 18:05:04,930]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037830f0>)>
+[2014-10-14 18:05:04,931]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777dd8>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,931]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,931]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,931]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,931]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777d68>)>
+[2014-10-14 18:05:04,931]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037778d0>)>
+[2014-10-14 18:05:04,931]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,931]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783470>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,931]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,931]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784710>)>
+[2014-10-14 18:05:04,931]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783518>)>
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777ac8>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777f28>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,932]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037772b0>)>
+[2014-10-14 18:05:04,932]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037777f0>)>
+[2014-10-14 18:05:04,932]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777c50>)>
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037834a8>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,932]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,932]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,932]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,933]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777978>)>
+[2014-10-14 18:05:04,933]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783b00>)>
+[2014-10-14 18:05:04,933]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784320>)>
+[2014-10-14 18:05:04,933]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,933]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777da0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,933]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777828>)>
+[2014-10-14 18:05:04,933]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037834e0>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,933]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103777860>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,933]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783518>)>
+[2014-10-14 18:05:04,934]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777d68>)>
+[2014-10-14 18:05:04,934]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,934]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,934]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,934]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,934]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,934]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,934]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783898>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,934]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777780>)>
+[2014-10-14 18:05:04,934]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777c18>)>
+[2014-10-14 18:05:04,934]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,934]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783518>)>
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783940>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777f60>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,935]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037845c0>)>
+[2014-10-14 18:05:04,935]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037776a0>)>
+[2014-10-14 18:05:04,935]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783cc0>)>
+[2014-10-14 18:05:04,935]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777fd0>)>
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,935]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,935]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784828>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,936]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,936]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,936]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037839b0>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,936]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777cf8>)>
+[2014-10-14 18:05:04,936]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777d68>)>
+[2014-10-14 18:05:04,936]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777cf8>)>
+[2014-10-14 18:05:04,936]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783b00>)>
+[2014-10-14 18:05:04,936]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,936]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,936]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,936]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,937]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784908>)>
+[2014-10-14 18:05:04,937]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037839e8>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,937]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777da0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,937]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777e80>)>
+[2014-10-14 18:05:04,937]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783cc0>)>
+[2014-10-14 18:05:04,937]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784ac8>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,937]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037774e0>)>
+[2014-10-14 18:05:04,937]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,937]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,937]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784a90>)>
+[2014-10-14 18:05:04,937]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,938]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,938]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,938]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777f28>)>
+[2014-10-14 18:05:04,938]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,938]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,938]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783a20>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,938]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777e10>)>
+[2014-10-14 18:05:04,938]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783b00>)>
+[2014-10-14 18:05:04,938]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,938]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037847f0>)>
+[2014-10-14 18:05:04,938]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,939]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777f60>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783a58>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784be0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,939]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037774e0>)>
+[2014-10-14 18:05:04,939]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784ba8>)>
+[2014-10-14 18:05:04,939]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783e80>)>
+[2014-10-14 18:05:04,939]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,939]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,939]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037779b0>)>
+[2014-10-14 18:05:04,939]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,940]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103777e80>)>
+[2014-10-14 18:05:04,940]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,940]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103783a90>) to <Server('sivarams-MacBook-Pro.local', 35877)>.
+[2014-10-14 18:05:04,940]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,940]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777da0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,940]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 35877)> from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103783b00>)>
+[2014-10-14 18:05:04,940]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784ac8>)>
+[2014-10-14 18:05:04,940]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777eb8>)>
+[2014-10-14 18:05:04,940]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,940]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,941]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,941]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,941]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,941]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,941]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785278>)>
+[2014-10-14 18:05:04,941]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103782358>)>
+[2014-10-14 18:05:04,941]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784a20>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,941]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037840f0>)>
+[2014-10-14 18:05:04,941]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784cc0>)>
+[2014-10-14 18:05:04,941]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,941]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,942]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777f60>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,942]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784be0>)>
+[2014-10-14 18:05:04,942]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'6e8d',processed,0>
+[2014-10-14 18:05:04,942]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037776a0>)>
+[2014-10-14 18:05:04,942]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,942]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103782400>)>
+[2014-10-14 18:05:04,942]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,943]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,943]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784b38>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,943]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785128>)>
+[2014-10-14 18:05:04,943]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784320>)>
+[2014-10-14 18:05:04,943]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,943]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784dd8>)>
+[2014-10-14 18:05:04,943]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,943]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777a90>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,943]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,943]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'ce45',processed,0>
+[2014-10-14 18:05:04,943]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777fd0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,943]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,944]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784cc0>)>
+[2014-10-14 18:05:04,944]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037827b8>)>
+[2014-10-14 18:05:04,944]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,944]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777828>)>
+[2014-10-14 18:05:04,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,944]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,944]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785358>)>
+[2014-10-14 18:05:04,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784a20>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,944]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,944]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784470>)>
+[2014-10-14 18:05:04,944]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784ef0>)>
+[2014-10-14 18:05:04,944]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'cfc3',processed,0>
+[2014-10-14 18:05:04,945]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777da0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,945]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,945]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777be0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,945]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,945]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777a58>)>
+[2014-10-14 18:05:04,945]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,945]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037880b8>)>
+[2014-10-14 18:05:04,945]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103777eb8>)>
+[2014-10-14 18:05:04,945]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,945]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,946]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,945]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,945]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,946]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037845f8>)>
+[2014-10-14 18:05:04,946]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785400>)>
+[2014-10-14 18:05:04,946]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784e80>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,946]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'b6f7',processed,0>
+[2014-10-14 18:05:04,946]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784dd8>)>
+[2014-10-14 18:05:04,946]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777f60>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,946]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,946]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777b38>)>
+[2014-10-14 18:05:04,947]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,946]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777828>)>
+[2014-10-14 18:05:04,946]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,947]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103785438>)>
+[2014-10-14 18:05:04,947]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,947]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,947]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037882b0>)>
+[2014-10-14 18:05:04,947]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,947]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,947]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784748>)>
+[2014-10-14 18:05:04,947]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,947]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785630>)>
+[2014-10-14 18:05:04,947]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'3dcf',processed,0>
+[2014-10-14 18:05:04,948]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784ef0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,948]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777dd8>)>
+[2014-10-14 18:05:04,948]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777fd0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,948]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,948]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784f28>)>
+[2014-10-14 18:05:04,948]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,948]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103785518>)>
+[2014-10-14 18:05:04,948]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,948]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,949]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,949]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,949]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x103784898>)>
+[2014-10-14 18:05:04,949]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'344d',processed,0>
+[2014-10-14 18:05:04,949]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037856d8>)>
+[2014-10-14 18:05:04,949]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,949]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103784a20>)>
+[2014-10-14 18:05:04,949]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037831d0>)>
+[2014-10-14 18:05:04,949]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,950]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,950]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777da0>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,950]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784b38>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,950]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777828>)>
+[2014-10-14 18:05:04,950]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,950]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,950]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,950]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,950]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784f28>)>
+[2014-10-14 18:05:04,950]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'64e5',processed,0>
+[2014-10-14 18:05:04,950]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103785748>)>
+[2014-10-14 18:05:04,950]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Client('sivarams-MacBook-Pro.local', 25606)> msg:('request', <structs.Request object at 0x1037848d0>)>
+[2014-10-14 18:05:04,951]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783550>)>
+[2014-10-14 18:05:04,951]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,951]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,951]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,951]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,951]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103788400>)>
+[2014-10-14 18:05:04,951]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x1037852b0>)>
+[2014-10-14 18:05:04,951]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x103777f60>) to <Server('sivarams-MacBook-Pro.local', 29726)>.
+[2014-10-14 18:05:04,951]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,951]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 29726)> from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103777ba8>)>
+[2014-10-14 18:05:04,951]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'123',processed,0>
+[2014-10-14 18:05:04,951]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784b38>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,952]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,952]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 35877)
+[2014-10-14 18:05:04,952]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,952]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783710>)>
+[2014-10-14 18:05:04,952]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784ef0>)>
+[2014-10-14 18:05:04,952]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x1037859b0>)>
+[2014-10-14 18:05:04,952]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,952]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,952]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103788470>)>
+[2014-10-14 18:05:04,952]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,952]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,952]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,953]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785828>)>
+[2014-10-14 18:05:04,953]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103784fd0>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,953]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103784f28>)>
+[2014-10-14 18:05:04,953]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'124',processed,0>
+[2014-10-14 18:05:04,953]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,953]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037837b8>)>
+[2014-10-14 18:05:04,953]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,953]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,954]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103788438>)>
+[2014-10-14 18:05:04,954]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103785710>)>
+[2014-10-14 18:05:04,954]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,954]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,954]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,954]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'125',processed,0>
+[2014-10-14 18:05:04,954]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 35877)> msg:('request', <structs.Request object at 0x103785978>)>
+[2014-10-14 18:05:04,954]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783b70>)>
+[2014-10-14 18:05:04,954]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103788048>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,954]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103788160>)>
+[2014-10-14 18:05:04,954]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,954]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('request', <structs.Request object at 0x1037776a0>) to <Server('sivarams-MacBook-Pro.local', 34587)>.
+[2014-10-14 18:05:04,955]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,955]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'126',processed,0>
+[2014-10-14 18:05:04,955]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,955]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: triggering event <SentEvent time:None to:<Server('sivarams-MacBook-Pro.local', 34587)> from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103785710>)>
+[2014-10-14 18:05:04,955]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783ba8>)>
+[2014-10-14 18:05:04,955]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 29726)> msg:('request', <structs.Request object at 0x103788550>)>
+[2014-10-14 18:05:04,955]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 29726)
+[2014-10-14 18:05:04,955]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,955]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,955]runtime.TcpEndPoint(sivarams-MacBook-Pro.local):DEBUG: Sent packet ('reply', <structs.Request object at 0x103788208>) to <Client('sivarams-MacBook-Pro.local', 25606)>.
+[2014-10-14 18:05:04,955]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'127',processed,0>
+[2014-10-14 18:05:04,956]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: triggering event <SentEvent time:None to:[<Client('sivarams-MacBook-Pro.local', 25606)>] from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037885f8>)>
+[2014-10-14 18:05:04,956]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783d30>)>
+[2014-10-14 18:05:04,956]da.api:DEBUG: Unknown proc: ('sivarams-MacBook-Pro.local', 34587)
+[2014-10-14 18:05:04,956]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('sent', 1) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:04,956]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,956]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'d9f8',processed,0>
+[2014-10-14 18:05:04,957]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783f28>)>
+[2014-10-14 18:05:04,957]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,957]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'4449',processed,0>
+[2014-10-14 18:05:04,958]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783f60>)>
+[2014-10-14 18:05:04,958]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,958]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'123',processed,10>
+[2014-10-14 18:05:04,958]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037872e8>)>
+[2014-10-14 18:05:04,959]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,959]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'124',processed,20>
+[2014-10-14 18:05:04,959]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103787128>)>
+[2014-10-14 18:05:04,959]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,960]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'125',processed,10>
+[2014-10-14 18:05:04,960]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103782320>)>
+[2014-10-14 18:05:04,960]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,961]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'126',processed,10>
+[2014-10-14 18:05:04,961]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783e80>)>
+[2014-10-14 18:05:04,962]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,962]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'127',processed,10>
+[2014-10-14 18:05:04,962]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x1037820f0>)>
+[2014-10-14 18:05:04,963]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,963]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'57e6',processed,0>
+[2014-10-14 18:05:04,963]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777a58>)>
+[2014-10-14 18:05:04,964]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,964]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'ffc1',processed,0>
+[2014-10-14 18:05:04,964]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777e48>)>
+[2014-10-14 18:05:04,965]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,965]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'123',inconsistent,10>
+[2014-10-14 18:05:04,965]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777f98>)>
+[2014-10-14 18:05:04,965]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,966]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'124',inconsistent,20>
+[2014-10-14 18:05:04,966]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103777fd0>)>
+[2014-10-14 18:05:04,966]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,966]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'125',inconsistent,10>
+[2014-10-14 18:05:04,967]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783978>)>
+[2014-10-14 18:05:04,967]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,967]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'126',inconsistent,10>
+[2014-10-14 18:05:04,967]Client[('sivarams-MacBook-Pro.local', 25606)]:DEBUG: triggering event <ReceivedEvent time:None to:None from:<Server('sivarams-MacBook-Pro.local', 34587)> msg:('reply', <structs.Request object at 0x103783668>)>
+[2014-10-14 18:05:04,968]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: client
+[2014-10-14 18:05:04,968]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: <'127',inconsistent,10>
+[2014-10-14 18:05:05,941]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: timeout
+[2014-10-14 18:05:05,942]Client[('sivarams-MacBook-Pro.local', 25606)]:INFO: finished request
+[2014-10-14 18:05:05,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('totalusrtime', 0) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:05,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('totalsystime', 0) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:05,942]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Sent packet ('totaltime', 0) to <process ('sivarams-MacBook-Pro.local', 21510)>.
+[2014-10-14 18:05:05,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_21510):DEBUG: Remote connection <socket.socket fd=11, family=AddressFamily.AF_INET, type=SocketType.SOCK_STREAM, proto=0, laddr=('10.255.51.73', 21510), raddr=('10.255.51.73', 54471)> terminated.
+[2014-10-14 18:05:05,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_35877):DEBUG: Remote connection <socket.socket fd=16, family=AddressFamily.AF_INET, type=SocketType.SOCK_STREAM, proto=0, laddr=('10.255.51.73', 35877), raddr=('10.255.51.73', 54474)> terminated.
+[2014-10-14 18:05:05,944]runtime.TcpEndPoint(sivarams-MacBook-Pro.local_34587):DEBUG: Remote connection <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketType.SOCK_STREAM, proto=0, laddr=('10.255.51.73', 34587), raddr=('10.255.51.73', 54470)> terminated.
+[2014-10-14 18:05:08,276]Server[('sivarams-MacBook-Pro.local', 34587)]:DEBUG: Received KeyboardInterrupt, exiting
+[2014-10-14 18:05:08,276]Server[('sivarams-MacBook-Pro.local', 35877)]:DEBUG: Received KeyboardInterrupt, exiting
+[2014-10-14 18:05:08,276]Server[('sivarams-MacBook-Pro.local', 29726)]:DEBUG: Received KeyboardInterrupt, exiting

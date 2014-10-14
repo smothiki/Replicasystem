@@ -1,0 +1,72 @@
+package structs
+
+import (
+	"fmt"
+	"strconv"
+
+	gson "github.com/bitly/go-simplejson"
+	"github.com/replicasystem/src/commons/utils"
+)
+
+func gettypeList(prob int, typet string) *[]Request {
+	listreqs := make([]Request, 0, 1)
+	js, _ := gson.NewJson(utils.GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	getReqs := js.Get("requests").Get(typet)
+	a, _ := getReqs.Array()
+	fmt.Println(len(a))
+	fmt.Println(prob)
+	if len(a)-prob < 0 {
+		for i := 0; i < prob-len(a); i++ {
+			listreqs = append(listreqs, *Genrequest(0, "getbalance"))
+		}
+		for i := 0; i < len(a); i++ {
+			reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
+			account, _ := getReqs.GetIndex(i).Get("account").String()
+			balances, _ := getReqs.GetIndex(i).Get("balance").String()
+			balance, _ := strconv.Atoi(balances)
+			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
+			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
+		}
+	} else {
+		for i := 0; i < prob; i++ {
+			reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
+			account, _ := getReqs.GetIndex(i).Get("account").String()
+			balances, _ := getReqs.GetIndex(i).Get("balance").String()
+			balance, _ := strconv.Atoi(balances)
+			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
+			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
+		}
+	}
+	return &listreqs
+}
+
+func GetrequestList(prob int, typet string) *[]Request {
+	listreqs := make([]Request, 0, 1)
+	totalreqs, _ := strconv.Atoi(utils.Getvalue("MaxRequests"))
+	types := []string{"getbalance", "deposit", "withdraw"}
+	if prob == 0 {
+		for i := 0; i < 3; i++ {
+			for _, request := range *gettypeList(6, types[i]) {
+				listreqs = append(listreqs, request)
+			}
+		}
+		listreqs = append(listreqs, *Genrequest(0, "getbalance"))
+		listreqs = append(listreqs, *Genrequest(0, "deposit"))
+	} else {
+		rem := totalreqs - (2 * prob)
+		rem = rem / 2
+		for _, request := range *gettypeList(prob*2, typet) {
+			listreqs = append(listreqs, request)
+		}
+		for i := 0; i < 3; i++ {
+			if typet != types[i] {
+				for _, request := range *gettypeList(rem, types[i]) {
+					listreqs = append(listreqs, request)
+				}
+			}
+		}
+	}
+	return &listreqs
+}
