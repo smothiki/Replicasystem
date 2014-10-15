@@ -3,5 +3,7 @@
   "chainlength": "3",
   "chian1series": "4",
   "clients" : "1",
-  "MaxRequests":"20"
+  "MaxRequests":"20",
+  "client" : "localhost:10001",
+  "clientseries" : "1"
 }

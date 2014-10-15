@@ -18,31 +18,33 @@ type ChainList struct {
 	tail string
 }
 
-func SendRequest(server, method, api string, request *structs.Request) {
-	res1B, _ := json.Marshal(request)
+func SendUpdate(server string, request *structs.Request) {
+	res1B, err := json.Marshal(request)
 	client := &http.Client{}
-	req, _ := http.NewRequest(method, "http://"+server+"/"+api, bytes.NewBuffer(res1B))
+	req, _ := http.NewRequest("POST", "http://"+server+"/update", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	if api == "query" {
-		resp, err := client.Do(req)
-		if err != nil {
-			fmt.Printf("Error : %s", err)
-		}
-		body, _ := ioutil.ReadAll(resp.Body)
-		res := &structs.Request{}
-		json.Unmarshal(body, &res)
-		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
-	} else {
-		go func() {
-			_, err := client.Do(req)
-			if err != nil {
-				fmt.Printf("Error : %s", err)
-			}
-		}()
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Error : %s", err)
 	}
+	_, _ = ioutil.ReadAll(resp.Body)
+}
 
+func Sendquery(server string, request *structs.Request) {
+	res1B, err := json.Marshal(request)
+	fmt.Println(string(res1B))
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", "http://"+server+"/query", bytes.NewBuffer(res1B))
+	req.Header = http.Header{
+		"accept": {"application/json"},
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Error : %s", err)
+	}
+	_, _ = ioutil.ReadAll(resp.Body)
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request) {
@@ -57,17 +59,17 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 
 func simulate(chain *ChainList) {
 
-	listreqs := structs.GetrequestList(3, "getbalance")
+	listreqs := structs.GetrequestList(0, "getbalance")
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
 			// SendRequest(chain.tail, "GET", "query", &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendRequest(chain.tail, "GET", "query", &request) })
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { Sendquery(chain.tail, &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}
 		} else {
-			//SendRequest(chain.head, "POST", "update", &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendRequest(chain.head, "POST", "update", &request) })
+			// SendUpdate(chain.head, &request)
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendUpdate(chain.head, &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}
@@ -80,12 +82,10 @@ func main() {
 		head: "localhost:4001",
 		tail: "localhost:4003",
 	}
-
-	//res1D.Account = "f12da044"
 	go simulate(chain1)
 	fmt.Println("start servver")
 	http.HandleFunc("/sync", synchandler)
-	err := http.ListenAndServe("localhost:10001", nil)
+	err := http.ListenAndServe(utils.Getconfig("client"), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

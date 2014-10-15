@@ -1,6 +1,7 @@
 package structs
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/replicasystem/src/commons/utils"
@@ -25,6 +26,9 @@ type Chain struct {
 
 func Makechain(series, server, length int) *Chain {
 	start := series*1000 + 1
+	fmt.Println(server)
+	fmt.Println(start)
+	fmt.Println(start + length - 1)
 	chain := &Chain{
 		Head:   "localhost:" + strconv.Itoa(start),
 		Tail:   "localhost:" + strconv.Itoa(start+length),

@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	gson "github.com/bitly/go-simplejson"
@@ -20,17 +22,46 @@ func NewID() string {
 	return fmt.Sprintf("%x", uuid[0:4])
 }
 
+func GetCount() string {
+	id, err := ioutil.ReadFile("/Users/ram/deistests/src/github.com/replicasystem/src/server/counter")
+	if err != nil {
+		return "0"
+	}
+	return strings.TrimSpace(string(id))
+}
+
+func PutCount(version string) error {
+	err := ioutil.WriteFile("/Users/ram/deistests/src/github.com/replicasystem/src/server/counter", []byte(version), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Logoutput(server, reqid, outcome string, balance int) {
 	var name string
 	if server == "client" {
-		name = "../../logs/clogs"
+		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/clogs"
 	} else {
-		name = "../../logs/slogs"
+		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/slogs"
 	}
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	log.SetOutput(f)
 	log.Printf("%s :%s-%s-%d", server, reqid, outcome, balance)
+}
+
+func Logevent(server, reqid, event string) {
+	var name string
+	if server == "client" {
+		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/clogs"
+	} else {
+		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/slogs"
+	}
+	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	defer f.Close()
+	log.SetOutput(f)
+	log.Printf("%s :%s-%s", server, reqid, event)
 }
 
 func GetFileBytes(filename string) []byte {
@@ -44,6 +75,12 @@ func GetFileBytes(filename string) []byte {
 
 func Getvalue(data string) string {
 	js, _ := gson.NewJson(GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	command, _ := js.Get(data).String()
+	return command
+}
+
+func Getconfig(data string) string {
+	js, _ := gson.NewJson(GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/config.json"))
 	command, _ := js.Get(data).String()
 	return command
 }

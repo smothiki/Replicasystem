@@ -35,9 +35,9 @@ func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		res1D := b.GetBalance(res)
-		utils.Logoutput("tail", res1D.Requestid, res1D.Outcome, res1D.Balance)
-		SendRequest("localhost:10001", res1D)
+		res1 := b.GetBalance(res)
+		utils.Logoutput("tail", res1.Requestid, res1.Outcome, res1.Balance)
+		SendRequest(utils.Getconfig("client"), res1)
 	}
 }
 
@@ -86,8 +86,10 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 func main() {
 	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
-	series, _ := strconv.Atoi(utils.Getvalue("chian1series"))
-	lenservers, _ := strconv.Atoi(utils.Getvalue("chainlength"))
+	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
+	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	curseries := int(port / 1000)
+	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
 		queryhandler(w, r, b)

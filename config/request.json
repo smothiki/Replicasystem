@@ -134,45 +134,38 @@
         "outcome": "none"
       },
       {
-        "requestid": "123",
-        "account": "1",
-        "balance": "0",
-        "transaction": "getbalance",
+        "requestid": "125",
+        "account": "3",
+        "balance": "10",
+        "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "123",
-        "account": "1",
-        "balance": "0",
-        "transaction": "getbalance",
+        "requestid": "125",
+        "account": "3",
+        "balance": "1",
+        "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "123",
-        "account": "1",
-        "balance": "0",
-        "transaction": "getbalance",
+        "requestid": "126",
+        "account": "3",
+        "balance": "11",
+        "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "123",
-        "account": "1",
-        "balance": "0",
-        "transaction": "getbalance",
+        "requestid": "127",
+        "account": "4",
+        "balance": "2",
+        "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "123",
-        "account": "1",
+        "requestid": "128",
+        "account": "5",
         "balance": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      },
-      {
-        "requestid": "123",
-        "account": "1",
-        "balance": "0",
-        "transaction": "getbalance",
+        "transaction": "deposit",
         "outcome": "none"
       }
     ]

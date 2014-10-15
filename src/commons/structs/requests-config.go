@@ -44,7 +44,7 @@ func gettypeList(prob int, typet string) *[]Request {
 
 func GetrequestList(prob int, typet string) *[]Request {
 	listreqs := make([]Request, 0, 1)
-	totalreqs, _ := strconv.Atoi(utils.Getvalue("MaxRequests"))
+	totalreqs, _ := strconv.Atoi(utils.Getconfig("MaxRequests"))
 	types := []string{"getbalance", "deposit", "withdraw"}
 	if prob == 0 {
 		for i := 0; i < 3; i++ {
@@ -67,6 +67,26 @@ func GetrequestList(prob int, typet string) *[]Request {
 				}
 			}
 		}
+	}
+	for _, request := range listreqs {
+		fmt.Println(request)
+	}
+	return &listreqs
+}
+
+func GetTestreqs() *[]Request {
+	listreqs := make([]Request, 0, 1)
+	js, _ := gson.NewJson(utils.GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	getReqs := js.Get("requests").Get("tests")
+	a, _ := getReqs.Array()
+	for i := 0; i < len(a); i++ {
+		reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
+		account, _ := getReqs.GetIndex(i).Get("account").String()
+		balances, _ := getReqs.GetIndex(i).Get("balance").String()
+		balance, _ := strconv.Atoi(balances)
+		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+		outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
+		listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
 	}
 	return &listreqs
 }
