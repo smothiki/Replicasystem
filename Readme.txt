@@ -1,3 +1,5 @@
+git hub repo : https://github.com/smothiki/Replicasystem  
+
   INSTRUCTIONS.
 
 Note # project Developed in go and distalgo . Inorder to run the project you should install GO and Distlago .
@@ -69,4 +71,3 @@ request.json (Replicasystem/config/request.json)
   1. Implemented Timeouts in both languages . Which was very interesting and fun to learn
   2. Implemented a program that start multiple server and client processes similar to distalgo which was very fun and lot of learning in GO .
   3. Used an opensource library simplejson to make reading of json files easy in GO .
-  
