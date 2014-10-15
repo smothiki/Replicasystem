@@ -1,0 +1,5 @@
+In request.json we have provided test requests under the column "tests" these are the series of requests that will be sent to server
+and will compare manually whether the output is as expected or not the output will be saved to Replicationsystem/logs/clog and slog
+
+For verifying proof of concept for a transaction we have written a seperate file clienttest.go which sends the test requests from the json and
+sends to the head or tail accordingly
