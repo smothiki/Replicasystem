@@ -5,7 +5,7 @@ import json
 import sys
 import time
 
-
+# server process that handles request form client
 
 class Server(process):
    def setup(servers,index,client,name,id1):
@@ -34,6 +34,7 @@ class Server(process):
       #  output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
        send(("reply",request),to=client)
 
+# client process that sends request to server
 
 class Client(process):
    def setup(chain,timed):

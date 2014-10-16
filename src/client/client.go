@@ -18,6 +18,8 @@ type ChainList struct {
 	tail string
 }
 
+// sends update request to server
+
 func SendUpdate(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
@@ -32,6 +34,7 @@ func SendUpdate(server string, request *structs.Request) {
 	_, _ = ioutil.ReadAll(resp.Body)
 }
 
+// send query request to tail
 func Sendquery(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	fmt.Println(string(res1B))
@@ -47,6 +50,8 @@ func Sendquery(server string, request *structs.Request) {
 	_, _ = ioutil.ReadAll(resp.Body)
 }
 
+// http handler function for listening to sync requests
+
 func synchandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello, client")
 	if r.Method == "POST" {
@@ -56,6 +61,8 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
 	}
 }
+
+// simulates the client and sends request to server
 
 func simulate(chain *ChainList) {
 

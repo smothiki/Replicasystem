@@ -4,7 +4,7 @@ import uuid
 
 # 7d529dd4-548b-4258-aa8e-23e34dc8d43d
 
-
+# Request struct that is standard protocol for message passing
 
 class Request():
   def __init__(self,reqid,accountid,balance,transaction,outcome):
@@ -36,6 +36,7 @@ class Requests():
     else:
       for i in range(counts):
         self.requests.append(Request(getReqs[i]["requestid"],getReqs[i]["account"],int(getReqs[i]["balance"]),getReqs[i]["transaction"],getReqs[i]["outcome"]))
+# generated requests according to probalilty 
 
   def getRequestList(self):
     configs = json.loads(open("/Users/ram/deistests/src/github.com/replicasystem/config/config.json").read())

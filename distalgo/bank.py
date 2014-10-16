@@ -1,5 +1,7 @@
 from structs import Request
 
+# Bank class that handles bank system
+
 class Bank():
   def __init__(self,name,id):
     self.name = name
