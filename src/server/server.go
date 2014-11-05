@@ -36,7 +36,7 @@ func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
 		res1 := b.GetBalance(res)
-		utils.Logoutput("tail", res1.Requestid, res1.Outcome, res1.Balance)
+		utils.Logoutput("tail", res1.Requestid, res1.Outcome, res1.Balance, res1.Transaction)
 		SendRequest(utils.Getconfig("client"), res1)
 	}
 }
@@ -51,13 +51,13 @@ func updatehandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *
 			res1D := b.Deposit(res)
 			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res1D)
-			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance)
+			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance, res1D.Transaction)
 		}
 		if res.Transaction == "withdraw" {
 			res1D := b.Withdraw(res)
 			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res1D)
-			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance)
+			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance, res1D.Transaction)
 		}
 	}
 }
@@ -71,7 +71,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 		json.Unmarshal(body, &res)
 		fmt.Println(res)
 		b.Set(res)
-		utils.Logoutput(chain.Server, res.Requestid, res.Outcome, res.Balance)
+		utils.Logoutput(chain.Server, res.Requestid, res.Outcome, res.Balance, res.Transaction)
 		if chain.Istail {
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)

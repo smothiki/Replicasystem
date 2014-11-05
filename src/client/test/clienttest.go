@@ -55,7 +55,7 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
+		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance, res.Transaction)
 	}
 }
 
@@ -81,8 +81,8 @@ func simulate(chain *ChainList) {
 
 func main() {
 	chain1 := &ChainList{
-		head: "localhost:4001",
-		tail: "localhost:4003",
+		head: "localhost:5001",
+		tail: "localhost:5003",
 	}
 	go simulate(chain1)
 	fmt.Println("start servver")

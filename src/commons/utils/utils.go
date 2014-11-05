@@ -38,7 +38,7 @@ func PutCount(version string) error {
 	return nil
 }
 
-func Logoutput(server, reqid, outcome string, balance int) {
+func Logoutput(server, reqid, outcome string, balance int, trans string) {
 	var name string
 	if server == "client" {
 		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/clogs"
@@ -48,7 +48,7 @@ func Logoutput(server, reqid, outcome string, balance int) {
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	log.SetOutput(f)
-	log.Printf("%s :%s-%s-%d", server, reqid, outcome, balance)
+	log.Printf("%s :%s-%s-%d-%s", server, reqid, outcome, balance, trans)
 }
 
 func Logevent(server, reqid, event string) {

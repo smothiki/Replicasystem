@@ -39,35 +39,35 @@
     ],
     "deposit": [
       {
-        "requestid": "123",
+        "requestid": "1233",
         "account": "1",
         "balance": "10",
         "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "124",
+        "requestid": "1244",
         "account": "2",
         "balance": "20",
         "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "125",
+        "requestid": "1255",
         "account": "3",
         "balance": "10",
         "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "126",
+        "requestid": "1266",
         "account": "4",
         "balance": "10",
         "transaction": "deposit",
         "outcome": "none"
       },
       {
-        "requestid": "127",
+        "requestid": "1277",
         "account": "5",
         "balance": "10",
         "transaction": "deposit",
@@ -76,35 +76,35 @@
     ],
     "withdraw": [
       {
-        "requestid": "123",
+        "requestid": "1233",
         "account": "1",
         "balance": "20",
         "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "124",
+        "requestid": "1244",
         "account": "2",
         "balance": "4",
         "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "125",
+        "requestid": "1255",
         "account": "3",
         "balance": "10",
         "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "126",
+        "requestid": "1266",
         "account": "4",
         "balance": "6",
         "transaction": "withdraw",
         "outcome": "none"
       },
       {
-        "requestid": "127",
+        "requestid": "1277",
         "account": "5",
         "balance": "7",
         "transaction": "withdraw",
@@ -129,8 +129,8 @@
       {
         "requestid": "124",
         "account": "2",
-        "balance": "10",
-        "transaction": "deposit",
+        "balance": "0",
+        "transaction": "getbalance",
         "outcome": "none"
       },
       {
@@ -143,8 +143,8 @@
       {
         "requestid": "125",
         "account": "3",
-        "balance": "1",
-        "transaction": "withdraw",
+        "balance": "10",
+        "transaction": "deposit",
         "outcome": "none"
       },
       {
@@ -156,9 +156,9 @@
       },
       {
         "requestid": "127",
-        "account": "4",
-        "balance": "2",
-        "transaction": "deposit",
+        "account": "3",
+        "balance": "1",
+        "transaction": "withdraw",
         "outcome": "none"
       },
       {

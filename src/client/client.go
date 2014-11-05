@@ -58,7 +58,7 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance)
+		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance, res.Transaction)
 	}
 }
 

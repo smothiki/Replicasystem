@@ -21,11 +21,11 @@ class Server(da.DistProcess):
         self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_0', PatternExpr_0, sources=[PatternExpr_1], destinations=None, timestamps=None, record_history=True, handlers=[]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_1', PatternExpr_3, sources=[PatternExpr_4], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_0])])
 
     def setup(self, servers, index, client, name, id1):
-        self.name = name
+        self.client = client
         self.id1 = id1
         self.index = index
+        self.name = name
         self.servers = servers
-        self.client = client
         self.bankobj = Bank(self.name, self.id1)
         self.output(str(self.index))
 
@@ -110,7 +110,7 @@ class Client(da.DistProcess):
                 _st_label_41 -= 1
         self.output('finished request')
 
-    def _Client_handler_1(self, p, request):
+    def _Client_handler_1(self, request, p):
         if (request.requestid in self.waitfor):
             self.waitfor.remove(request.requestid)
         self.output('client')
