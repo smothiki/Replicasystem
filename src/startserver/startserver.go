@@ -31,7 +31,7 @@ func main() {
 	commands := make([]string, 0, 1)
 	for i := 1; i <= totalchains; i++ {
 		for start := 1000*series + 1; start <= 1000*series+lenservers; start++ {
-			strin := "/Users/ram/deistests/bin/server " + strconv.Itoa(start)
+			strin := utils.GetBinDir() + "server " + strconv.Itoa(start)
 			commands = append(commands, strin)
 
 		}

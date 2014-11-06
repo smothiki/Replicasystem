@@ -23,7 +23,7 @@ func NewID() string {
 }
 
 func GetCount() string {
-	id, err := ioutil.ReadFile("/Users/ram/deistests/src/github.com/replicasystem/src/server/counter")
+	id, err := ioutil.ReadFile(GetWorkDir() + "src/server/counter")
 	if err != nil {
 		return "0"
 	}
@@ -31,7 +31,7 @@ func GetCount() string {
 }
 
 func PutCount(version string) error {
-	err := ioutil.WriteFile("/Users/ram/deistests/src/github.com/replicasystem/src/server/counter", []byte(version), 0644)
+	err := ioutil.WriteFile(GetWorkDir() + "src/server/counter", []byte(version), 0644)
 	if err != nil {
 		return err
 	}
@@ -41,9 +41,9 @@ func PutCount(version string) error {
 func Logoutput(server, reqid, outcome string, balance int, trans string) {
 	var name string
 	if server == "client" {
-		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/clogs"
+		name = GetWorkDir() + "logs/clogs"
 	} else {
-		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/slogs"
+		name = GetWorkDir() + "logs/slogs"
 	}
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
@@ -54,9 +54,9 @@ func Logoutput(server, reqid, outcome string, balance int, trans string) {
 func Logevent(server, reqid, event string) {
 	var name string
 	if server == "client" {
-		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/clogs"
+		name = GetWorkDir() + "logs/clogs"
 	} else {
-		name = "/Users/ram/deistests/src/github.com/replicasystem/logs/slogs"
+		name = GetWorkDir() + "logs/slogs"
 	}
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
@@ -74,13 +74,13 @@ func GetFileBytes(filename string) []byte {
 }
 
 func Getvalue(data string) string {
-	js, _ := gson.NewJson(GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	js, _ := gson.NewJson(GetFileBytes(GetWorkDir() + "config/request.json"))
 	command, _ := js.Get(data).String()
 	return command
 }
 
 func Getconfig(data string) string {
-	js, _ := gson.NewJson(GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/config.json"))
+	js, _ := gson.NewJson(GetFileBytes(GetWorkDir() + "config/config.json"))
 	command, _ := js.Get(data).String()
 	return command
 }
@@ -99,4 +99,12 @@ func Timeout(msg string, seconds time.Duration, f func()) error {
 		return errors.New(msg + "timed out")
 	}
 	return nil
+}
+
+func GetWorkDir() string {
+    return os.Getenv("GOPATH") + "/src/github.com/replicasystem/"
+}
+
+func GetBinDir() string {
+    return os.Getenv("GOBIN") + "/"
 }

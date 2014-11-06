@@ -10,7 +10,7 @@ import (
 
 func gettypeList(prob int, typet string) *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request.json"))
 	getReqs := js.Get("requests").Get(typet)
 	a, _ := getReqs.Array()
 	fmt.Println(len(a))
@@ -76,7 +76,7 @@ func GetrequestList(prob int, typet string) *[]Request {
 
 func GetTestreqs() *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes("/Users/ram/deistests/src/github.com/replicasystem/config/request.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request.json"))
 	getReqs := js.Get("requests").Get("tests")
 	a, _ := getReqs.Array()
 	for i := 0; i < len(a); i++ {

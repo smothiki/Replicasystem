@@ -37,6 +37,6 @@ func main() {
 	// for _, str := range commands {
 	// 	fmt.Println(str)
 	wg.Add(1)
-	go exe_cmd("/Users/ram/deistests/bin/client ", wg)
+	go exe_cmd(utils.GetBinDir() + "client", wg)
 	wg.Wait()
 }
