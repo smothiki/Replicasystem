@@ -3,6 +3,7 @@ package structs
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/replicasystem/src/commons/utils"
 )
@@ -30,10 +31,16 @@ func Makechain(series, server, length int) *Chain {
 	fmt.Println(start)
 	fmt.Println(start + length - 1)
 	chain := &Chain{
-		Head:   "localhost:" + strconv.Itoa(start),
-		Tail:   "localhost:" + strconv.Itoa(start+length),
-		Next:   "localhost:" + strconv.Itoa(server+1),
-		Server: "localhost:" + strconv.Itoa(server),
+		/*
+			Head:   "localhost:" + strconv.Itoa(start),
+			Tail:   "localhost:" + strconv.Itoa(start+length),
+			Next:   "localhost:" + strconv.Itoa(server+1),
+			Server: "localhost:" + strconv.Itoa(server),
+		*/
+		Head:   "127.0.0.1:" + strconv.Itoa(start),
+		Tail:   "127.0.0.1:" + strconv.Itoa(start+length-1),
+		Next:   "127.0.0.1:" + strconv.Itoa(server+1),
+		Server: "127.0.0.1:" + strconv.Itoa(server),
 		Ishead: false,
 		Istail: false,
 	}
@@ -64,4 +71,11 @@ func Makereply(reqid, account, outcome, typet string, balance int) *Request {
 		Transaction: typet,
 		Balance:     balance}
 	return rep
+}
+
+func GetIPAndPort(server string) (string, int) {
+	r := strings.Split(server, ":")
+	ip := r[0]
+	port, _ := strconv.Atoi(r[1])
+	return ip, port
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -16,6 +17,9 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
+const MAXLINE = 1024
+
+/* SendRequest send request to successor */
 func SendRequest(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
@@ -29,42 +33,32 @@ func SendRequest(server string, request *structs.Request) {
 	}
 }
 
-func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
-	if r.Method == "GET" {
-		fmt.Fprint(w, "Hello, query")
-		body, _ := ioutil.ReadAll(r.Body)
-		res := &structs.Request{}
-		json.Unmarshal(body, &res)
-		res1 := b.GetBalance(res)
-		utils.Logoutput("tail", res1.Requestid, res1.Outcome, res1.Balance, res1.Transaction)
-		SendRequest(utils.Getconfig("client"), res1)
+/* SendReply sends reply to client */
+func SendReply(request *structs.Request) {
+	res1B, err := json.Marshal(request)
+	destIP, destPort := structs.GetIPAndPort(utils.Getconfig("client"))
+	destAddr := net.UDPAddr{
+		Port: destPort,
+		IP:   net.ParseIP(destIP),
 	}
-}
 
-func updatehandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
-	fmt.Fprint(w, "Hello, update")
-	if r.Method == "POST" {
-		body, _ := ioutil.ReadAll(r.Body)
-		res := &structs.Request{}
-		json.Unmarshal(body, &res)
-		if res.Transaction == "deposit" {
-			res1D := b.Deposit(res)
-			fmt.Println("inside deposit" + chain.Next)
-			SendRequest(chain.Next, res1D)
-			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance, res1D.Transaction)
-		}
-		if res.Transaction == "withdraw" {
-			res1D := b.Withdraw(res)
-			fmt.Println("inside deposit" + chain.Next)
-			SendRequest(chain.Next, res1D)
-			utils.Logoutput(chain.Server, res1D.Requestid, res1D.Outcome, res1D.Balance, res1D.Transaction)
-		}
+	conn, err := net.DialUDP("udp", nil, &destAddr)
+
+	if err != nil {
+		fmt.Println("ERROR while connecting to client: %s\n", err)
+	}
+
+	defer conn.Close()
+
+	_, err = conn.Write(res1B)
+	if err != nil {
+		fmt.Println("ERROR while sending reply to client: %s\n", err)
 	}
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
 	fmt.Fprint(w, "Hello, sync")
-	fmt.Println("hello syncss")
+	fmt.Println("hello syncs")
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
@@ -75,11 +69,57 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 		if chain.Istail {
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)
-			SendRequest("localhost:10001", res)
+			//SendRequest("localhost:10001", res)
+			SendReply(res)
 		} else {
-			fmt.Println("inside deposit" + chain.Next)
+			fmt.Println("inside sync" + chain.Next)
 			SendRequest(chain.Next, res)
 		}
+	}
+}
+
+func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
+	localAddr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP("127.0.0.1"),
+	}
+	conn, err := net.ListenUDP("udp", &localAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		buf := make([]byte, MAXLINE)
+		n, _, err := conn.ReadFromUDP(buf)
+
+		if err != nil {
+			fmt.Printf("Error while reading UDP: %s\n", err)
+		}
+
+		rqst := &structs.Request{}
+		json.Unmarshal(buf[:n], &rqst)
+
+		reply := &structs.Request{}
+		switch rqst.Transaction {
+		case "getbalance":
+			reply = b.GetBalance(rqst)
+		case "withdraw":
+			reply = b.Withdraw(rqst)
+			fmt.Println("inside withdraw" + chain.Next)
+		case "deposit":
+			reply = b.Deposit(rqst)
+			fmt.Println("inside deposit" + chain.Next)
+		case "transfer":
+			//TODO: phase 4
+		}
+
+		utils.Logoutput(chain.Server, reply.Requestid, reply.Outcome, reply.Balance, reply.Transaction)
+		if chain.Istail {
+			SendReply(reply)
+		} else {
+			SendRequest(chain.Next, reply)
+		}
+
 	}
 }
 
@@ -91,12 +131,9 @@ func main() {
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
-	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
-		queryhandler(w, r, b)
-	})
-	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
-		updatehandler(w, r, b, chain)
-	})
+
+	go startUDPService(port, b, chain)
+
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
 		synchandler(w, r, b, chain)
 	})

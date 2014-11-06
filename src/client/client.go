@@ -1,85 +1,112 @@
 package main
 
 import (
-	"bytes"
+	//"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
-	"net/http"
+	"net"
+	//"net/http"
 	"time"
 
 	"github.com/replicasystem/src/commons/structs"
 	"github.com/replicasystem/src/commons/utils"
 )
 
+const MAXLINE = 1024
+
 type ChainList struct {
 	head string
 	tail string
 }
 
-// sends update request to server
-
-func SendUpdate(server string, request *structs.Request) {
-	res1B, err := json.Marshal(request)
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "http://"+server+"/update", bytes.NewBuffer(res1B))
-	req.Header = http.Header{
-		"accept": {"application/json"},
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Printf("Error : %s", err)
-	}
-	_, _ = ioutil.ReadAll(resp.Body)
-}
-
-// send query request to tail
-func Sendquery(server string, request *structs.Request) {
+/* SendRequest sends request (query/update) to server */
+func SendRequest(server string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	fmt.Println(string(res1B))
-	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://"+server+"/query", bytes.NewBuffer(res1B))
-	req.Header = http.Header{
-		"accept": {"application/json"},
+
+	destIP, destPort := structs.GetIPAndPort(server)
+	destAddr := net.UDPAddr{
+		Port: destPort,
+		IP:   net.ParseIP(destIP),
 	}
-	resp, err := client.Do(req)
+
+	conn, err := net.DialUDP("udp", nil, &destAddr)
+
 	if err != nil {
-		fmt.Printf("Error : %s", err)
+		fmt.Printf("ERROR: %s", err)
 	}
-	_, _ = ioutil.ReadAll(resp.Body)
+
+	defer conn.Close()
+
+	n, err := conn.Write(res1B)
+	fmt.Println(n)
+}
+
+func createUDPSocket() *net.UDPConn {
+	sLocalAddr := utils.Getconfig("client")
+	ip, port := structs.GetIPAndPort(sLocalAddr)
+	localAddr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP(ip),
+	}
+	conn, err := net.ListenUDP("udp", &localAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return conn
+}
+
+func readResponse(conn *net.UDPConn) *structs.Request {
+	buf := make([]byte, MAXLINE)
+	n, _, err := conn.ReadFromUDP(buf)
+
+	if err != nil {
+		fmt.Println("Error while reading UDP: %s\n", err)
+	}
+
+	rqst := &structs.Request{}
+	json.Unmarshal(buf[:n], &rqst)
+
+	return rqst
 }
 
 // http handler function for listening to sync requests
-
+/*
 func synchandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello, client")
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
+		fmt.Println("SYNC")
+		fmt.Println(res)
 		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance, res.Transaction)
 	}
 }
+*/
 
 // simulates the client and sends request to server
 
-func simulate(chain *ChainList) {
+func simulate(chain *ChainList, conn *net.UDPConn) {
 
 	listreqs := structs.GetrequestList(0, "getbalance")
+	var dest string
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
-			// SendRequest(chain.tail, "GET", "query", &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { Sendquery(chain.tail, &request) })
-			if err != nil {
-				fmt.Println("timeout")
-			}
+			dest = chain.tail
 		} else {
-			// SendUpdate(chain.head, &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendUpdate(chain.head, &request) })
-			if err != nil {
-				fmt.Println("timeout")
-			}
+			dest = chain.head
+		}
+
+		// SendRequest(chain.tail, "GET", "query", &request)
+		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
+			SendRequest(dest, &request)
+			fmt.Println(readResponse(conn))
+		})
+		if err != nil {
+			fmt.Println("timeout")
 		}
 	}
 }
@@ -89,11 +116,17 @@ func main() {
 		head: "localhost:4001",
 		tail: "localhost:4003",
 	}
-	go simulate(chain1)
-	fmt.Println("start servver")
-	http.HandleFunc("/sync", synchandler)
-	err := http.ListenAndServe(utils.Getconfig("client"), nil)
+	fmt.Println("start server")
+	conn := createUDPSocket()
+
+	//go simulate(chain1, conn)
+	simulate(chain1, conn)
+	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
+	//SendRequest("127.0.0.1:4001", &re)
+	//readResponse(conn)
+	//http.HandleFunc("/sync", synchandler)
+	/*err := http.ListenAndServe(utils.Getconfig("client"), nil)
 	if err != nil {
 		log.Fatal(err)
-	}
+	}*/
 }
