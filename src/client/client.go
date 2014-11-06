@@ -8,6 +8,8 @@ import (
 	"log"
 	"net"
 	//"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/replicasystem/src/commons/structs"
@@ -89,15 +91,14 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 
 // simulates the client and sends request to server
 
-func simulate(chain *ChainList, conn *net.UDPConn) {
-
+func simulate(chain *structs.Chain, conn *net.UDPConn) {
 	listreqs := structs.GetrequestList(0, "getbalance")
 	var dest string
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
-			dest = chain.tail
+			dest = chain.Tail
 		} else {
-			dest = chain.head
+			dest = chain.Head
 		}
 
 		// SendRequest(chain.tail, "GET", "query", &request)
@@ -112,20 +113,21 @@ func simulate(chain *ChainList, conn *net.UDPConn) {
 }
 
 func main() {
-	chain1 := &ChainList{
-		head: "localhost:4001",
-		tail: "localhost:4003",
-	}
+	port, _ := strconv.Atoi(os.Args[1])
+	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
+	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	curseries := int(port / 1000)
+	series = series + (curseries - series)
+	chain := structs.Makechain(series, port, lenservers)
 	fmt.Println("start server")
 	conn := createUDPSocket()
-
-	//go simulate(chain1, conn)
-	simulate(chain1, conn)
+	//go simulate(chain, conn)
+	simulate(chain, conn)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
 	//SendRequest("127.0.0.1:4001", &re)
 	//readResponse(conn)
 	//http.HandleFunc("/sync", synchandler)
-	/*err := http.ListenAndServe(utils.Getconfig("client"), nil)
+	/*err := http.ListenAndServe(chain.Client, nil)
 	if err != nil {
 		log.Fatal(err)
 	}*/
