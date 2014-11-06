@@ -29,7 +29,7 @@ func SendRequest(server string, request *structs.Request) {
 	}
 }
 
-func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
 	if r.Method == "GET" {
 		fmt.Fprint(w, "Hello, query")
 		body, _ := ioutil.ReadAll(r.Body)
@@ -37,7 +37,7 @@ func queryhandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		json.Unmarshal(body, &res)
 		res1 := b.GetBalance(res)
 		utils.Logoutput("tail", res1.Requestid, res1.Outcome, res1.Balance, res1.Transaction)
-		SendRequest(utils.Getconfig("client"), res1)
+		SendRequest(chain.Client, res1)
 	}
 }
 
@@ -75,7 +75,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 		if chain.Istail {
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)
-			SendRequest("localhost:10001", res)
+			SendRequest(chain.Client, res)
 		} else {
 			fmt.Println("inside deposit" + chain.Next)
 			SendRequest(chain.Next, res)
@@ -92,7 +92,7 @@ func main() {
 	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
 	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
-		queryhandler(w, r, b)
+		queryhandler(w, r, b, chain)
 	})
 	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
 		updatehandler(w, r, b, chain)

@@ -7,16 +7,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/replicasystem/src/commons/structs"
 	"github.com/replicasystem/src/commons/utils"
 )
-
-type ChainList struct {
-	head string
-	tail string
-}
 
 // sends update request to server
 
@@ -64,19 +61,19 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 
 // simulates the client and sends request to server
 
-func simulate(chain *ChainList) {
+func simulate(chain *structs.Chain) {
 
 	listreqs := structs.GetrequestList(0, "getbalance")
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
 			// SendRequest(chain.tail, "GET", "query", &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { Sendquery(chain.tail, &request) })
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { Sendquery(chain.Tail, &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}
 		} else {
 			// SendUpdate(chain.head, &request)
-			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendUpdate(chain.head, &request) })
+			err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() { SendUpdate(chain.Head, &request) })
 			if err != nil {
 				fmt.Println("timeout")
 			}
@@ -85,14 +82,16 @@ func simulate(chain *ChainList) {
 }
 
 func main() {
-	chain1 := &ChainList{
-		head: "localhost:4001",
-		tail: "localhost:4003",
-	}
-	go simulate(chain1)
+	port, _ := strconv.Atoi(os.Args[1])
+	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
+	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	curseries := int(port / 1000)
+	series = series + (curseries - series)
+	chain := structs.Makechain(series, port, lenservers)
+	go simulate(chain)
 	fmt.Println("start servver")
 	http.HandleFunc("/sync", synchandler)
-	err := http.ListenAndServe(utils.Getconfig("client"), nil)
+	err := http.ListenAndServe(chain.Client, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

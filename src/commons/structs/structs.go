@@ -22,6 +22,7 @@ type Chain struct {
 	Server string
 	Ishead bool
 	Istail bool
+	Client string
 }
 
 func Makechain(series, server, length int) *Chain {
@@ -36,6 +37,7 @@ func Makechain(series, server, length int) *Chain {
 		Server: "localhost:" + strconv.Itoa(server),
 		Ishead: false,
 		Istail: false,
+		Client: "localhost:" + strconv.Itoa(series*1000),
 	}
 	if server == start {
 		chain.Ishead = true

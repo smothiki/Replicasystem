@@ -35,6 +35,8 @@ func main() {
 			commands = append(commands, strin)
 
 		}
+		client := utils.GetBinDir() + "client " + strconv.Itoa(series*1000)
+		commands = append(commands, client)
 		series = series + 1
 	}
 	// commands := []string{"/Users/ram/deistests/bin/server 4001", "/Users/ram/deistests/bin/server 4002", "/Users/ram/deistests/bin/server 4003"}

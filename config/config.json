@@ -1,9 +1,6 @@
 {
-  "chains" : "2",
+  "chains" : "1",
   "chainlength": "3",
   "chian1series": "4",
-  "clients" : "1",
   "MaxRequests":"20",
-  "client" : "localhost:10001",
-  "clientseries" : "1"
 }
