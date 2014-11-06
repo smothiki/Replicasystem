@@ -34,9 +34,9 @@ func SendRequest(server string, request *structs.Request) {
 }
 
 /* SendReply sends reply to client */
-func SendReply(request *structs.Request) {
+func SendReply(client string, request *structs.Request) {
 	res1B, err := json.Marshal(request)
-	destIP, destPort := structs.GetIPAndPort(utils.Getconfig("client"))
+	destIP, destPort := structs.GetIPAndPort(client)
 	destAddr := net.UDPAddr{
 		Port: destPort,
 		IP:   net.ParseIP(destIP),
@@ -70,7 +70,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)
 			//SendRequest("localhost:10001", res)
-			SendReply(res)
+			SendReply(chain.Client, res)
 		} else {
 			fmt.Println("inside sync" + chain.Next)
 			SendRequest(chain.Next, res)
@@ -115,7 +115,7 @@ func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
 
 		utils.Logoutput(chain.Server, reply.Requestid, reply.Outcome, reply.Balance, reply.Transaction)
 		if chain.Istail {
-			SendReply(reply)
+			SendReply(chain.Client, reply)
 		} else {
 			SendRequest(chain.Next, reply)
 		}

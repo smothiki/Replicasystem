@@ -2,5 +2,5 @@
   "chains" : "1",
   "chainlength": "3",
   "chian1series": "4",
-  "MaxRequests":"20",
+  "MaxRequests":"20"
 }

@@ -46,9 +46,8 @@ func SendRequest(server string, request *structs.Request) {
 	fmt.Println(n)
 }
 
-func createUDPSocket() *net.UDPConn {
-	sLocalAddr := utils.Getconfig("client")
-	ip, port := structs.GetIPAndPort(sLocalAddr)
+func createUDPSocket(client string) *net.UDPConn {
+	ip, port := structs.GetIPAndPort(client)
 	localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP(ip),
@@ -119,8 +118,8 @@ func main() {
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
-	fmt.Println("start server")
-	conn := createUDPSocket()
+	fmt.Println("start client")
+	conn := createUDPSocket(chain.Client)
 	//go simulate(chain, conn)
 	simulate(chain, conn)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
