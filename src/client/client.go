@@ -24,7 +24,7 @@ type ChainList struct {
 }
 
 /* SendRequest sends request (query/update) to server */
-func SendRequest(server string, request *structs.Request) {
+func SendRequest(server string, request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
 	fmt.Println(string(res1B))
 
@@ -69,6 +69,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
+	go utils.Logoutput("client", rqst.Requestid, rqst.Outcome, rqst.Balance, rqst.Transaction)
 
 	return rqst
 }
@@ -90,7 +91,7 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 
 // simulates the client and sends request to server
 
-func simulate(chain *structs.Chain, conn *net.UDPConn) {
+func simulate(chain *structs.Chain, conn *net.UDPConn, port int) {
 	listreqs := structs.GetrequestList(0, "getbalance")
 	var dest string
 	for _, request := range *listreqs {
@@ -102,7 +103,7 @@ func simulate(chain *structs.Chain, conn *net.UDPConn) {
 
 		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
-			SendRequest(dest, &request)
+			SendRequest(dest, &request, port)
 			fmt.Println(readResponse(conn))
 		})
 		if err != nil {
@@ -122,7 +123,7 @@ func main() {
 	fmt.Println("start client")
 	conn := createUDPSocket(chain.Client)
 	//go simulate(chain, conn)
-	simulate(chain, conn)
+	simulate(chain, conn, port)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
 	//SendRequest("127.0.0.1:4001", &re)
 	//readResponse(conn)

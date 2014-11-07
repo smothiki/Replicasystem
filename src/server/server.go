@@ -18,6 +18,37 @@ import (
 )
 
 const MAXLINE = 1024
+const SENT_HEALTH_INTERVAL = 1000
+
+func connectToMaster(port int) *net.UDPConn {
+	masterAddr := utils.Getconfig("master")
+	localAddr := net.UDPAddr{
+		Port: port + 100,
+		IP:   net.ParseIP("127.0.0.1"),
+	}
+	destIP, destPort := structs.GetIPAndPort(masterAddr)
+	destAddr := net.UDPAddr{
+		Port: destPort,
+		IP:   net.ParseIP(destIP),
+	}
+	conn, err := net.DialUDP("udp", &localAddr, &destAddr)
+
+	if err != nil {
+		fmt.Printf("ERROR while connecting to master: %s\n", err)
+	}
+	return conn
+}
+
+func sendOnlineMsg(conn *net.UDPConn) {
+	for {
+		msg, _ := json.Marshal(1)
+		_, err := conn.Write(msg)
+		if err != nil {
+			fmt.Println("ERROR while sending online msg to master: %s\n", err)
+		}
+		time.Sleep(SENT_HEALTH_INTERVAL * time.Millisecond)
+	}
+}
 
 /* SendRequest send request to successor */
 func SendRequest(server string, request *structs.Request) {
@@ -34,9 +65,14 @@ func SendRequest(server string, request *structs.Request) {
 }
 
 /* SendReply sends reply to client */
-func SendReply(client string, request *structs.Request) {
+func SendReply(client string, request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
 	destIP, destPort := structs.GetIPAndPort(client)
+	/*localAddr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP("127.0.0.1"),
+	}*/
+
 	destAddr := net.UDPAddr{
 		Port: destPort,
 		IP:   net.ParseIP(destIP),
@@ -45,7 +81,7 @@ func SendReply(client string, request *structs.Request) {
 	conn, err := net.DialUDP("udp", nil, &destAddr)
 
 	if err != nil {
-		fmt.Println("ERROR while connecting to client: %s\n", err)
+		fmt.Printf("ERROR while connecting to client: %s\n", err)
 	}
 
 	defer conn.Close()
@@ -56,7 +92,7 @@ func SendReply(client string, request *structs.Request) {
 	}
 }
 
-func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain) {
+func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain, port int) {
 	fmt.Fprint(w, "Hello, sync")
 	fmt.Println("hello syncs")
 	if r.Method == "POST" {
@@ -70,7 +106,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *st
 			fmt.Println("inside clientsent" + chain.Next)
 			time.Sleep(6000 * time.Millisecond)
 			//SendRequest("localhost:10001", res)
-			SendReply(chain.Client, res)
+			SendReply(chain.Client, res, port)
 		} else {
 			fmt.Println("inside sync" + chain.Next)
 			SendRequest(chain.Next, res)
@@ -115,7 +151,7 @@ func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
 
 		utils.Logoutput(chain.Server, reply.Requestid, reply.Outcome, reply.Balance, reply.Transaction)
 		if chain.Istail {
-			SendReply(chain.Client, reply)
+			SendReply(chain.Client, reply, port)
 		} else {
 			SendRequest(chain.Next, reply)
 		}
@@ -133,10 +169,14 @@ func main() {
 	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
 
+	connMaster := connectToMaster(port)
+	go sendOnlineMsg(connMaster)
+	defer connMaster.Close()
+
 	go startUDPService(port, b, chain)
 
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
-		synchandler(w, r, b, chain)
+		synchandler(w, r, b, chain, port)
 	})
 	err := http.ListenAndServe(chain.Server, nil)
 	if err != nil {

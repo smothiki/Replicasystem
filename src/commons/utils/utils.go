@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,6 +91,11 @@ func Getvalue(data string) string {
 func Getconfig(data string) string {
 	command, _ := config.Get(data).String()
 	return command
+}
+
+func GetConfigInt(data string) int {
+	r, _ := strconv.Atoi(Getconfig(data))
+	return r
 }
 
 func GetconfigArray(data string) []interface{} {
