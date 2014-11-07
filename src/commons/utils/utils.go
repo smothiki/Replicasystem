@@ -98,8 +98,8 @@ func GetConfigInt(data string) int {
 	return r
 }
 
-func GetconfigArray(data string) []interface{} {
-	command, _ := config.Get(data).Array()
+func GetLifeTime(index int) int {
+	command, _ := config.Get("lifetime").GetIndex(index).Int()
 	return command
 }
 
@@ -117,6 +117,13 @@ func Timeout(msg string, seconds time.Duration, f func()) error {
 		return errors.New(msg + "timed out")
 	}
 	return nil
+}
+
+func SetTimer(seconds int, f func()) {
+	go func() {
+		time.Sleep(time.Duration(seconds*1000) * time.Millisecond)
+		f()
+	}()
 }
 
 func GetWorkDir() string {

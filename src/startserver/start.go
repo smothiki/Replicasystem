@@ -26,18 +26,26 @@ func main() {
 	totalchains, _ := strconv.Atoi(utils.Getconfig("chains"))
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	clientNum := utils.GetConfigInt("clientNum")
 
 	fmt.Println(totalchains)
 	wg := new(sync.WaitGroup)
 	commands := make([]string, 0, 1)
 	for i := 0; i < totalchains; i++ {
-		for start := 1000*(series+i) + 1; start <= 1000*series+lenservers; start++ {
+		//start servers
+		curSeries := 1000 * (series + i)
+		for start := curSeries + 1; start <= curSeries+lenservers; start++ {
 			strin := utils.GetBinDir() + "server " + strconv.Itoa(start)
 			commands = append(commands, strin)
 
 		}
-		client := utils.GetBinDir() + "client " + strconv.Itoa(series*1000)
-		commands = append(commands, client)
+
+		//start clients
+		for start := curSeries + 999; start > curSeries+999-clientNum; start-- {
+
+			client := utils.GetBinDir() + "client " + strconv.Itoa(start)
+			commands = append(commands, client)
+		}
 		series = series + 1
 	}
 	// commands := []string{"/Users/ram/deistests/bin/server 4001", "/Users/ram/deistests/bin/server 4002", "/Users/ram/deistests/bin/server 4003"}

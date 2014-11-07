@@ -4,10 +4,10 @@ import (
 	//"bytes"
 	"encoding/json"
 	"fmt"
-	//"io/ioutil"
+	"io/ioutil"
 	"log"
 	"net"
-	//"net/http"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -25,13 +25,15 @@ type ChainList struct {
 
 /* SendRequest sends request (query/update) to server */
 func SendRequest(server string, request *structs.Request, port int) {
-	res1B, err := json.Marshal(request)
-	fmt.Println(string(res1B))
-
 	destIP, destPort := structs.GetIPAndPort(server)
 	destAddr := net.UDPAddr{
 		Port: destPort,
 		IP:   net.ParseIP(destIP),
+	}
+
+	localAddr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP("127.0.0.1"),
 	}
 
 	conn, err := net.DialUDP("udp", nil, &destAddr)
@@ -42,12 +44,18 @@ func SendRequest(server string, request *structs.Request, port int) {
 
 	defer conn.Close()
 
+	request.Client = localAddr
+	request.Time = time.Now().String()
+	res1B, err := json.Marshal(request)
+	fmt.Println("sendReq", string(res1B))
+
 	n, err := conn.Write(res1B)
 	fmt.Println(n)
 }
 
 func createUDPSocket(client string) *net.UDPConn {
 	ip, port := structs.GetIPAndPort(client)
+	fmt.Println("createUDP", client)
 	localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP(ip),
@@ -64,7 +72,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 	n, _, err := conn.ReadFromUDP(buf)
 
 	if err != nil {
-		fmt.Println("Error while reading UDP: %s\n", err)
+		fmt.Println("Error while reading UDP", err)
 	}
 
 	rqst := &structs.Request{}
@@ -89,8 +97,21 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-// simulates the client and sends request to server
+func alterChainHandler(w http.ResponseWriter, r *http.Request, chain *structs.Chain) {
+	fmt.Fprintf(w, "changed")
+	body, _ := ioutil.ReadAll(r.Body)
+	newHeadTail := &structs.ClientNotify{}
+	json.Unmarshal(body, &newHeadTail)
+	if newHeadTail.Head != "" {
+		chain.Head = newHeadTail.Head
+		fmt.Println("newHead", chain.Head)
+	} else if newHeadTail.Tail != "" {
+		chain.Tail = newHeadTail.Tail
+		fmt.Println("newTail", chain.Tail)
+	}
+}
 
+// simulates the client and sends request to server
 func simulate(chain *structs.Chain, conn *net.UDPConn, port int) {
 	listreqs := structs.GetrequestList(0, "getbalance")
 	var dest string
@@ -100,11 +121,12 @@ func simulate(chain *structs.Chain, conn *net.UDPConn, port int) {
 		} else {
 			dest = chain.Head
 		}
+		fmt.Println("dest", dest)
 
 		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
 			SendRequest(dest, &request, port)
-			fmt.Println(readResponse(conn))
+			fmt.Println("mYR", readResponse(conn))
 		})
 		if err != nil {
 			fmt.Println("timeout")
@@ -121,15 +143,17 @@ func main() {
 	series = series + (curseries - series)
 	chain := structs.Makechain(series, port, lenservers)
 	fmt.Println("start client")
-	conn := createUDPSocket(chain.Client)
+	conn := createUDPSocket("127.0.0.1:" + os.Args[1])
 	//go simulate(chain, conn)
-	simulate(chain, conn, port)
+	go simulate(chain, conn, port)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
 	//SendRequest("127.0.0.1:4001", &re)
 	//readResponse(conn)
-	//http.HandleFunc("/sync", synchandler)
-	/*err := http.ListenAndServe(chain.Client, nil)
+	http.HandleFunc("/alterChain", func(w http.ResponseWriter, r *http.Request) {
+		alterChainHandler(w, r, chain)
+	})
+	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)
 	if err != nil {
 		log.Fatal(err)
-	}*/
+	}
 }

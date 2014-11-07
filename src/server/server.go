@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"container/list"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -19,6 +21,9 @@ import (
 
 const MAXLINE = 1024
 const SENT_HEALTH_INTERVAL = 1000
+
+var sent list.List
+var chain structs.Chain
 
 func connectToMaster(port int) *net.UDPConn {
 	masterAddr := utils.Getconfig("master")
@@ -51,34 +56,45 @@ func sendOnlineMsg(conn *net.UDPConn) {
 }
 
 /* SendRequest send request to successor */
-func SendRequest(server string, request *structs.Request) {
+func SendRequest(request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "http://"+server+"/sync", bytes.NewBuffer(res1B))
+	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sync", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
 	_, err = client.Do(req)
 	if err != nil {
-		fmt.Printf("Error : %s", err)
+		fmt.Println("Error while sending request", err)
+	}
+	sent.PushBack(request)
+}
+
+func SendAck(ack *structs.Ack) {
+	if chain.Ishead {
+		return
+	}
+	msg, err := json.Marshal(ack)
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", "http://"+chain.Prev+"/ack", bytes.NewBuffer(msg))
+	req.Header = http.Header{
+		"accept": {"application/json"},
+	}
+	_, err = client.Do(req)
+	if err != nil {
+		fmt.Println("ERROR while sending ack", err)
 	}
 }
 
 /* SendReply sends reply to client */
-func SendReply(client string, request *structs.Request, port int) {
+func SendReply(request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
-	destIP, destPort := structs.GetIPAndPort(client)
 	/*localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP("127.0.0.1"),
 	}*/
-
-	destAddr := net.UDPAddr{
-		Port: destPort,
-		IP:   net.ParseIP(destIP),
-	}
-
-	conn, err := net.DialUDP("udp", nil, &destAddr)
+	fmt.Println("cient addr", request.Client)
+	conn, err := net.DialUDP("udp", nil, &request.Client)
 
 	if err != nil {
 		fmt.Printf("ERROR while connecting to client: %s\n", err)
@@ -92,29 +108,112 @@ func SendReply(client string, request *structs.Request, port int) {
 	}
 }
 
-func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, chain *structs.Chain, port int) {
+func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int) {
 	fmt.Fprint(w, "Hello, sync")
-	fmt.Println("hello syncs")
+	//fmt.Println("hello syncs")
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		fmt.Println(res)
+		//fmt.Println(res)
 		b.Set(res)
 		utils.Logoutput(chain.Server, res.Requestid, res.Outcome, res.Balance, res.Transaction)
+		sleepTime := rand.Intn(1500)
+		fmt.Println("sleep for", sleepTime, "ms")
+		time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 		if chain.Istail {
 			fmt.Println("inside clientsent" + chain.Next)
-			time.Sleep(6000 * time.Millisecond)
+			//time.Sleep(6000 * time.Millisecond)
 			//SendRequest("localhost:10001", res)
-			SendReply(chain.Client, res, port)
+			SendReply(res, port)
+			ack := structs.Ack{
+				ReqKey: res.MakeKey(),
+			}
+			SendAck(&ack)
 		} else {
 			fmt.Println("inside sync" + chain.Next)
-			SendRequest(chain.Next, res)
+			SendRequest(res)
 		}
 	}
 }
 
-func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
+func alterChainHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "changed")
+	body, _ := ioutil.ReadAll(r.Body)
+	newChain := &structs.Chain{}
+	json.Unmarshal(body, &newChain)
+	if chain.Prev != newChain.Prev && newChain.Prev != "" {
+		// if current server has new predecessor, send it the
+		// last record in sent, and wait for sent records
+		// after that entry
+		sendLastSentToPrev(newChain.Prev)
+	}
+	//if chain.Next != newChain.Next && newChain.Next != "" {}
+	chain = *newChain
+	fmt.Println("newChain", chain)
+}
+
+func ackHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "r")
+	body, _ := ioutil.ReadAll(r.Body)
+	ack := &structs.Ack{}
+	json.Unmarshal(body, &ack)
+	for e := sent.Front(); e != nil; e = e.Next() {
+		req := e.Value.(structs.Request)
+		if (req).MakeKey() == ack.ReqKey {
+			sent.Remove(e)
+			break
+		}
+	}
+	fmt.Println("ackReceived")
+	SendAck(ack)
+}
+
+func requestSentHandler(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+	elem := &list.Element{}
+	json.Unmarshal(body, &elem)
+	l := list.New()
+
+	if elem != nil {
+		lastRec := elem.Value.(structs.Request)
+		key := lastRec.MakeKey()
+		bToAdd := false
+		for e := sent.Front(); e != nil; e = e.Next() {
+			if bToAdd {
+				l.PushBack(e)
+			}
+			req := e.Value.(structs.Request)
+			if req.MakeKey() == key {
+				bToAdd = true
+			}
+		}
+	}
+	sendSentsToNext(l)
+}
+
+func sendLastSentToPrev(destServer string) {
+	e := sent.Back()
+	msg, err := json.Marshal(e)
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", "http://"+destServer+"/requestSent", bytes.NewBuffer(msg))
+	req.Header = http.Header{
+		"accept": {"application/json"},
+	}
+	_, err = client.Do(req)
+	if err != nil {
+		fmt.Println("ERROR", err)
+	}
+}
+
+func sendSentsToNext(lst *list.List) {
+	for e := lst.Front(); e != nil; e = e.Next() {
+		req := e.Value.(structs.Request)
+		SendRequest(&req)
+	}
+}
+
+func startUDPService(port int, b *bank.Bank) {
 	localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP("127.0.0.1"),
@@ -149,14 +248,21 @@ func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
 			//TODO: phase 4
 		}
 
+		reply.Client = rqst.Client
+		fmt.Println("dd", reply)
 		utils.Logoutput(chain.Server, reply.Requestid, reply.Outcome, reply.Balance, reply.Transaction)
 		if chain.Istail {
-			SendReply(chain.Client, reply, port)
+			SendReply(reply, port)
 		} else {
-			SendRequest(chain.Next, reply)
+			SendRequest(reply)
 		}
 
 	}
+}
+
+func die() {
+	fmt.Println("Server died")
+	os.Exit(0)
 }
 
 func main() {
@@ -167,17 +273,30 @@ func main() {
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
-	chain := structs.Makechain(series, port, lenservers)
+	chain = *structs.Makechain(series, port, lenservers)
+	lifetime := utils.GetLifeTime(port%1000 - 1)
+	if lifetime != 0 {
+		utils.SetTimer(lifetime, die)
+	}
 
 	connMaster := connectToMaster(port)
 	go sendOnlineMsg(connMaster)
 	defer connMaster.Close()
 
-	go startUDPService(port, b, chain)
+	go startUDPService(port, b)
 
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
-		synchandler(w, r, b, chain, port)
+		synchandler(w, r, b, port)
 	})
+	http.HandleFunc("/alterChain", func(w http.ResponseWriter, r *http.Request) {
+		alterChainHandler(w, r)
+	})
+
+	http.HandleFunc("/ack", func(w http.ResponseWriter, r *http.Request) {
+		ackHandler(w, r)
+	})
+
+	http.HandleFunc("/requestSent", requestSentHandler)
 	err := http.ListenAndServe(chain.Server, nil)
 	if err != nil {
 		log.Fatal(err)
