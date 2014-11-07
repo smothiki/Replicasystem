@@ -22,6 +22,7 @@ func exe_cmd(cmd string, wg *sync.WaitGroup) {
 }
 
 func main() {
+	utils.SetConfigFile("config.json")
 	totalchains, _ := strconv.Atoi(utils.Getconfig("chains"))
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
@@ -29,8 +30,8 @@ func main() {
 	fmt.Println(totalchains)
 	wg := new(sync.WaitGroup)
 	commands := make([]string, 0, 1)
-	for i := 1; i <= totalchains; i++ {
-		for start := 1000*series + 1; start <= 1000*series+lenservers; start++ {
+	for i := 0; i < totalchains; i++ {
+		for start := 1000*(series+i) + 1; start <= 1000*series+lenservers; start++ {
 			strin := utils.GetBinDir() + "server " + strconv.Itoa(start)
 			commands = append(commands, strin)
 

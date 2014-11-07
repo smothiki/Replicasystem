@@ -2,5 +2,8 @@
   "chains" : "1",
   "chainlength": "3",
   "chian1series": "4",
-  "MaxRequests":"20"
+  "MaxRequests":"20",
+  "clientNum" : "1",
+  "startDelay" : [0, 0, 1],
+  "lifetime" : [0, 1, 0]
 }

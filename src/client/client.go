@@ -113,6 +113,7 @@ func simulate(chain *structs.Chain, conn *net.UDPConn) {
 
 func main() {
 	port, _ := strconv.Atoi(os.Args[1])
+	utils.SetConfigFile("config.json")
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	curseries := int(port / 1000)

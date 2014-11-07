@@ -126,6 +126,7 @@ func startUDPService(port int, b *bank.Bank, chain *structs.Chain) {
 func main() {
 	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
+	utils.SetConfigFile("config.json")
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	curseries := int(port / 1000)

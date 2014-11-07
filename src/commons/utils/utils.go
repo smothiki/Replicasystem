@@ -14,6 +14,15 @@ import (
 	gson "github.com/bitly/go-simplejson"
 )
 
+var config, request *gson.Json
+
+func SetConfigFile(filename string) {
+	configFile := GetWorkDir() + "config/" + filename
+	requestFile := GetWorkDir() + "config/request.json"
+	config, _ = gson.NewJson(GetFileBytes(configFile))
+	request, _ = gson.NewJson(GetFileBytes(requestFile))
+}
+
 func NewID() string {
 	uuid := make([]byte, 16)
 	io.ReadFull(rand.Reader, uuid)
@@ -31,7 +40,7 @@ func GetCount() string {
 }
 
 func PutCount(version string) error {
-	err := ioutil.WriteFile(GetWorkDir() + "src/server/counter", []byte(version), 0644)
+	err := ioutil.WriteFile(GetWorkDir()+"src/server/counter", []byte(version), 0644)
 	if err != nil {
 		return err
 	}
@@ -74,14 +83,17 @@ func GetFileBytes(filename string) []byte {
 }
 
 func Getvalue(data string) string {
-	js, _ := gson.NewJson(GetFileBytes(GetWorkDir() + "config/request.json"))
-	command, _ := js.Get(data).String()
+	command, _ := request.Get(data).String()
 	return command
 }
 
 func Getconfig(data string) string {
-	js, _ := gson.NewJson(GetFileBytes(GetWorkDir() + "config/config.json"))
-	command, _ := js.Get(data).String()
+	command, _ := config.Get(data).String()
+	return command
+}
+
+func GetconfigArray(data string) []interface{} {
+	command, _ := config.Get(data).Array()
 	return command
 }
 
@@ -102,9 +114,9 @@ func Timeout(msg string, seconds time.Duration, f func()) error {
 }
 
 func GetWorkDir() string {
-    return os.Getenv("GOPATH") + "/src/github.com/replicasystem/"
+	return os.Getenv("GOPATH") + "/src/github.com/replicasystem/"
 }
 
 func GetBinDir() string {
-    return os.Getenv("GOBIN") + "/"
+	return os.Getenv("GOBIN") + "/"
 }
