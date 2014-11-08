@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -196,7 +197,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 
 func main() {
 	log.Println("master started!")
-	utils.SetConfigFile("config.json")
+	utils.SetConfigFile(os.Args[1])
 	chainNum := utils.GetConfigInt("chains")
 	chain1Series := utils.GetConfigInt("chian1series")
 	chainLen := utils.GetConfigInt("chainlength")

@@ -148,7 +148,7 @@ func simulate(conn *net.UDPConn, port int) {
 
 func main() {
 	port, _ := strconv.Atoi(os.Args[1])
-	utils.SetConfigFile("config.json")
+	utils.SetConfigFile(os.Args[2])
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	curseries := int(port / 1000)

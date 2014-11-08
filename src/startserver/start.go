@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ import (
 
 func exe_cmd(cmd string, wg *sync.WaitGroup) {
 	parts := strings.Fields(cmd)
-	out, err := exec.Command(parts[0], parts[1]).Output()
+	out, err := exec.Command(parts[0], parts[1], parts[2]).Output()
 	if err != nil {
 		fmt.Println("error occured")
 		fmt.Printf("%s", err)
@@ -22,7 +23,7 @@ func exe_cmd(cmd string, wg *sync.WaitGroup) {
 }
 
 func main() {
-	utils.SetConfigFile("config.json")
+	utils.SetConfigFile(os.Args[1])
 	totalchains, _ := strconv.Atoi(utils.Getconfig("chains"))
 	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
@@ -31,13 +32,13 @@ func main() {
 	fmt.Println(totalchains)
 	wg := new(sync.WaitGroup)
 	commands := make([]string, 0, 1)
-	//master := utils.GetBinDir() + "master.go"
-	//commands = append(commands, master)
+	master := utils.GetBinDir() + "master " + os.Args[1] + " 1"
+	commands = append(commands, master)
 	for i := 0; i < totalchains; i++ {
 		//start servers
 		curSeries := 1000 * (series + i)
 		for start := curSeries + 1; start <= curSeries+lenservers; start++ {
-			strin := utils.GetBinDir() + "server " + strconv.Itoa(start)
+			strin := utils.GetBinDir() + "server " + strconv.Itoa(start) + " " + os.Args[1]
 			commands = append(commands, strin)
 
 		}
@@ -45,7 +46,7 @@ func main() {
 		//start clients
 		for start := curSeries + 999; start > curSeries+999-clientNum; start-- {
 
-			client := utils.GetBinDir() + "client " + strconv.Itoa(start)
+			client := utils.GetBinDir() + "client " + strconv.Itoa(start) + " " + os.Args[1]
 			commands = append(commands, client)
 		}
 		series = series + 1

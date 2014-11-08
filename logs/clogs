@@ -107,3 +107,50 @@
 2014/11/07 23:31:47 127.0.0.1:4999 SENT:#2 reqID 124, a/c 2, balance 0, getbalance, none, reqTime 2014-11-07 23:31:47.208805363 -0500 EST
 2014/11/07 23:31:52 127.0.0.1:4999 SENT:#3 reqID 125, a/c 3, balance 0, getbalance, none, reqTime 2014-11-07 23:31:52.209055253 -0500 EST
 2014/11/07 23:31:57 127.0.0.1:4999 SENT:#4 reqID 126, a/c 4, balance 0, getbalance, none, reqTime 2014-11-07 23:31:57.20927932 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4002
+2014/11/07 23:54:08 127.0.0.1:4999 EVENT: UDP Socket connected!
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#0 reqID f11de22a, a/c a4604525, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.320829096 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#0 reqID f11de22a, a/c a4604525, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.320829096 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#1 reqID 123, a/c 1, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.322793906 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#1 reqID 123, a/c 1, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.322793906 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#2 reqID 124, a/c 2, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.323290987 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#2 reqID 124, a/c 2, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.323290987 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#3 reqID 125, a/c 3, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.323645643 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#3 reqID 125, a/c 3, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.323645643 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#4 reqID 126, a/c 4, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.324045576 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#4 reqID 126, a/c 4, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.324045576 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#5 reqID 127, a/c 5, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.324394416 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#5 reqID 127, a/c 5, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.324394416 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#6 reqID d3bc8d97, a/c d749d93a, balance 0, getbalance, none, reqTime 2014-11-07 23:54:08.324717009 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 RECV:#6 reqID d3bc8d97, a/c d749d93a, balance 0, getbalance, processed, reqTime 2014-11-07 23:54:08.324717009 -0500 EST
+2014/11/07 23:54:08 127.0.0.1:4999 SENT:#7 reqID 1233, a/c 1, balance 10, deposit, none, reqTime 2014-11-07 23:54:08.325059451 -0500 EST
+2014/11/07 23:54:09 127.0.0.1:4999 RECV:#7 reqID 1233, a/c 1, balance 10, deposit, processed, reqTime 2014-11-07 23:54:08.325059451 -0500 EST
+2014/11/07 23:54:09 127.0.0.1:4999 SENT:#8 reqID 1244, a/c 2, balance 20, deposit, none, reqTime 2014-11-07 23:54:09.038391435 -0500 EST
+2014/11/07 23:57:26 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4002
+2014/11/07 23:57:26 127.0.0.1:4999 EVENT: UDP Socket connected!
+2014/11/07 23:57:26 127.0.0.1:4999 SENT:#0 reqID 425f3f5a, a/c 40e89169, balance 0, getbalance, none, reqTime 2014-11-07 23:57:26.581178942 -0500 EST
+2014/11/07 23:57:31 127.0.0.1:4999 SENT:#1 reqID 123, a/c 1, balance 0, getbalance, none, reqTime 2014-11-07 23:57:31.581443083 -0500 EST
+2014/11/07 23:57:36 127.0.0.1:4999 SENT:#2 reqID 124, a/c 2, balance 0, getbalance, none, reqTime 2014-11-07 23:57:36.581592511 -0500 EST
+2014/11/07 23:57:41 127.0.0.1:4999 SENT:#3 reqID 125, a/c 3, balance 0, getbalance, none, reqTime 2014-11-07 23:57:41.581802806 -0500 EST
+2014/11/07 23:57:46 127.0.0.1:4999 SENT:#4 reqID 126, a/c 4, balance 0, getbalance, none, reqTime 2014-11-07 23:57:46.582093084 -0500 EST
+2014/11/07 23:57:51 127.0.0.1:4999 SENT:#5 reqID 127, a/c 5, balance 0, getbalance, none, reqTime 2014-11-07 23:57:51.58237397 -0500 EST
+2014/11/07 23:57:56 127.0.0.1:4999 SENT:#6 reqID e3116978, a/c de2af19f, balance 0, getbalance, none, reqTime 2014-11-07 23:57:56.582713438 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4002
+2014/11/07 23:58:08 127.0.0.1:4999 EVENT: UDP Socket connected!
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#0 reqID 0a38e3b4, a/c c12ed71c, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.165746757 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#0 reqID 0a38e3b4, a/c c12ed71c, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.165746757 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#1 reqID 123, a/c 1, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.16654667 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#1 reqID 123, a/c 1, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.16654667 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#2 reqID 124, a/c 2, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.167114056 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#2 reqID 124, a/c 2, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.167114056 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#3 reqID 125, a/c 3, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.167661392 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#3 reqID 125, a/c 3, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.167661392 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#4 reqID 126, a/c 4, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.168137579 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#4 reqID 126, a/c 4, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.168137579 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#5 reqID 127, a/c 5, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.168682397 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#5 reqID 127, a/c 5, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.168682397 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#6 reqID 5e28a14d, a/c 09f7527c, balance 0, getbalance, none, reqTime 2014-11-07 23:58:08.169184134 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#6 reqID 5e28a14d, a/c 09f7527c, balance 0, getbalance, processed, reqTime 2014-11-07 23:58:08.169184134 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#7 reqID 1233, a/c 1, balance 10, deposit, none, reqTime 2014-11-07 23:58:08.169647213 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 RECV:#7 reqID 1233, a/c 1, balance 10, deposit, processed, reqTime 2014-11-07 23:58:08.169647213 -0500 EST
+2014/11/07 23:58:08 127.0.0.1:4999 SENT:#8 reqID 1244, a/c 2, balance 20, deposit, none, reqTime 2014-11-07 23:58:08.909682294 -0500 EST
