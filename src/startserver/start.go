@@ -31,6 +31,8 @@ func main() {
 	fmt.Println(totalchains)
 	wg := new(sync.WaitGroup)
 	commands := make([]string, 0, 1)
+	//master := utils.GetBinDir() + "master.go"
+	//commands = append(commands, master)
 	for i := 0; i < totalchains; i++ {
 		//start servers
 		curSeries := 1000 * (series + i)

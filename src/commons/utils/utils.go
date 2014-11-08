@@ -48,9 +48,9 @@ func PutCount(version string) error {
 	return nil
 }
 
-func Logoutput(server, reqid, outcome string, balance int, trans string) {
+func Logoutput(server, servType, reqid, account, outcome string, balance int, trans string) {
 	var name string
-	if server == "client" {
+	if servType == "client" {
 		name = GetWorkDir() + "logs/clogs"
 	} else {
 		name = GetWorkDir() + "logs/slogs"
@@ -58,20 +58,73 @@ func Logoutput(server, reqid, outcome string, balance int, trans string) {
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	log.SetOutput(f)
-	log.Printf("%s :%s-%s-%d-%s", server, reqid, outcome, balance, trans)
+	log.Printf("%s, requestID %s, %s, Balance: %d, %s", server, reqid, outcome, balance, trans)
 }
 
-func Logevent(server, reqid, event string) {
+func LogServer(server, reqID, account, outcome, trans string, balance int) {
+	Logoutput(server, "server", reqID, account, outcome, balance, trans)
+}
+
+func LogClient(server, reqID, account, outcome, trans string, balance int) {
+	Logoutput(server, "client", reqID, account, outcome, balance, trans)
+}
+
+func Logevent(server, servType, event string) {
 	var name string
-	if server == "client" {
+	if servType == "client" {
 		name = GetWorkDir() + "logs/clogs"
-	} else {
+	} else if servType == "server" {
 		name = GetWorkDir() + "logs/slogs"
+	} else {
+		name = GetWorkDir() + "logs/mlogs"
 	}
+
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
+	log.Printf("%s EVENT: %s", server, event)
 	log.SetOutput(f)
-	log.Printf("%s :%s-%s", server, reqid, event)
+	log.Printf("%s EVENT: %s", server, event)
+}
+
+func LogSEvent(server, event string) {
+	Logevent(server, "server", event)
+}
+
+func LogCEvent(server, event string) {
+	Logevent(server, "client", event)
+}
+
+func LogMEvent(event string) {
+	Logevent("", "master", event)
+}
+
+func LogMsg(server, servType, msgType, msg string, num int) {
+	var name string
+	if servType == "client" {
+		name = GetWorkDir() + "logs/clogs"
+	} else if servType == "server" {
+		name = GetWorkDir() + "logs/slogs"
+	} else if servType == "master" {
+		name = GetWorkDir() + "logs/mlogs"
+	}
+
+	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	defer f.Close()
+	log.Printf("%s %s:#%d %s", server, msgType, num, msg)
+	log.SetOutput(f)
+	log.Printf("%s %s:#%d %s", server, msgType, num, msg)
+}
+
+func LogSMsg(server, msgType string, num int, msg string) {
+	LogMsg(server, "server", msgType, msg, num)
+}
+
+func LogCMsg(client, msgType string, num int, msg string) {
+	LogMsg(client, "client", msgType, msg, num)
+}
+
+func LogMMsg(master, msgType string, num int, msg string) {
+	LogMsg(master, "master", msgType, msg, num)
 }
 
 func GetFileBytes(filename string) []byte {

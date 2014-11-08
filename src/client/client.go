@@ -18,6 +18,21 @@ import (
 
 const MAXLINE = 1024
 
+var chain structs.Chain
+var recvNum, sendNum int
+
+func logMsg(msgType, msg string) {
+	if msgType == "SENT" {
+		utils.LogCMsg(chain.Server, msgType, sendNum, msg)
+		sendNum++
+	} else if msgType == "RECV" {
+		utils.LogCMsg(chain.Server, msgType, recvNum, msg)
+		recvNum++
+	} else {
+		log.Println("LOG ERROR: UNKOWN MSG TYPE")
+	}
+}
+
 /* SendRequest sends request (query/update) to server */
 func SendRequest(server string, request *structs.Request, port int) {
 	destIP, destPort := structs.GetIPAndPort(server)
@@ -41,12 +56,10 @@ func SendRequest(server string, request *structs.Request, port int) {
 
 	request.Client = localAddr
 	request.Time = time.Now().String()
-	fmt.Println("TTIIMMEE", request.Time)
 	res1B, err := json.Marshal(request)
-	fmt.Println("sendReq", string(res1B))
 
-	n, err := conn.Write(res1B)
-	fmt.Println(n)
+	_, err = conn.Write(res1B)
+	logMsg("SENT", request.String())
 }
 
 func createUDPSocket(client string) *net.UDPConn {
@@ -60,6 +73,7 @@ func createUDPSocket(client string) *net.UDPConn {
 	if err != nil {
 		log.Fatal(err)
 	}
+	utils.LogCEvent(chain.Server, "UDP Socket connected!")
 	return conn
 }
 
@@ -73,7 +87,8 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
-	go utils.Logoutput("client", rqst.Requestid, rqst.Outcome, rqst.Balance, rqst.Transaction)
+	logMsg("RECV", rqst.String())
+	//go utils.LogClient(chain.Server, rqst.Requestid, rqst.Account, rqst.Outcome, rqst.Transaction, rqst.Balance)
 
 	return rqst
 }
@@ -93,11 +108,12 @@ func synchandler(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-func alterChainHandler(w http.ResponseWriter, r *http.Request, chain *structs.Chain) {
+func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
 	newHeadTail := &structs.ClientNotify{}
 	json.Unmarshal(body, &newHeadTail)
+	logMsg("RECV", string(body))
 	if newHeadTail.Head != "" {
 		chain.Head = newHeadTail.Head
 		fmt.Println("newHead", chain.Head)
@@ -108,7 +124,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, chain *structs.Ch
 }
 
 // simulates the client and sends request to server
-func simulate(chain *structs.Chain, conn *net.UDPConn, port int) {
+func simulate(conn *net.UDPConn, port int) {
 	listreqs := structs.GetrequestList(0, "getbalance")
 	var dest string
 	for _, request := range *listreqs {
@@ -137,17 +153,18 @@ func main() {
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
-	chain := structs.Makechain(series, port, lenservers)
-	fmt.Println("start client")
+	chain = *structs.Makechain(series, port, lenservers)
+	recvNum = 0
+	sendNum = 0
+	m := "Head server: " + chain.Head + ", Tail server:" + chain.Tail
+	utils.LogCEvent(chain.Server, "Client started!"+m)
 	conn := createUDPSocket("127.0.0.1:" + os.Args[1])
 	//go simulate(chain, conn)
-	go simulate(chain, conn, port)
+	go simulate(conn, port)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
 	//SendRequest("127.0.0.1:4001", &re)
 	//readResponse(conn)
-	http.HandleFunc("/alterChain", func(w http.ResponseWriter, r *http.Request) {
-		alterChainHandler(w, r, chain)
-	})
+	http.HandleFunc("/alterChain", alterChainHandler)
 	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)
 	if err != nil {
 		log.Fatal(err)

@@ -2,7 +2,7 @@ package bank
 
 import (
 	"errors"
-	"fmt"
+	//"fmt"
 
 	"github.com/replicasystem/src/commons/structs"
 )
@@ -75,17 +75,13 @@ func Initbank(name, Id string) *Bank {
 
 func (b *Bank) CheckId(accountId string) {
 	if _, ok := b.amap[accountId]; ok != true {
-		fmt.Println("checkid")
-		fmt.Println(ok)
 		newaccnt := &account{
 			accountid: accountId,
 			balance:   0,
 		}
-		fmt.Println(newaccnt)
 		b.amap[accountId] = newaccnt
 	}
-	fmt.Println("out-checkid")
-	fmt.Println(b)
+	//TODO:log
 }
 
 func (b *Bank) Deposit(req *structs.Request) *structs.Request {
@@ -116,17 +112,13 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 
 func (b *Bank) Set(rep *structs.Request) {
 	b.CheckId(rep.Account)
-	a := b.amap[rep.Account]
-	fmt.Println(rep.Account)
-	fmt.Println(a)
-	a.balance = rep.Balance
+	//a := b.amap[rep.Account]
 	b.t.recordtransaction(rep.Requestid, rep.Transaction)
 }
 
 func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
-	fmt.Println("getbalacne")
 	//b.t.recordtransaction(req.Requestid, "getbalance")
 	return structs.Makereply(req.Requestid, req.Account, "processed", "getbalance", a.getbalance())
 }

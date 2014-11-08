@@ -40,8 +40,21 @@ type Ack struct {
 	ReqKey string
 }
 
+func (r *Request) String() string {
+	return fmt.Sprintf("reqID %s, a/c %s, balance %d, %s, %s, reqTime %s",
+		r.Requestid, r.Account, r.Balance, r.Transaction, r.Outcome, r.Time)
+}
+
 func (req *Request) MakeKey() string {
 	return req.Requestid + " " + req.Time
+}
+
+func (c *Chain) String() string {
+	return fmt.Sprintf("Prev: %s, Next: %s, isHead: %t, isTail: %t, isOnline: %t", c.Prev, c.Next, c.Ishead, c.Istail, c.Online)
+}
+
+func (c *Chain) PrintHeadTail() string {
+	return fmt.Sprintf("Head: %s, Tail :%s", c.Head, c.Tail)
 }
 
 func Makechain(series, server, length int) *Chain {
@@ -106,7 +119,6 @@ func Makechain(series, server, length int) *Chain {
 		}
 		chain.Next = "127.0.0.1:" + strconv.Itoa(next)
 	}
-	fmt.Println("initChain", chain)
 	return chain
 }
 

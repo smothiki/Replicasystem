@@ -16,6 +16,20 @@ import (
 const MAXLINE = 1024
 const CHECK_CYCLE = 3000
 
+var recvNum, sendNum int
+
+func logMsg(msgType, msg string) {
+	if msgType == "SENT" {
+		utils.LogMMsg("", msgType, sendNum, msg)
+		sendNum++
+	} else if msgType == "RECV" {
+		utils.LogMMsg("", msgType, sendNum, msg)
+		recvNum++
+	} else {
+		log.Println("LOG ERROR: UNKOWN MSG TYPE")
+	}
+}
+
 func createUDPSocket() *net.UDPConn {
 	s := utils.Getconfig("master")
 	ip, port := structs.GetIPAndPort(s)
@@ -45,6 +59,7 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 			keyPort := strconv.Itoa(sourceAddr.Port - 100)
 			key := "127.0.0.1:" + keyPort
 			(*statMap)[key].MsgCnt++
+			logMsg("RECV", "ONLINE (from "+key+")")
 		}
 	}
 }
@@ -55,12 +70,11 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 		for serverIdx, chain := range *statMap {
 			if chain.MsgCnt == 0 && chain.Online {
 				//failure
-				fmt.Println("server", serverIdx, "failed")
+				utils.LogMEvent("server" + serverIdx + " failed")
 				alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				fmt.Println("new server", serverIdx)
-				fmt.Println(chain)
+				utils.LogMEvent("new server" + serverIdx + "online")
 				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)
@@ -111,8 +125,9 @@ func notifyServer(dest, action string, newChain *structs.Chain) {
 	}
 	_, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("ERROR whiile notifying server chain modification %s\n", err)
+		log.Println("ERROR whiile notifying server chain modification", err)
 	}
+	logMsg("SENT", newChain.String())
 }
 
 func notifyClient(dest string, data *structs.ClientNotify) {
@@ -124,8 +139,9 @@ func notifyClient(dest string, data *structs.ClientNotify) {
 	}
 	_, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("ERROR whiile notifying client chain modification %s\n", err)
+		log.Println("ERROR while notifying client chain modification", err)
 	}
+	logMsg("SENT", string(msg))
 }
 
 func notifyClients(data *structs.ClientNotify) {
@@ -156,6 +172,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 			Head: nextKey,
 			Tail: "",
 		}
+		utils.LogMEvent("Head becomes " + nextKey)
 		notifyClients(&newHeadTail)
 	} else if !curNode.Ishead && curNode.Istail {
 		(*statMap)[prevKey].Next = ""
@@ -165,6 +182,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 			Head: "",
 			Tail: prevKey,
 		}
+		utils.LogMEvent("Head becomes " + prevKey)
 		notifyClients(&newHeadTail)
 	} else if !curNode.Ishead && !curNode.Istail {
 		(*statMap)[prevKey].Next = curNode.Next
@@ -177,6 +195,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 }
 
 func main() {
+	log.Println("master started!")
 	utils.SetConfigFile("config.json")
 	chainNum := utils.GetConfigInt("chains")
 	chain1Series := utils.GetConfigInt("chian1series")
