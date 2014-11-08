@@ -142,15 +142,43 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	newChain := &structs.Chain{}
 	json.Unmarshal(body, &newChain)
-	if chain.Prev != newChain.Prev && newChain.Prev != "" {
+	if chain.Prev != newChain.Prev && !newChain.Ishead {
 		// if current server has new predecessor, send it the
 		// last record in sent, and wait for sent records
 		// after that entry
 		sendLastSentToPrev(newChain.Prev)
 	}
-	//if chain.Next != newChain.Next && newChain.Next != "" {}
+	//if chain.Next != newChain.Next && !newChain.Istail {}
 	chain = *newChain
 	fmt.Println("newChain", chain)
+}
+
+func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+	fmt.Fprintf(w, "extended")
+	body, _ := ioutil.ReadAll(r.Body)
+	newChain := &structs.Chain{}
+	json.Unmarshal(body, &newChain)
+	if chain.Istail && !newChain.Istail {
+		msg, _ := json.Marshal(b)
+		client := &http.Client{}
+		req, _ := http.NewRequest("POST", "http://"+newChain.Tail+"/copyBank", bytes.NewBuffer(msg))
+		req.Header = http.Header{
+			"accept": {"application/json"},
+		}
+		_, err := client.Do(req)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	chain = *newChain
+	fmt.Println("newChain", chain)
+}
+
+func copyBankHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+	fmt.Fprintf(w, "copied")
+	body, _ := ioutil.ReadAll(r.Body)
+	json.Unmarshal(body, &b)
+	fmt.Println("bankINfo copied", b)
 }
 
 func ackHandler(w http.ResponseWriter, r *http.Request) {
@@ -275,6 +303,10 @@ func main() {
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)
 	lifetime := utils.GetLifeTime(port%1000 - 1)
+	startDelay := utils.GetStartDelay(port%1000 - 1)
+	if startDelay != 0 {
+		time.Sleep(time.Duration(startDelay*1000) * time.Millisecond)
+	}
 	if lifetime != 0 {
 		utils.SetTimer(lifetime, die)
 	}
@@ -295,7 +327,13 @@ func main() {
 	http.HandleFunc("/ack", func(w http.ResponseWriter, r *http.Request) {
 		ackHandler(w, r)
 	})
+	http.HandleFunc("/extendChain", func(w http.ResponseWriter, r *http.Request) {
+		extendChainHandler(w, r, b)
+	})
 
+	http.HandleFunc("/copyBank", func(w http.ResponseWriter, r *http.Request) {
+		copyBankHandler(w, r, b)
+	})
 	http.HandleFunc("/requestSent", requestSentHandler)
 	err := http.ListenAndServe(chain.Server, nil)
 	if err != nil {

@@ -44,11 +44,7 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 		if r == 1 {
 			keyPort := strconv.Itoa(sourceAddr.Port - 100)
 			key := "127.0.0.1:" + keyPort
-			if _, exists := (*statMap)[key]; exists {
-				(*statMap)[key].MsgCnt++
-			} else {
-				//extend
-			}
+			(*statMap)[key].MsgCnt++
 		}
 	}
 }
@@ -61,6 +57,10 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 				//failure
 				fmt.Println("server", serverIdx, "failed")
 				alterChain(serverIdx, statMap)
+			} else if chain.MsgCnt > 0 && !chain.Online {
+				//extend
+				fmt.Println("new server", serverIdx)
+				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)
 			(*statMap)[serverIdx].MsgCnt = 0
@@ -68,10 +68,43 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 	}
 }
 
-func notifyServer(dest string, newChain *structs.Chain) {
+func extendChain(newTail string, statMap *map[string]*structs.Chain) {
+	// find tail
+	var oldTail string
+	for serverIdx, chain := range *statMap {
+		if chain.Online && chain.Istail {
+			oldTail = serverIdx
+			break
+		}
+	}
+
+	fmt.Println("oldTail", oldTail)
+	fmt.Println("newTail", newTail)
+	// notify old tail
+	(*statMap)[oldTail].Istail = false
+	(*statMap)[oldTail].Next = newTail
+	notifyServer(oldTail, "extendChain", (*statMap)[oldTail])
+
+	// notify new Tail
+	(*statMap)[newTail].Istail = true
+	(*statMap)[newTail].Prev = oldTail
+	(*statMap)[newTail].Next = ""
+	(*statMap)[newTail].Online = true
+	notifyServer(newTail, "extendChain", (*statMap)[newTail])
+
+	// notify clients
+	newHeadTail := structs.ClientNotify{
+		Head: "",
+		Tail: newTail,
+	}
+	notifyClients(&newHeadTail)
+}
+
+func notifyServer(dest, action string, newChain *structs.Chain) {
 	msg, _ := json.Marshal(newChain)
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "http://"+dest+"/alterChain", bytes.NewBuffer(msg))
+	req, _ := http.NewRequest("POST",
+		"http://"+dest+"/"+action, bytes.NewBuffer(msg))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
@@ -117,7 +150,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 	if curNode.Ishead && !curNode.Istail {
 		(*statMap)[nextKey].Prev = ""
 		(*statMap)[nextKey].Ishead = true
-		notifyServer(nextKey, (*statMap)[nextKey])
+		notifyServer(nextKey, "alterChain", (*statMap)[nextKey])
 		newHeadTail := structs.ClientNotify{
 			Head: nextKey,
 			Tail: "",
@@ -126,7 +159,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 	} else if !curNode.Ishead && curNode.Istail {
 		(*statMap)[prevKey].Next = ""
 		(*statMap)[prevKey].Istail = true
-		notifyServer(prevKey, (*statMap)[prevKey])
+		notifyServer(prevKey, "alterChain", (*statMap)[prevKey])
 		newHeadTail := structs.ClientNotify{
 			Head: "",
 			Tail: prevKey,
@@ -135,8 +168,8 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 	} else if !curNode.Ishead && !curNode.Istail {
 		(*statMap)[prevKey].Next = curNode.Next
 		(*statMap)[nextKey].Prev = curNode.Prev
-		notifyServer(nextKey, (*statMap)[nextKey])
-		notifyServer(prevKey, (*statMap)[prevKey])
+		notifyServer(nextKey, "alterChain", (*statMap)[nextKey])
+		notifyServer(prevKey, "alterChain", (*statMap)[prevKey])
 	} else {
 		fmt.Println("ERROR: no server available")
 	}

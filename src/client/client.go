@@ -18,11 +18,6 @@ import (
 
 const MAXLINE = 1024
 
-type ChainList struct {
-	head string
-	tail string
-}
-
 /* SendRequest sends request (query/update) to server */
 func SendRequest(server string, request *structs.Request, port int) {
 	destIP, destPort := structs.GetIPAndPort(server)

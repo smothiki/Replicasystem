@@ -103,6 +103,11 @@ func GetLifeTime(index int) int {
 	return command
 }
 
+func GetStartDelay(index int) int {
+	command, _ := config.Get("startDelay").GetIndex(index).Int()
+	return command
+}
+
 func Timeout(msg string, seconds time.Duration, f func()) error {
 	c := make(chan bool)
 	go func() {

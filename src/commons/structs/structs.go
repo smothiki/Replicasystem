@@ -1,7 +1,7 @@
 package structs
 
 import (
-	//	"fmt"
+	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -45,30 +45,68 @@ func (req *Request) MakeKey() string {
 }
 
 func Makechain(series, server, length int) *Chain {
-	start := series*1000 + 1
-	//fmt.Println(server)
-	//fmt.Println(start)
-	//fmt.Println(start + length - 1)
 	chain := &Chain{
 		//next two fields are used only by client
-		Head:   "127.0.0.1:" + strconv.Itoa(start),
-		Tail:   "127.0.0.1:" + strconv.Itoa(start+length-1),
-		Prev:   "127.0.0.1:" + strconv.Itoa(server-1),
-		Next:   "127.0.0.1:" + strconv.Itoa(server+1),
+		Head:   "",
+		Tail:   "",
+		Prev:   "",
+		Next:   "",
 		Server: "127.0.0.1:" + strconv.Itoa(server),
 		Ishead: false,
 		Istail: false,
 		MsgCnt: 0,
 		Online: true,
 	}
-	if server == start {
+
+	if utils.GetStartDelay(server%1000-1) > 0 {
+		chain.Online = false
+	}
+
+	base := series * 1000
+	start := 0
+	end := 0
+	for i := 0; i < length; i++ {
+		if utils.GetStartDelay(i) == 0 {
+			start = base + i + 1
+			break
+		}
+	}
+
+	for i := length - 1; i >= 0; i-- {
+		if utils.GetStartDelay(i) == 0 {
+			end = base + i + 1
+			break
+		}
+	}
+	chain.Head = "127.0.0.1:" + strconv.Itoa(start)
+	chain.Tail = "127.0.0.1:" + strconv.Itoa(end)
+
+	if chain.Head == chain.Server {
 		chain.Ishead = true
-		chain.Prev = ""
+	} else {
+		prev := 0
+		for i := server%1000 - 2; i >= 0; i-- {
+			if utils.GetStartDelay(i) == 0 {
+				prev = base + i + 1
+				break
+			}
+		}
+		chain.Prev = "127.0.0.1:" + strconv.Itoa(prev)
 	}
-	if server == start+length-1 {
+
+	if chain.Tail == chain.Server {
 		chain.Istail = true
-		chain.Next = ""
+	} else {
+		next := 0
+		for i := server % 1000; i < length; i++ {
+			if utils.GetStartDelay(i) == 0 {
+				next = base + i + 1
+				break
+			}
+		}
+		chain.Next = "127.0.0.1:" + strconv.Itoa(next)
 	}
+	fmt.Println("initChain", chain)
 	return chain
 }
 
