@@ -5,6 +5,6 @@
   "MaxRequests":"20",
   "master" : "127.0.0.1:65535",
   "clientNum" : "1",
-  "startDelay" : [0, 0, 5],
-  "lifetime" : [0, 0, 0]
+  "startDelay" : [0, 0, 8],
+  "lifetime" : [0, 2, 0]
 }

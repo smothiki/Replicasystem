@@ -41,7 +41,7 @@ type Ack struct {
 }
 
 func (req *Request) MakeKey() string {
-	return req.Requestid + "|" + req.Time
+	return req.Requestid + " " + req.Time
 }
 
 func Makechain(series, server, length int) *Chain {

@@ -60,6 +60,7 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
 				fmt.Println("new server", serverIdx)
+				fmt.Println(chain)
 				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)

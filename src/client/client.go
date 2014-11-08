@@ -41,6 +41,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 
 	request.Client = localAddr
 	request.Time = time.Now().String()
+	fmt.Println("TTIIMMEE", request.Time)
 	res1B, err := json.Marshal(request)
 	fmt.Println("sendReq", string(res1B))
 

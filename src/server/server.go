@@ -74,16 +74,18 @@ func SendAck(ack *structs.Ack) {
 	if chain.Ishead {
 		return
 	}
-	msg, err := json.Marshal(ack)
+	msg, _ := json.Marshal(ack)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+chain.Prev+"/ack", bytes.NewBuffer(msg))
+	req.Close = true
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	_, err = client.Do(req)
+	/*_, err = client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR while sending ack", err)
-	}
+	}*/
+	client.Do(req)
 }
 
 /* SendReply sends reply to client */
@@ -129,6 +131,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 			ack := structs.Ack{
 				ReqKey: res.MakeKey(),
 			}
+			fmt.Println("ack", ack.ReqKey)
 			SendAck(&ack)
 		} else {
 			fmt.Println("inside sync" + chain.Next)
@@ -161,7 +164,7 @@ func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	if chain.Istail && !newChain.Istail {
 		msg, _ := json.Marshal(b)
 		client := &http.Client{}
-		req, _ := http.NewRequest("POST", "http://"+newChain.Tail+"/copyBank", bytes.NewBuffer(msg))
+		req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/copyBank", bytes.NewBuffer(msg))
 		req.Header = http.Header{
 			"accept": {"application/json"},
 		}
@@ -277,6 +280,7 @@ func startUDPService(port int, b *bank.Bank) {
 		}
 
 		reply.Client = rqst.Client
+		reply.Time = rqst.Time
 		fmt.Println("dd", reply)
 		utils.Logoutput(chain.Server, reply.Requestid, reply.Outcome, reply.Balance, reply.Transaction)
 		if chain.Istail {
