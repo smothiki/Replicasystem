@@ -162,8 +162,8 @@ func simulate(conn *net.UDPConn, port, clientIdx int) {
 func main() {
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
-	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
-	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	series := utils.GetConfigInt("chain1series")
+	lenservers := utils.GetConfigInt("chainlength")
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)

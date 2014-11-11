@@ -61,7 +61,7 @@ func LogEventData(server, servType, msgType, msg string) {
 
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
-	fmt.Printf("%s %s: %s\n", server, msgType, msg)
+	//fmt.Printf("%s %s: %s\n", server, msgType, msg)
 	log.SetOutput(f)
 	log.Printf("%s %s: %s", server, msgType, msg)
 }
@@ -89,7 +89,7 @@ func LogMsg(server, servType, msgType, msg string, num int) {
 
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
-	log.Printf("%s %s:#%d %s", server, msgType, num, msg)
+	//log.Printf("%s %s:#%d %s", server, msgType, num, msg)
 	log.SetOutput(f)
 	log.Printf("%s %s:#%d %s", server, msgType, num, msg)
 }

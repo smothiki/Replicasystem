@@ -1,3 +1,5 @@
 *~
 .*.swp
-logs/*
+logs/mlogs
+logs/slogs
+logs/clogs

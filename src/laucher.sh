@@ -7,11 +7,11 @@
 pkill server
 rm ../logs/*
 #xterm go run master/master.go
-gnome-terminal -e "go run master/master.go config.json"
+gnome-terminal -e "go run master/master.go config01.json"
 #for i in `seq $1 $2`; do
 for i in `seq 4001 4004`; do
 #    server $i &
-    go run server/server.go $i config.json &
+    go run server/server.go $i config01.json &
 done
-gnome-terminal -e "go run client/client.go 4999 config.json"
+gnome-terminal -e "go run client/client.go 4999 config01.json"
 echo servers launched!

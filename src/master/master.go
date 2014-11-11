@@ -212,7 +212,7 @@ func main() {
 	utils.SetConfigFile(os.Args[1])
 	master = "127.0.0.1:65535"
 	chainNum := utils.GetConfigInt("chains")
-	chain1Series := utils.GetConfigInt("chian1series")
+	chain1Series := utils.GetConfigInt("chain1series")
 	chainLen := utils.GetConfigInt("chainlength")
 	//key: port number, value : msgs received within timeframe
 	servStatus := make(map[string]*structs.Chain)

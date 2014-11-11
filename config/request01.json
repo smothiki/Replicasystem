@@ -1,122 +1,11 @@
 {
   "requests": {
-    "getbalance": [
-      {
-        "requestid": "123",
-        "account": "1",
-        "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      },
-      {
-        "requestid": "124",
-        "account": "2",
-        "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      },
-      {
-        "requestid": "125",
-        "account": "3",
-        "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      },
-      {
-        "requestid": "126",
-        "account": "4",
-        "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      },
-      {
-        "requestid": "127",
-        "account": "5",
-        "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
-      }
-    ],
-    "deposit": [
-      {
-        "requestid": "1233",
-        "account": "1",
-        "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1244",
-        "account": "2",
-        "amount": "20",
-        "transaction": "deposit",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1255",
-        "account": "3",
-        "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1266",
-        "account": "4",
-        "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1277",
-        "account": "5",
-        "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
-      }
-    ],
-    "withdraw": [
-      {
-        "requestid": "1233",
-        "account": "1",
-        "amount": "20",
-        "transaction": "withdraw",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1244",
-        "account": "2",
-        "amount": "4",
-        "transaction": "withdraw",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1255",
-        "account": "3",
-        "amount": "10",
-        "transaction": "withdraw",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1266",
-        "account": "4",
-        "amount": "6",
-        "transaction": "withdraw",
-        "outcome": "none"
-      },
-      {
-        "requestid": "1277",
-        "account": "5",
-        "amount": "7",
-        "transaction": "withdraw",
-        "outcome": "none"
-      }
-    ],
     "tests": [
       {
         "requestid": "123",
         "account": "1",
-        "amount": "0",
-        "transaction": "getbalance",
+        "amount": "5",
+        "transaction": "deposit",
         "outcome": "none"
       },
       {
@@ -129,8 +18,8 @@
       {
         "requestid": "124",
         "account": "2",
-        "amount": "0",
-        "transaction": "getbalance",
+        "amount": "15",
+        "transaction": "deposit",
         "outcome": "none"
       },
       {
@@ -166,6 +55,13 @@
         "account": "5",
         "amount": "0",
         "transaction": "deposit",
+        "outcome": "none"
+      },
+      {
+        "requestid": "129",
+        "account": "5",
+        "amount": "0",
+        "transaction": "getbalance",
         "outcome": "none"
       }
     ]

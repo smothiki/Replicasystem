@@ -22,6 +22,8 @@ import (
 
 const MAXLINE = 1024
 const SENT_HEALTH_INTERVAL = 1000
+const ACK_PROC_TIME = 3000
+const RQST_PROC_TIME = 1500
 
 var sent list.List
 var chain structs.Chain
@@ -76,25 +78,29 @@ func sendOnlineMsg(conn *net.UDPConn) {
 
 /* SendRequest send request to successor */
 func SendRequest(request *structs.Request) {
+	randomSleep(RQST_PROC_TIME, "before sending request")
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sync", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+
+	logMsg("SENT", request.String("HISTORY"), chain.Next)
+	sent.PushBack(*request)
+	utils.LogSEvent(chain.Server, "Added "+request.MakeKey()+" into 'Sent'")
+
 	_, err = client.Do(req)
 	if err != nil {
 		log.Println("Error while sending request.", err)
 	}
-	logMsg("SENT", request.String("HISTORY"), chain.Next)
-	sent.PushBack(*request)
-	fmt.Println("pushed", chain.Server)
 }
 
 func SendAck(ack *structs.Ack) {
 	if chain.Ishead {
 		return
 	}
+	randomSleep(ACK_PROC_TIME, "before sending ack")
 	msg, _ := json.Marshal(ack)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+chain.Prev+"/ack", bytes.NewBuffer(msg))
@@ -102,17 +108,19 @@ func SendAck(ack *structs.Ack) {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+
+	fmt.Println("SENT ack: " + ack.ReqKey)
+	logMsg("SENT", "ack: "+ack.ReqKey, chain.Prev)
+
 	_, err := client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR while sending ack", err)
 	}
-	client.Do(req)
-	fmt.Println("SENT ack: " + ack.ReqKey)
-	logMsg("SENT", "ack: "+ack.ReqKey, chain.Prev)
 }
 
 /* SendReply sends reply to client */
 func SendReply(request *structs.Request) {
+	randomSleep(RQST_PROC_TIME, "before sending request")
 	res1B, err := json.Marshal(request)
 	/*localAddr := net.UDPAddr{
 		Port: port,
@@ -145,9 +153,6 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		logMsg("RECV", res.String("HISTORY"), chain.Prev)
 		b.Set(res)
 		utils.LogEventData(chain.Server, "server", "PROC", res.String("REPLY"))
-		sleepTime := rand.Intn(1500)
-		fmt.Println("sleep for", sleepTime, "ms")
-		time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 		if chain.Istail {
 			//time.Sleep(6000 * time.Millisecond)
 			//SendRequest("localhost:10001", res)
@@ -201,12 +206,14 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+
+	fmt.Println("SENT Bank info: " + string(msgBank))
+	logMsg("SENT", "Bank info: "+string(msgBank), newChain.Next)
+
 	_, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println("SENT Bank info: " + string(msgBank))
-	logMsg("SENT", "Bank info: "+string(msgBank), newChain.Next)
 
 	//send accounts info
 	acMap := b.Accounts()
@@ -218,12 +225,14 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		req.Header = http.Header{
 			"accept": {"application/json"},
 		}
+
+		fmt.Println("SENT a/c info: " + string(msg))
+		logMsg("SENT", "a/c info: "+string(msg), newChain.Next)
+
 		_, err := client.Do(req)
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println("SENT a/c info: " + string(msg))
-		logMsg("SENT", "a/c info: "+string(msg), newChain.Next)
 	}
 
 	transMap := *b.TransMap()
@@ -234,12 +243,14 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		req.Header = http.Header{
 			"accept": {"application/json"},
 		}
+
+		fmt.Println("SENT transaction: " + string(msg))
+		logMsg("SENT", "transactions: "+string(msg), newChain.Next)
+
 		_, err := client.Do(req)
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println("SENT transaction: " + string(msg))
-		logMsg("SENT", "transactions: "+string(msg), newChain.Next)
 	}
 }
 
@@ -257,12 +268,14 @@ func sendSentToTail(newChain *structs.Chain) {
 		req.Header = http.Header{
 			"accept": {"application/json"},
 		}
+
+		fmt.Println("sent to tail:", sprtReqSlice(&sentList))
+		logMsg("SENT", "'Sent': "+sprtReqSlice(&sentList), newChain.Next)
+
 		_, err := client.Do(req)
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println("sent to tail:", sprtReqSlice(&sentList))
-		logMsg("SENT", "sentlist: "+sprtReqSlice(&sentList), newChain.Next)
 	}
 }
 
@@ -300,17 +313,15 @@ func ackHandler(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &ack)
 	for e := sent.Front(); e != nil; e = e.Next() {
 		req := e.Value.(structs.Request)
-		if (req).MakeKey() == ack.ReqKey {
+		fmt.Println("makeKey", req.MakeKey())
+		fmt.Println("ackKey", ack.ReqKey)
+		if req.MakeKey() == ack.ReqKey {
+			utils.LogSEvent(chain.Server, "Removed "+req.MakeKey()+" from 'Sent'")
 			sent.Remove(e)
 			break
 		}
 	}
-	fmt.Println("RECV ack: " + ack.ReqKey)
 	logMsg("RECV", "ack: "+ack.ReqKey, chain.Next)
-
-	sleepTime := rand.Intn(1500)
-	fmt.Println("sleep for", sleepTime, "ms")
-	time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 	SendAck(ack)
 }
 
@@ -318,21 +329,23 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	lastReq := &structs.Request{}
 	json.Unmarshal(body, &lastReq)
-	logMsg("RECV", lastReq.String("HISTORY"), r.RemoteAddr)
-	fmt.Println("RECV", lastReq.String("HISTORY"))
+	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), r.RemoteAddr)
+	fmt.Println("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"))
 	//l := list.New()
 	var sendList []structs.Request
 
 	if lastReq != nil {
 		key := lastReq.MakeKey()
 		bToAdd := false
+		if lastReq.Requestid == "" {
+			bToAdd = true
+		}
 		for e := sent.Front(); e != nil; e = e.Next() {
 			req := e.Value.(structs.Request)
 			if bToAdd {
 				//l.PushBack(req)
 				sendList = append(sendList, req)
-			}
-			if req.MakeKey() == key {
+			} else if req.MakeKey() == key {
 				bToAdd = true
 			}
 		}
@@ -340,34 +353,39 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 
 	enc := json.NewEncoder(w)
 	enc.Encode(sendList)
-	logMsg("SENT", "SentList: "+sprtReqSlice(&sendList), r.RemoteAddr)
-	fmt.Println("SENT", "Sentlist: "+sprtReqSlice(&sendList))
+	logMsg("SENT", "'Sent': "+sprtReqSlice(&sendList), chain.Next)
+	fmt.Println("SENT", "'Sent': "+sprtReqSlice(&sendList))
 	//sendSentsToNext(&sendList)
 }
 
 func sendLastSentToPrev(destServer string, b *bank.Bank) {
+	r := structs.Request{}
 	e := sent.Back()
-	r := e.Value.(structs.Request)
+	if e != nil {
+		r = e.Value.(structs.Request)
+	}
 	msg, err := json.Marshal(r)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+destServer+"/requestSent", bytes.NewBuffer(msg))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+
+	logMsg("SENT", "Last entry in 'Sent': "+r.String("HISTORY"), destServer)
+	fmt.Println("SENT", "Last entry in 'Sent': "+r.String("HISTORY"))
+
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("ERROR", err)
 	}
-	logMsg("SENT", r.String("HISTORY"), destServer)
-	fmt.Println("SENT", r.String("HISTORY"))
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	var sentList []structs.Request
 	json.Unmarshal(body, &sentList)
-	logMsg("RECV", "SentList: "+sprtReqSlice(&sentList), destServer)
-	fmt.Println("RECV Sentlist:", sprtReqSlice(&sentList))
+	logMsg("RECV", "'Sent': "+sprtReqSlice(&sentList), destServer)
+	fmt.Println("RECV 'Sent': ", sprtReqSlice(&sentList))
 
 	for _, req := range sentList {
 		b.Set(&req)
@@ -467,8 +485,8 @@ func main() {
 	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
-	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
-	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
+	series := utils.GetConfigInt("chain1series")
+	lenservers := utils.GetConfigInt("chainlength")
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)
@@ -525,11 +543,17 @@ func sprtReqSlice(rs *[]structs.Request) string {
 	r := "["
 	l := len(*rs)
 	for idx, req := range *rs {
-		r += req.String("HISTORY")
+		r += "{" + req.String("HISTORY") + "}"
 		if idx < l-1 {
-			r += ","
+			r += ", "
 		}
 	}
 	r += "]"
 	return r
+}
+
+func randomSleep(upperTime int, msg string) {
+	sleepTime := rand.Intn(upperTime)
+	fmt.Println("sleep for", sleepTime, "ms", msg)
+	time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 }
