@@ -133,10 +133,11 @@ func Genrequest(balance int, typet string) *Request {
 	return req
 }
 
-func Makereply(reqid, account, outcome, typet string, balance int) *Request {
+func Makereply(reqid, account, outcome, typet string, amount, balance int) *Request {
 	rep := &Request{
 		Requestid:   reqid,
 		Account:     account,
+		Amount:      amount,
 		Outcome:     outcome,
 		Transaction: typet,
 		Balance:     balance}
