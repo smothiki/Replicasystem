@@ -3,6 +3,8 @@
   "chainlength": "4",
   "chian1series": "4",
   "MaxRequests":"20",
+  "testcases" : ["predefined"],
+  "testrequests" : ["request01.json"],
   "master" : "127.0.0.1:65535",
   "clientNum" : "1",
   "startDelay" : [0, 0, 0, 0],

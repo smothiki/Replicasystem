@@ -131,8 +131,15 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // simulates the client and sends request to server
-func simulate(conn *net.UDPConn, port int) {
-	listreqs := structs.GetrequestList(3, "getbalance")
+func simulate(conn *net.UDPConn, port, clientIdx int) {
+	reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
+	reqFile := utils.GetTestRequestFile(clientIdx)
+	var listreqs *[]structs.Request
+	if reqGenMethod == "predefined" {
+		listreqs = structs.GetTestreqs(reqFile)
+	} else {
+		listreqs = structs.GetrequestList(3, "getbalance", reqFile)
+	}
 	var dest string
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
@@ -165,8 +172,9 @@ func main() {
 	m := "Head server: " + chain.Head + ", Tail server:" + chain.Tail
 	utils.LogCEvent(chain.Server, "Client started!"+m)
 	conn := createUDPSocket("127.0.0.1:" + os.Args[1])
+	clientIdx := 999 - port%1000
 	//go simulate(chain, conn)
-	go simulate(conn, port)
+	go simulate(conn, port, clientIdx)
 	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
 	//SendRequest("127.0.0.1:4001", &re)
 	//readResponse(conn)

@@ -15,13 +15,11 @@ import (
 	gson "github.com/bitly/go-simplejson"
 )
 
-var config, request *gson.Json
+var config *gson.Json
 
 func SetConfigFile(filename string) {
 	configFile := GetWorkDir() + "config/" + filename
-	requestFile := GetWorkDir() + "config/request01.json"
 	config, _ = gson.NewJson(GetFileBytes(configFile))
-	request, _ = gson.NewJson(GetFileBytes(requestFile))
 }
 
 func NewID() string {
@@ -117,11 +115,6 @@ func GetFileBytes(filename string) []byte {
 	return bs
 }
 
-func Getvalue(data string) string {
-	command, _ := request.Get(data).String()
-	return command
-}
-
 func Getconfig(data string) string {
 	command, _ := config.Get(data).String()
 	return command
@@ -140,6 +133,16 @@ func GetLifeTime(index int) int {
 func GetStartDelay(index int) int {
 	command, _ := config.Get("startDelay").GetIndex(index).Int()
 	return command
+}
+
+func GetTestCaseGenMethod(index int) string {
+	v, _ := config.Get("testcases").GetIndex(index).String()
+	return v
+}
+
+func GetTestRequestFile(index int) string {
+	v, _ := config.Get("testrequests").GetIndex(index).String()
+	return v
 }
 
 func Timeout(msg string, seconds time.Duration, f func()) error {

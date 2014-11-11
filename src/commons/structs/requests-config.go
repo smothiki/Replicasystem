@@ -8,9 +8,9 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
-func gettypeList(prob int, typet string) *[]Request {
+func gettypeList(prob int, typet, rqstFile string) *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request01.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/" + rqstFile))
 	getReqs := js.Get("requests").Get(typet)
 	a, _ := getReqs.Array()
 	fmt.Println(len(a))
@@ -42,13 +42,13 @@ func gettypeList(prob int, typet string) *[]Request {
 	return &listreqs
 }
 
-func GetrequestList(prob int, typet string) *[]Request {
+func GetrequestList(prob int, typet, rqstFile string) *[]Request {
 	listreqs := make([]Request, 0, 1)
 	totalreqs, _ := strconv.Atoi(utils.Getconfig("MaxRequests"))
 	types := []string{"getbalance", "deposit", "withdraw"}
 	if prob == 0 {
 		for i := 0; i < 3; i++ {
-			for _, request := range *gettypeList(6, types[i]) {
+			for _, request := range *gettypeList(6, types[i], rqstFile) {
 				listreqs = append(listreqs, request)
 			}
 		}
@@ -57,12 +57,12 @@ func GetrequestList(prob int, typet string) *[]Request {
 	} else {
 		rem := totalreqs - (2 * prob)
 		rem = rem / 2
-		for _, request := range *gettypeList(prob*2, typet) {
+		for _, request := range *gettypeList(prob*2, typet, rqstFile) {
 			listreqs = append(listreqs, request)
 		}
 		for i := 0; i < 3; i++ {
 			if typet != types[i] {
-				for _, request := range *gettypeList(rem, types[i]) {
+				for _, request := range *gettypeList(rem, types[i], rqstFile) {
 					listreqs = append(listreqs, request)
 				}
 			}
@@ -74,9 +74,9 @@ func GetrequestList(prob int, typet string) *[]Request {
 	return &listreqs
 }
 
-func GetTestreqs() *[]Request {
+func GetTestreqs(rqstFile string) *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request01.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/" + rqstFile))
 	getReqs := js.Get("requests").Get("tests")
 	a, _ := getReqs.Array()
 	for i := 0; i < len(a); i++ {
