@@ -55,11 +55,11 @@ func SendRequest(server string, request *structs.Request, port int) {
 	defer conn.Close()
 
 	request.Client = localAddr
-	request.Time = time.Now().String()
+	request.Time = fmt.Sprintf("%d", (time.Now().Unix()))
 	res1B, err := json.Marshal(request)
 
 	_, err = conn.Write(res1B)
-	logMsg("SENT", request.String())
+	logMsg("SENT", request.String("REQUEST"))
 }
 
 func createUDPSocket(client string) *net.UDPConn {
@@ -87,7 +87,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
-	logMsg("RECV", rqst.String())
+	logMsg("RECV", rqst.String("REPLY"))
 	//go utils.LogClient(chain.Server, rqst.Requestid, rqst.Account, rqst.Outcome, rqst.Transaction, rqst.Balance)
 
 	return rqst
@@ -113,19 +113,20 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	newHeadTail := &structs.ClientNotify{}
 	json.Unmarshal(body, &newHeadTail)
-	logMsg("RECV", string(body))
 	if newHeadTail.Head != "" {
 		chain.Head = newHeadTail.Head
 		fmt.Println("newHead", chain.Head)
+		logMsg("RECV", "New head is "+chain.Head)
 	} else if newHeadTail.Tail != "" {
 		chain.Tail = newHeadTail.Tail
 		fmt.Println("newTail", chain.Tail)
+		logMsg("RECV", "New tail is "+chain.Tail)
 	}
 }
 
 // simulates the client and sends request to server
 func simulate(conn *net.UDPConn, port int) {
-	listreqs := structs.GetrequestList(0, "getbalance")
+	listreqs := structs.GetrequestList(3, "getbalance")
 	var dest string
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
@@ -134,11 +135,10 @@ func simulate(conn *net.UDPConn, port int) {
 			dest = chain.Head
 		}
 		fmt.Println("dest", dest)
+		fmt.Println(request)
 
-		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
 			SendRequest(dest, &request, port)
-			fmt.Println("mYR", readResponse(conn))
 		})
 		if err != nil {
 			fmt.Println("timeout")

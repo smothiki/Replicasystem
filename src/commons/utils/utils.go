@@ -19,7 +19,7 @@ var config, request *gson.Json
 
 func SetConfigFile(filename string) {
 	configFile := GetWorkDir() + "config/" + filename
-	requestFile := GetWorkDir() + "config/request.json"
+	requestFile := GetWorkDir() + "config/request01.json"
 	config, _ = gson.NewJson(GetFileBytes(configFile))
 	request, _ = gson.NewJson(GetFileBytes(requestFile))
 }
@@ -48,56 +48,36 @@ func PutCount(version string) error {
 	return nil
 }
 
-func Logoutput(server, servType, reqid, account, outcome string, balance int, trans string) {
-	var name string
-	if servType == "client" {
-		name = GetWorkDir() + "logs/clogs"
-	} else {
-		name = GetWorkDir() + "logs/slogs"
-	}
-	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	defer f.Close()
-	log.SetOutput(f)
-	s := fmt.Sprintf("%s, requestID %s, %s, Balance: %d, %s", server, reqid, outcome, balance, trans)
-	fmt.Println(s)
-	log.Printf(s)
-}
-
-func LogServer(server, reqID, account, outcome, trans string, balance int) {
-	Logoutput(server, "server", reqID, account, outcome, balance, trans)
-}
-
-func LogClient(server, reqID, account, outcome, trans string, balance int) {
-	Logoutput(server, "client", reqID, account, outcome, balance, trans)
-}
-
-func Logevent(server, servType, event string) {
-	var name string
-	if servType == "client" {
-		name = GetWorkDir() + "logs/clogs"
-	} else if servType == "server" {
-		name = GetWorkDir() + "logs/slogs"
-	} else {
-		name = GetWorkDir() + "logs/mlogs"
+func LogEventData(server, servType, msgType, msg string) {
+	name := GetWorkDir() + "logs/"
+	switch servType {
+	case "client":
+		name += "clogs"
+	case "server":
+		name += "slogs"
+	case "master":
+		name += "mlogs"
+	default:
+		log.Fatal("ERROR while logging events/data, wrong msgType")
 	}
 
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
-	fmt.Printf("%s EVENT: %s\n", server, event)
+	fmt.Printf("%s %s: %s\n", server, msgType, msg)
 	log.SetOutput(f)
-	log.Printf("%s EVENT: %s", server, event)
+	log.Printf("%s %s: %s", server, msgType, msg)
 }
 
 func LogSEvent(server, event string) {
-	Logevent(server, "server", event)
+	LogEventData(server, "server", "EVENT", event)
 }
 
 func LogCEvent(server, event string) {
-	Logevent(server, "client", event)
+	LogEventData(server, "client", "EVENT", event)
 }
 
 func LogMEvent(server, event string) {
-	Logevent(server, "master", event)
+	LogEventData(server, "master", "EVENT", event)
 }
 
 func LogMsg(server, servType, msgType, msg string, num int) {

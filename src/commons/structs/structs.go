@@ -12,10 +12,10 @@ import (
 type Request struct {
 	Requestid   string
 	Account     string
+	Amount      int
 	Balance     int
 	Transaction string
 	Outcome     string
-	Amount      int
 	Client      net.UDPAddr
 	Time        string
 }
@@ -41,13 +41,21 @@ type Ack struct {
 	ReqKey string
 }
 
-func (r *Request) String() string {
-	return fmt.Sprintf("reqID %s, a/c %s, balance %d, %s, %s, reqTime %s",
-		r.Requestid, r.Account, r.Balance, r.Transaction, r.Outcome, r.Time)
+func (r *Request) String(strType string) string {
+	switch strType {
+	case "REPLY":
+		return fmt.Sprintf("reqID %s, a/c %s, %s, balance %d, %s, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time)
+	case "REQUEST":
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%d) %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
+	case "HISTORY":
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%d), balance %d, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Balance, r.Time)
+	default:
+		return ""
+	}
 }
 
 func (req *Request) MakeKey() string {
-	return req.Requestid + " " + req.Time
+	return req.Requestid + "." + req.Time
 }
 
 func (c *Chain) String() string {
@@ -133,7 +141,7 @@ func Genrequest(balance int, typet string) *Request {
 	return req
 }
 
-func Makereply(reqid, account, outcome, typet string, balance int) *Request {
+func Makereply(reqid, account, outcome, typet string, amount, balance int) *Request {
 	rep := &Request{
 		Requestid:   reqid,
 		Account:     account,
