@@ -1,0 +1,13 @@
+{
+  "chains" : "1",
+  "chainlength": "4",
+  "chain1series": "4",
+  "MaxRequests":"20",
+  "testcases" : ["predefined"],
+  "testrequests" : ["request01.json"],
+  "master" : "127.0.0.1:65535",
+  "clientNum" : "1",
+  "startDelay" : [0, 0, 0, 0],
+  "lifetime" : [0, 0, 7, 0],
+  "failOnReqSent" : [0, 1, 0, 0]
+}

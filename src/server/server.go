@@ -174,6 +174,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	json.Unmarshal(body, &newChain)
 	logMsg("RECV", newChain.String(), "master")
 	hasNewPrev := chain.Prev != newChain.Prev && !newChain.Ishead
+	isNewTail := !chain.Istail && newChain.Istail
 	chain = *newChain
 	if hasNewPrev {
 		// if current server has new predecessor, send it the
@@ -182,6 +183,9 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		sendLastSentToPrev(newChain.Prev, b)
 	}
 	//if chain.Next != newChain.Next && !newChain.Istail {}
+	if isNewTail {
+		sent.Init()
+	}
 }
 
 func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
@@ -330,7 +334,7 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	lastReq := &structs.Request{}
 	json.Unmarshal(body, &lastReq)
-	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), r.RemoteAddr)
+	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), chain.Next)
 	fmt.Println("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"))
 	//l := list.New()
 	var sendList []structs.Request
@@ -350,6 +354,11 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 				bToAdd = true
 			}
 		}
+	}
+
+	if chain.FailOnReqSent {
+		utils.LogSEvent(chain.Server, "Failed after receiving last entry in 'Sent'")
+		os.Exit(0)
 	}
 
 	enc := json.NewEncoder(w)
@@ -491,6 +500,8 @@ func main() {
 	curseries := int(port / 1000)
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)
+	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)
+
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)
 	if startDelay != 0 {

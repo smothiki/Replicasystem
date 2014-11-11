@@ -145,6 +145,15 @@ func GetTestRequestFile(index int) string {
 	return v
 }
 
+func GetFailOnReqSent(index int) bool {
+	v, _ := config.Get("failOnReqSent").GetIndex(index).Int()
+	if v == 1 {
+		return true
+	} else {
+		return false
+	}
+}
+
 func Timeout(msg string, seconds time.Duration, f func()) error {
 	c := make(chan bool)
 	go func() {
