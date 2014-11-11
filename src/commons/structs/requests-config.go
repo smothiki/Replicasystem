@@ -82,7 +82,7 @@ func GetTestreqs() *[]Request {
 	for i := 0; i < len(a); i++ {
 		reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
 		account, _ := getReqs.GetIndex(i).Get("account").String()
-		amounts, _ := getReqs.GetIndex(i).Get("balance").String()
+		amounts, _ := getReqs.GetIndex(i).Get("amount").String()
 		amount, _ := strconv.Atoi(amounts)
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
 		outcome, _ := getReqs.GetIndex(i).Get("outcome").String()

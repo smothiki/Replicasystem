@@ -145,6 +145,7 @@ func Makereply(reqid, account, outcome, typet string, amount, balance int) *Requ
 	rep := &Request{
 		Requestid:   reqid,
 		Account:     account,
+		Amount:      amount,
 		Outcome:     outcome,
 		Transaction: typet,
 		Balance:     balance}
