@@ -113,20 +113,21 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
 	newHeadTail := &structs.ClientNotify{}
-	json.Unmarshal(body, &newHeadTail)
 	logMsg("RECV", string(body))
 	if newHeadTail.Head != "" {
 		chain.Head = newHeadTail.Head
 		fmt.Println("newHead", chain.Head)
+		logMsg("RECV", "New head is "+chain.Head)
 	} else if newHeadTail.Tail != "" {
 		chain.Tail = newHeadTail.Tail
 		fmt.Println("newTail", chain.Tail)
+		logMsg("RECV", "New tail is "+chain.Tail)
 	}
 }
 
 // simulates the client and sends request to server
 func simulate(conn *net.UDPConn, port int) {
-	listreqs := structs.GetrequestList(0, "getbalance")
+	listreqs := structs.GetrequestList(3, "getbalance")
 	var dest string
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
@@ -139,7 +140,7 @@ func simulate(conn *net.UDPConn, port int) {
 		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
 			SendRequest(dest, &request, port)
-			fmt.Println("mYR", readResponse(conn))
+			//			fmt.Println("mYR", readResponse(conn))
 		})
 		if err != nil {
 			fmt.Println("timeout")
