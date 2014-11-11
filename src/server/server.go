@@ -175,7 +175,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	logMsg("RECV", newChain.String(), "master")
 	hasNewPrev := chain.Prev != newChain.Prev && !newChain.Ishead
 	isNewTail := !chain.Istail && newChain.Istail
-	chain = *newChain
+	chain.SetChain(newChain)
 	if hasNewPrev {
 		// if current server has new predecessor, send it the
 		// last record in sent, and wait for sent records
@@ -396,6 +396,11 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	json.Unmarshal(body, &sentList)
 	logMsg("RECV", "'Sent': "+sprtReqSlice(&sentList), destServer)
 	fmt.Println("RECV 'Sent': ", sprtReqSlice(&sentList))
+	if chain.FailOnRecvSent {
+		fmt.Println("AAAAAAAAAAAAAAAA")
+		utils.LogSEvent(chain.Server, "Failed on receiving 'Sent' from predecessor")
+		os.Exit(0)
+	}
 
 	for _, req := range sentList {
 		b.Set(&req)
@@ -501,6 +506,7 @@ func main() {
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)
 	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)
+	chain.FailOnRecvSent = utils.GetFailOnRecvSent(port%1000 - 1)
 
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)
