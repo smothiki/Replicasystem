@@ -20,15 +20,17 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
-const MAXLINE = 1024
-const SENT_HEALTH_INTERVAL = 1000
-const ACK_PROC_TIME = 3000
-const RQST_PROC_TIME = 1500
+const MAXLINE = 1024              // max length of char buffer
+const SENT_HEALTH_INTERVAL = 1000 // frequency of sending online msg to master
+const ACK_PROC_TIME = 3000        // time of (simulated) ack processing
+const RQST_PROC_TIME = 1500       // time of (simulated) request processing
 
-var sent list.List
-var chain structs.Chain
-var recvNum, sendNum int
+var sent list.List       // 'Sent'
+var chain structs.Chain  // info of current server
+var recvNum, sendNum int // msg counters for logging
 
+//logMsg logs sent/received message msg into log file,
+//msgType is "SENT" or "RECV", counterServer is receiving / sender
 func logMsg(msgType, msg, counterServer string) {
 	if msgType == "SENT" {
 		msg += " (to " + counterServer + ")"
@@ -43,6 +45,8 @@ func logMsg(msgType, msg, counterServer string) {
 	}
 }
 
+//connectToMaster connects UDP socket to master server,
+//returning socket descriptor
 func connectToMaster() *net.UDPConn {
 	ip, port := structs.GetIPAndPort(chain.Server)
 	masterAddr := utils.Getconfig("master")
@@ -64,6 +68,8 @@ func connectToMaster() *net.UDPConn {
 	return conn
 }
 
+//sendOnlingMsg sends online messge (for health check) to master
+//server via conn returned by connectToMaster
 func sendOnlineMsg(conn *net.UDPConn) {
 	for {
 		msg, _ := json.Marshal(1)
@@ -76,7 +82,7 @@ func sendOnlineMsg(conn *net.UDPConn) {
 	}
 }
 
-/* SendRequest send request to successor */
+//SendRequest send request to successor
 func SendRequest(request *structs.Request) {
 	randomSleep(RQST_PROC_TIME, "before sending request")
 	res1B, err := json.Marshal(request)
@@ -96,6 +102,7 @@ func SendRequest(request *structs.Request) {
 	}
 }
 
+//SendAck sends acknowledgement ack to predecessor
 func SendAck(ack *structs.Ack) {
 	if chain.Ishead {
 		return
@@ -118,7 +125,7 @@ func SendAck(ack *structs.Ack) {
 	}
 }
 
-/* SendReply sends reply to client */
+//SendReply sends reply (request) to client
 func SendReply(request *structs.Request) {
 	randomSleep(RQST_PROC_TIME, "before sending request")
 	res1B, err := json.Marshal(request)
@@ -142,20 +149,18 @@ func SendReply(request *structs.Request) {
 	logMsg("SENT", request.String("REPLY"), request.Client.String())
 }
 
+//sync handler processes request sent by predecessor and sends it
+//to successor server
 func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int) {
 	fmt.Fprint(w, "Hello, sync")
-	//fmt.Println("hello syncs")
 	if r.Method == "POST" {
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		//fmt.Println(res)
 		logMsg("RECV", res.String("HISTORY"), chain.Prev)
 		b.Set(res)
 		utils.LogEventData(chain.Server, "server", "PROC", res.String("REPLY"))
 		if chain.Istail {
-			//time.Sleep(6000 * time.Millisecond)
-			//SendRequest("localhost:10001", res)
 			SendReply(res)
 			ack := structs.Ack{
 				ReqKey: res.MakeKey(),
@@ -167,6 +172,8 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 	}
 }
 
+//alterChainHandler handles http request "alterChain", which
+//indicates predecessor or successor has changed
 func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -188,6 +195,9 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	}
 }
 
+//extendChainHandler handles http request "extendChain", which
+//indicates new tail being added to chain. Both old and new tail
+//show deal with extendChain request
 func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "extended")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -202,6 +212,7 @@ func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	chain = *newChain
 }
 
+//sendBankToTail sends bank information in old tail to new tail
 func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 	//send basic bank info
 	client := &http.Client{}
@@ -240,6 +251,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		}
 	}
 
+	//send transactions
 	transMap := *b.TransMap()
 	for _, trans := range transMap {
 		msg, _ := json.Marshal(trans)
@@ -250,7 +262,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		}
 
 		fmt.Println("SENT transaction: " + string(msg))
-		logMsg("SENT", "transactions: "+string(msg), newChain.Next)
+		logMsg("SENT", "transaction: "+string(msg), newChain.Next)
 
 		_, err := client.Do(req)
 		if err != nil {
@@ -259,6 +271,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 	}
 }
 
+//sendSentToTail sends 'Sent' in old tail to new tail
 func sendSentToTail(newChain *structs.Chain) {
 	lenSent := sent.Len()
 	if lenSent > 0 {
@@ -281,9 +294,14 @@ func sendSentToTail(newChain *structs.Chain) {
 		if err != nil {
 			log.Println(err)
 		}
+	} else {
+		utils.LogSEvent(chain.Server, "'Sent' is empty, nothing to send to new tail")
 	}
 }
 
+//extendBankHandler handles http request "extend/bank", new tail
+//calls this function to receive basic bank information sent by
+//old tail
 func extendBankHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "copied")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -293,6 +311,9 @@ func extendBankHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Println(b)
 }
 
+//extendAccountsHandler handles http request "extend/accounts", new
+//tail calls this function to receive accounts information sent by
+//old tail
 func extendAccountsHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "copied")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -302,6 +323,9 @@ func extendAccountsHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank)
 	logMsg("RECV", string(body), chain.Prev)
 }
 
+//extendTransactionsHandler handles http request "extend/transactions",
+//new tail calls this function to receive transaction history sent by
+//old tail
 func extendTransactionsHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "copied")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -311,6 +335,9 @@ func extendTransactionsHandler(w http.ResponseWriter, r *http.Request, b *bank.B
 	logMsg("RECV", string(body), chain.Prev)
 }
 
+//ackHandler handles http request "ack" sent by its successor,
+//removing corresponding request from 'Sent' and sending ack
+//to predecessor
 func ackHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "r")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -330,13 +357,16 @@ func ackHandler(w http.ResponseWriter, r *http.Request) {
 	SendAck(ack)
 }
 
+//requestSentHandler handles http request "requestSent" sent by new
+//successor. When successor fails, new successor sends its last entry
+//in 'Sent'. On receiving it, it sends back those records in its
+//'Sent' but not in new successor's 'Sent'.
 func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	lastReq := &structs.Request{}
 	json.Unmarshal(body, &lastReq)
 	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), chain.Next)
 	fmt.Println("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"))
-	//l := list.New()
 	var sendList []structs.Request
 
 	if lastReq != nil {
@@ -348,7 +378,6 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 		for e := sent.Front(); e != nil; e = e.Next() {
 			req := e.Value.(structs.Request)
 			if bToAdd {
-				//l.PushBack(req)
 				sendList = append(sendList, req)
 			} else if req.MakeKey() == key {
 				bToAdd = true
@@ -365,9 +394,10 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	enc.Encode(sendList)
 	logMsg("SENT", "'Sent': "+sprtReqSlice(&sendList), chain.Next)
 	fmt.Println("SENT", "'Sent': "+sprtReqSlice(&sendList))
-	//sendSentsToNext(&sendList)
 }
 
+//sendLastSentToPrev sends last entry of 'Sent' to its new predecessor
+//destServer and waits for new 'Sent' records and processes them
 func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	r := structs.Request{}
 	e := sent.Back()
@@ -397,7 +427,6 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	logMsg("RECV", "'Sent': "+sprtReqSlice(&sentList), destServer)
 	fmt.Println("RECV 'Sent': ", sprtReqSlice(&sentList))
 	if chain.FailOnRecvSent {
-		fmt.Println("AAAAAAAAAAAAAAAA")
 		utils.LogSEvent(chain.Server, "Failed on receiving 'Sent' from predecessor")
 		os.Exit(0)
 	}
@@ -422,23 +451,9 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	}
 }
 
-/*func sendSentsToNext(lst *[]structs.Request) {
-	msg, err := json.Marshal(lst)
-	fmt.Println("msg", string(msg))
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sent", bytes.NewBuffer(msg))
-	req.Header = http.Header{
-		"accept": {"application/json"},
-	}
-	_, err = client.Do(req)
-	if err != nil {
-		log.Println("ERROR while sending Sents to next server", chain.Next)
-	}
-
-	logMsg("SENT", "Sents "+string(msg))
-}
-*/
-
+//startUDPService listens UDP socket, through which clients send
+//request, and process the incoming requests, and then sends
+//requests either to clients or successor server
 func startUDPService(b *bank.Bank) {
 	ip, port := structs.GetIPAndPort(chain.Server)
 	localAddr := net.UDPAddr{
@@ -489,6 +504,7 @@ func startUDPService(b *bank.Bank) {
 	}
 }
 
+//die terminate current server to simulate server failure
 func die() {
 	utils.LogSEvent(chain.Server, "Server died!")
 	os.Exit(0)
@@ -542,6 +558,7 @@ func main() {
 	http.HandleFunc("/extend/bank", func(w http.ResponseWriter, r *http.Request) {
 		extendBankHandler(w, r, b)
 	})
+
 	http.HandleFunc("/extend/accounts", func(w http.ResponseWriter, r *http.Request) {
 		extendAccountsHandler(w, r, b)
 	})
@@ -557,6 +574,7 @@ func main() {
 
 }
 
+//sprtReqSlice conversts slice of requests rs to string
 func sprtReqSlice(rs *[]structs.Request) string {
 	r := "["
 	l := len(*rs)
@@ -570,6 +588,8 @@ func sprtReqSlice(rs *[]structs.Request) string {
 	return r
 }
 
+//randomSleep sleeps for random duration, whose upperbound is
+//upperTime seconds and prints out msg
 func randomSleep(upperTime int, msg string) {
 	sleepTime := rand.Intn(upperTime)
 	fmt.Println("sleep for", sleepTime, "ms", msg)

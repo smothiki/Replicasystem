@@ -14,16 +14,19 @@ import (
 	"time"
 )
 
-const MAXLINE = 1024
-const CHECK_CYCLE = 3000
+const MAXLINE = 1024     //max length of char buffer
+const CHECK_CYCLE = 3000 //interval of checking servers' status
 
-var recvNum, sendNum int
-var master string
+var recvNum, sendNum int //msg counter for logging
+var master string        //master server information
 
+//logEvent logs event to log file
 func logEvent(event string) {
 	utils.LogMEvent("", event)
 }
 
+//logMsg logs received / sent msg to log file, msgType is either
+//"SENT" or "RECV", counterServer is corresponding sender / receiver
 func logMsg(msgType, msg, counterServer string) {
 	if msgType == "SENT" {
 		msg += " (to " + counterServer + ")"
@@ -38,6 +41,8 @@ func logMsg(msgType, msg, counterServer string) {
 	}
 }
 
+//createUDPSocket creates and listens UDP socket, through which
+//servers send online (health) message to master
 func createUDPSocket() *net.UDPConn {
 	s := utils.Getconfig("master")
 	ip, port := structs.GetIPAndPort(s)
@@ -52,6 +57,8 @@ func createUDPSocket() *net.UDPConn {
 	return conn
 }
 
+//readOnlineMsg reads online (health) message from conn and sets
+//msg counter for each server in statMap
 func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 	for {
 		buf := make([]byte, MAXLINE)
@@ -72,6 +79,9 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 	}
 }
 
+//checkStatus checks message counter in statMap every CHECK_CYCLE
+//milliseconds and sends alterChain or extendChain requests to
+//servers based on message counts
 func checkStatus(statMap *map[string]*structs.Chain) {
 	for {
 		time.Sleep(CHECK_CYCLE * time.Millisecond)
@@ -91,6 +101,7 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 	}
 }
 
+//extendChain
 func extendChain(newTail string, statMap *map[string]*structs.Chain) {
 	// find tail
 	var oldTail string

@@ -2,7 +2,6 @@ package bank
 
 import (
 	"errors"
-	//"fmt"
 
 	"github.com/replicasystem/src/commons/structs"
 )
