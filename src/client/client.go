@@ -61,6 +61,9 @@ func SendRequest(server string, request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
 
 	_, err = conn.Write(res1B)
+	if err != nil {
+		fmt.Println(err)
+	}
 	logMsg("SENT", request.String("REQUEST"), server)
 }
 

@@ -427,7 +427,8 @@ func startUDPService(b *bank.Bank) {
 
 		rqst := &structs.Request{}
 		json.Unmarshal(buf[:n], &rqst)
-		logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
+		//logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
+		logMsg("RECV", "BB", "AA")
 
 		reply := &structs.Request{}
 		switch rqst.Transaction {
