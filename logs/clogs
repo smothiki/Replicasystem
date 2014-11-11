@@ -1,20 +1,2 @@
-2014/11/10 19:54:55 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4003
-2014/11/10 19:54:55 127.0.0.1:4999 EVENT: UDP Socket connected!
-2014/11/10 19:54:55 127.0.0.1:4999 SENT:#0 reqID e93f01d2, a/c ca8c07e7, balance 0, getbalance, none, reqTime 2014-11-10 19:54:55.03520328 -0500 EST
-2014/11/10 19:55:00 127.0.0.1:4999 SENT:#1 reqID 123, a/c 1, balance 0, deposit, none, reqTime 2014-11-10 19:55:00.035617704 -0500 EST
-2014/11/10 19:55:01 127.0.0.1:4999 RECV:#0 reqID 123, a/c 1, balance 0, deposit, processed, reqTime 2014-11-10 19:55:00.035617704 -0500 EST
-2014/11/10 19:55:03 127.0.0.1:4999 RECV:#1 {"Head":"","Tail":"127.0.0.1:4004"}
-2014/11/10 19:55:05 127.0.0.1:4999 SENT:#2 reqID 124, a/c 2, balance 0, deposit, none, reqTime 2014-11-10 19:55:05.035874433 -0500 EST
-2014/11/10 19:55:06 127.0.0.1:4999 RECV:#2 reqID 124, a/c 2, balance 0, deposit, processed, reqTime 2014-11-10 19:55:05.035874433 -0500 EST
-2014/11/10 19:55:10 127.0.0.1:4999 SENT:#3 reqID 125, a/c 3, balance 0, deposit, none, reqTime 2014-11-10 19:55:10.036193469 -0500 EST
-2014/11/10 19:55:11 127.0.0.1:4999 RECV:#3 reqID 125, a/c 3, balance 0, deposit, processed, reqTime 2014-11-10 19:55:10.036193469 -0500 EST
-2014/11/10 19:55:15 127.0.0.1:4999 SENT:#4 reqID 126, a/c 4, balance 0, deposit, none, reqTime 2014-11-10 19:55:15.036526115 -0500 EST
-2014/11/10 19:55:16 127.0.0.1:4999 RECV:#4 reqID 126, a/c 4, balance 0, deposit, processed, reqTime 2014-11-10 19:55:15.036526115 -0500 EST
-2014/11/10 19:55:20 127.0.0.1:4999 SENT:#5 reqID 127, a/c 5, balance 0, deposit, none, reqTime 2014-11-10 19:55:20.036829074 -0500 EST
-2014/11/10 19:55:22 127.0.0.1:4999 RECV:#5 reqID 127, a/c 5, balance 0, deposit, processed, reqTime 2014-11-10 19:55:20.036829074 -0500 EST
-2014/11/10 19:55:25 127.0.0.1:4999 SENT:#6 reqID 50dafe71, a/c b7cd5bb5, balance 0, getbalance, none, reqTime 2014-11-10 19:55:25.037052177 -0500 EST
-2014/11/10 19:55:25 127.0.0.1:4999 RECV:#6 reqID 50dafe71, a/c b7cd5bb5, balance 0, getbalance, processed, reqTime 2014-11-10 19:55:25.037052177 -0500 EST
-2014/11/10 19:55:30 127.0.0.1:4999 SENT:#7 reqID 1233, a/c 1, balance 10, deposit, none, reqTime 2014-11-10 19:55:30.037362322 -0500 EST
-2014/11/10 19:55:31 127.0.0.1:4999 RECV:#7 reqID 1233, a/c 1, balance 10, deposit, processed, reqTime 2014-11-10 19:55:30.037362322 -0500 EST
-2014/11/10 19:55:35 127.0.0.1:4999 SENT:#8 reqID 1244, a/c 2, balance 20, deposit, none, reqTime 2014-11-10 19:55:35.037650583 -0500 EST
-2014/11/10 19:55:36 127.0.0.1:4999 RECV:#8 reqID 1244, a/c 2, balance 20, deposit, processed, reqTime 2014-11-10 19:55:35.037650583 -0500 EST
+2014/11/11 00:13:31 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4003
+2014/11/11 00:13:40 127.0.0.1:4999 RECV:#4 New tail is 127.0.0.1:4004
