@@ -18,6 +18,11 @@ const MAXLINE = 1024
 const CHECK_CYCLE = 3000
 
 var recvNum, sendNum int
+var master string
+
+func logEvent(event string) {
+	utils.LogMEvent(master, event)
+}
 
 func logMsg(msgType, msg string) {
 	if msgType == "SENT" {
@@ -71,11 +76,11 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 		for serverIdx, chain := range *statMap {
 			if chain.MsgCnt == 0 && chain.Online {
 				//failure
-				utils.LogMEvent("server" + serverIdx + " failed")
+				logEvent("server" + serverIdx + " failed")
 				alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				utils.LogMEvent("new server" + serverIdx + "online")
+				logEvent("new server" + serverIdx + "online")
 				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)
@@ -96,10 +101,6 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) {
 
 	fmt.Println("oldTail", oldTail)
 	fmt.Println("newTail", newTail)
-	// notify old tail
-	(*statMap)[oldTail].Istail = false
-	(*statMap)[oldTail].Next = newTail
-	notifyServer(oldTail, "extendChain", (*statMap)[oldTail])
 
 	// notify new Tail
 	(*statMap)[newTail].Istail = true
@@ -107,6 +108,11 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) {
 	(*statMap)[newTail].Next = ""
 	(*statMap)[newTail].Online = true
 	notifyServer(newTail, "extendChain", (*statMap)[newTail])
+
+	// notify old tail
+	(*statMap)[oldTail].Istail = false
+	(*statMap)[oldTail].Next = newTail
+	notifyServer(oldTail, "extendChain", (*statMap)[oldTail])
 
 	// notify clients
 	newHeadTail := structs.ClientNotify{
@@ -173,7 +179,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 			Head: nextKey,
 			Tail: "",
 		}
-		utils.LogMEvent("Head becomes " + nextKey)
+		logEvent("Head becomes " + nextKey)
 		notifyClients(&newHeadTail)
 	} else if !curNode.Ishead && curNode.Istail {
 		(*statMap)[prevKey].Next = ""
@@ -183,7 +189,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 			Head: "",
 			Tail: prevKey,
 		}
-		utils.LogMEvent("Head becomes " + prevKey)
+		logEvent("Head becomes " + prevKey)
 		notifyClients(&newHeadTail)
 	} else if !curNode.Ishead && !curNode.Istail {
 		(*statMap)[prevKey].Next = curNode.Next
@@ -198,6 +204,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 func main() {
 	log.Println("master started!")
 	utils.SetConfigFile(os.Args[1])
+	master = "127.0.0.1:65535"
 	chainNum := utils.GetConfigInt("chains")
 	chain1Series := utils.GetConfigInt("chian1series")
 	chainLen := utils.GetConfigInt("chainlength")

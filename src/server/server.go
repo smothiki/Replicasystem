@@ -5,6 +5,7 @@ import (
 	"container/list"
 	"encoding/json"
 	"fmt"
+	//"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -38,11 +39,12 @@ func logMsg(msgType, msg string) {
 	}
 }
 
-func connectToMaster(port int) *net.UDPConn {
+func connectToMaster() *net.UDPConn {
+	ip, port := structs.GetIPAndPort(chain.Server)
 	masterAddr := utils.Getconfig("master")
 	localAddr := net.UDPAddr{
 		Port: port + 100,
-		IP:   net.ParseIP("127.0.0.1"),
+		IP:   net.ParseIP(ip),
 	}
 	destIP, destPort := structs.GetIPAndPort(masterAddr)
 	destAddr := net.UDPAddr{
@@ -83,7 +85,8 @@ func SendRequest(request *structs.Request) {
 		log.Println("Error while sending request.", err)
 	}
 	logMsg("SENT", request.String())
-	sent.PushBack(request)
+	sent.PushBack(*request)
+	fmt.Println("pushed", chain.Server)
 }
 
 func SendAck(ack *structs.Ack) {
@@ -97,16 +100,17 @@ func SendAck(ack *structs.Ack) {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	/*_, err = client.Do(req)
+	_, err := client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR while sending ack", err)
-	}*/
+	}
 	client.Do(req)
-	//logMsg("SENT", ack)
+	fmt.Println("SENT ack: " + ack.ReqKey)
+	logMsg("SENT", "ack: "+ack.ReqKey)
 }
 
 /* SendReply sends reply to client */
-func SendReply(request *structs.Request, port int) {
+func SendReply(request *structs.Request) {
 	res1B, err := json.Marshal(request)
 	/*localAddr := net.UDPAddr{
 		Port: port,
@@ -145,7 +149,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		if chain.Istail {
 			//time.Sleep(6000 * time.Millisecond)
 			//SendRequest("localhost:10001", res)
-			SendReply(res, port)
+			SendReply(res)
 			ack := structs.Ack{
 				ReqKey: res.MakeKey(),
 			}
@@ -156,7 +160,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 	}
 }
 
-func alterChainHandler(w http.ResponseWriter, r *http.Request) {
+func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
 	newChain := &structs.Chain{}
@@ -166,7 +170,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 		// if current server has new predecessor, send it the
 		// last record in sent, and wait for sent records
 		// after that entry
-		sendLastSentToPrev(newChain.Prev)
+		sendLastSentToPrev(newChain.Prev, b)
 	}
 	//if chain.Next != newChain.Next && !newChain.Istail {}
 	chain = *newChain
@@ -179,9 +183,36 @@ func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	json.Unmarshal(body, &newChain)
 	logMsg("RECV", newChain.String())
 	if chain.Istail && !newChain.Istail {
-		msg, _ := json.Marshal(b)
+		//old tail
+		sendBankToTail(b, newChain)
+		sendSentToTail(newChain)
+	}
+	chain = *newChain
+}
+
+func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
+	//send basic bank info
+	client := &http.Client{}
+	newBank := bank.Initbank(b.Bankname, b.Bankid)
+	msgBank, _ := json.Marshal(newBank)
+	req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/extend/bank", bytes.NewBuffer(msgBank))
+	req.Header = http.Header{
+		"accept": {"application/json"},
+	}
+	_, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("SENT Bank info: " + string(msgBank))
+	logMsg("SENT", "Bank info: "+string(msgBank))
+
+	//send accounts info
+	acMap := b.Accounts()
+	for _, pAcc := range *acMap {
+		acc := *pAcc
+		msg, _ := json.Marshal(acc)
 		client := &http.Client{}
-		req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/copyBank", bytes.NewBuffer(msg))
+		req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/extend/accounts", bytes.NewBuffer(msg))
 		req.Header = http.Header{
 			"accept": {"application/json"},
 		}
@@ -189,16 +220,74 @@ func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		if err != nil {
 			log.Println(err)
 		}
-		logMsg("SENT", string(msg))
+		fmt.Println("SENT a/c info: " + string(msg))
+		logMsg("SENT", "a/c info: "+string(msg))
 	}
-	chain = *newChain
+
+	transMap := *b.TransMap()
+	for _, trans := range transMap {
+		msg, _ := json.Marshal(trans)
+		client := &http.Client{}
+		req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/extend/transactions", bytes.NewBuffer(msg))
+		req.Header = http.Header{
+			"accept": {"application/json"},
+		}
+		_, err := client.Do(req)
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println("SENT transaction: " + string(msg))
+		logMsg("SENT", "transactions: "+string(msg))
+	}
 }
 
-func copyBankHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+func sendSentToTail(newChain *structs.Chain) {
+	lenSent := sent.Len()
+	if lenSent > 0 {
+		sentList := make([]structs.Request, lenSent)
+		for e := sent.Front(); e != nil; e = e.Next() {
+			r := e.Value.(structs.Request)
+			sentList = append(sentList, r)
+		}
+		msg, _ := json.Marshal(sentList)
+		client := &http.Client{}
+		req, _ := http.NewRequest("POST", "http://"+newChain.Next+"/extend/sent", bytes.NewBuffer(msg))
+		req.Header = http.Header{
+			"accept": {"application/json"},
+		}
+		_, err := client.Do(req)
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println("sent to tail:", sprtReqSlice(&sentList))
+		logMsg("SENT", "sentlist: "+sprtReqSlice(&sentList))
+	}
+}
+
+func extendBankHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	fmt.Fprintf(w, "copied")
 	body, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(body, &b)
-	log.Println("bank info copied")
+	fmt.Println("bank info copied")
+	logMsg("RECV", string(body))
+	fmt.Println(b)
+}
+
+func extendAccountsHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+	fmt.Fprintf(w, "copied")
+	body, _ := ioutil.ReadAll(r.Body)
+	acc := bank.Account{}
+	json.Unmarshal(body, &acc)
+	b.AddAccount(acc.Accountid, acc.Balance)
+	logMsg("RECV", string(body))
+}
+
+func extendTransactionsHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+	fmt.Fprintf(w, "copied")
+	body, _ := ioutil.ReadAll(r.Body)
+	var trans bank.Transaction
+	json.Unmarshal(body, &trans)
+	b.T.RecordTransaction(&trans)
 	logMsg("RECV", string(body))
 }
 
@@ -214,60 +303,112 @@ func ackHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+	fmt.Println("RECV ack: " + ack.ReqKey)
+	logMsg("RECV", "ack: "+ack.ReqKey)
+
+	sleepTime := rand.Intn(1500)
+	fmt.Println("sleep for", sleepTime, "ms")
+	time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 	SendAck(ack)
 }
 
 func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
-	elem := &list.Element{}
-	json.Unmarshal(body, &elem)
-	lastRec := elem.Value.(structs.Request)
-	logMsg("RECV", lastRec.String())
-	l := list.New()
+	lastReq := &structs.Request{}
+	json.Unmarshal(body, &lastReq)
+	logMsg("RECV", lastReq.String())
+	fmt.Println("RECV", lastReq.String())
+	//l := list.New()
+	var sendList []structs.Request
 
-	if elem != nil {
-		key := lastRec.MakeKey()
+	if lastReq != nil {
+		key := lastReq.MakeKey()
 		bToAdd := false
 		for e := sent.Front(); e != nil; e = e.Next() {
-			if bToAdd {
-				l.PushBack(e)
-			}
 			req := e.Value.(structs.Request)
+			if bToAdd {
+				//l.PushBack(req)
+				sendList = append(sendList, req)
+			}
 			if req.MakeKey() == key {
 				bToAdd = true
 			}
 		}
 	}
-	sendSentsToNext(l)
+
+	enc := json.NewEncoder(w)
+	enc.Encode(sendList)
+	logMsg("SENT", "SentList: "+sprtReqSlice(&sendList))
+	fmt.Println("SENT", "Sentlist: "+sprtReqSlice(&sendList))
+	//sendSentsToNext(&sendList)
 }
 
-func sendLastSentToPrev(destServer string) {
+func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	e := sent.Back()
-	msg, err := json.Marshal(e)
+	r := e.Value.(structs.Request)
+	msg, err := json.Marshal(r)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+destServer+"/requestSent", bytes.NewBuffer(msg))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	_, err = client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("ERROR", err)
 	}
-	logMsg("SENT", e.Value.(string))
-}
+	logMsg("SENT", r.String())
+	fmt.Println("SENT", r.String())
 
-func sendSentsToNext(lst *list.List) {
-	for e := lst.Front(); e != nil; e = e.Next() {
-		req := e.Value.(structs.Request)
-		SendRequest(&req)
-		logMsg("SENT", req.String())
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var sentList []structs.Request
+	json.Unmarshal(body, &sentList)
+	logMsg("RECV", "SentList: "+sprtReqSlice(&sentList))
+	fmt.Println("RECV Sentlist:", sprtReqSlice(&sentList))
+
+	for _, req := range sentList {
+		b.Set(&req)
+		utils.LogServer(chain.Server, req.Requestid, req.Account, req.Outcome, req.Transaction, req.Balance)
+		//isleepTime := rand.Intn(1500)
+		//fmt.Println("sleep for", sleepTime, "ms")
+		//time.Sleep(time.Duration(sleepTime) * time.Millisecond)
+		if chain.Istail {
+			//time.Sleep(6000 * time.Millisecond)
+			//SendRequest("localhost:10001", res)
+			SendReply(&req)
+			ack := structs.Ack{
+				ReqKey: req.MakeKey(),
+			}
+			SendAck(&ack)
+		} else {
+			SendRequest(&req)
+		}
 	}
 }
 
-func startUDPService(port int, b *bank.Bank) {
+/*func sendSentsToNext(lst *[]structs.Request) {
+	msg, err := json.Marshal(lst)
+	fmt.Println("msg", string(msg))
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sent", bytes.NewBuffer(msg))
+	req.Header = http.Header{
+		"accept": {"application/json"},
+	}
+	_, err = client.Do(req)
+	if err != nil {
+		log.Println("ERROR while sending Sents to next server", chain.Next)
+	}
+
+	logMsg("SENT", "Sents "+string(msg))
+}
+*/
+
+func startUDPService(b *bank.Bank) {
+	ip, port := structs.GetIPAndPort(chain.Server)
 	localAddr := net.UDPAddr{
 		Port: port,
-		IP:   net.ParseIP("127.0.0.1"),
+		IP:   net.ParseIP(ip),
 	}
 	conn, err := net.ListenUDP("udp", &localAddr)
 	if err != nil {
@@ -302,10 +443,10 @@ func startUDPService(port int, b *bank.Bank) {
 
 		reply.Client = rqst.Client
 		reply.Time = rqst.Time
-		fmt.Println("dd", reply)
+		//fmt.Println("dd", reply)
 		utils.LogServer(chain.Server, reply.Requestid, reply.Account, reply.Outcome, reply.Transaction, reply.Balance)
 		if chain.Istail {
-			SendReply(reply, port)
+			SendReply(reply)
 		} else {
 			SendRequest(reply)
 		}
@@ -340,17 +481,17 @@ func main() {
 		utils.SetTimer(lifetime, die)
 	}
 
-	connMaster := connectToMaster(port)
+	connMaster := connectToMaster()
 	go sendOnlineMsg(connMaster)
 	defer connMaster.Close()
 
-	go startUDPService(port, b)
+	go startUDPService(b)
 
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
 		synchandler(w, r, b, port)
 	})
 	http.HandleFunc("/alterChain", func(w http.ResponseWriter, r *http.Request) {
-		alterChainHandler(w, r)
+		alterChainHandler(w, r, b)
 	})
 
 	http.HandleFunc("/ack", func(w http.ResponseWriter, r *http.Request) {
@@ -360,8 +501,15 @@ func main() {
 		extendChainHandler(w, r, b)
 	})
 
-	http.HandleFunc("/copyBank", func(w http.ResponseWriter, r *http.Request) {
-		copyBankHandler(w, r, b)
+	http.HandleFunc("/extend/bank", func(w http.ResponseWriter, r *http.Request) {
+		extendBankHandler(w, r, b)
+	})
+	http.HandleFunc("/extend/accounts", func(w http.ResponseWriter, r *http.Request) {
+		extendAccountsHandler(w, r, b)
+	})
+
+	http.HandleFunc("/extend/transactions", func(w http.ResponseWriter, r *http.Request) {
+		extendTransactionsHandler(w, r, b)
 	})
 	http.HandleFunc("/requestSent", requestSentHandler)
 	err := http.ListenAndServe(chain.Server, nil)
@@ -369,4 +517,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func sprtReqSlice(rs *[]structs.Request) string {
+	r := "["
+	l := len(*rs)
+	for idx, req := range *rs {
+		r += req.String()
+		if idx < l-1 {
+			r += ","
+		}
+	}
+	r += "]"
+	return r
 }

@@ -15,6 +15,7 @@ type Request struct {
 	Balance     int
 	Transaction string
 	Outcome     string
+	Amount      int
 	Client      net.UDPAddr
 	Time        string
 }

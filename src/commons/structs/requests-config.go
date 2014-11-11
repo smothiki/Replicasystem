@@ -24,7 +24,8 @@ func gettypeList(prob int, typet string) *[]Request {
 			account, _ := getReqs.GetIndex(i).Get("account").String()
 			balances, _ := getReqs.GetIndex(i).Get("balance").String()
 			balance, _ := strconv.Atoi(balances)
-			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			//typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			typet := "deposit" //TODO
 			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
 			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
 		}
@@ -34,7 +35,8 @@ func gettypeList(prob int, typet string) *[]Request {
 			account, _ := getReqs.GetIndex(i).Get("account").String()
 			balances, _ := getReqs.GetIndex(i).Get("balance").String()
 			balance, _ := strconv.Atoi(balances)
-			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			//typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+			typet := "deposit" //TODO
 			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
 			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
 		}
@@ -84,7 +86,8 @@ func GetTestreqs() *[]Request {
 		account, _ := getReqs.GetIndex(i).Get("account").String()
 		balances, _ := getReqs.GetIndex(i).Get("balance").String()
 		balance, _ := strconv.Atoi(balances)
-		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+		//typet, _ := getReqs.GetIndex(i).Get("transaction").String() //TODO
+		typet := "deposit"
 		outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
 		listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance))
 	}

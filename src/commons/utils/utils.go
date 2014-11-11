@@ -58,7 +58,9 @@ func Logoutput(server, servType, reqid, account, outcome string, balance int, tr
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	log.SetOutput(f)
-	log.Printf("%s, requestID %s, %s, Balance: %d, %s", server, reqid, outcome, balance, trans)
+	s := fmt.Sprintf("%s, requestID %s, %s, Balance: %d, %s", server, reqid, outcome, balance, trans)
+	fmt.Println(s)
+	log.Printf(s)
 }
 
 func LogServer(server, reqID, account, outcome, trans string, balance int) {
@@ -81,7 +83,7 @@ func Logevent(server, servType, event string) {
 
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
-	log.Printf("%s EVENT: %s", server, event)
+	fmt.Printf("%s EVENT: %s\n", server, event)
 	log.SetOutput(f)
 	log.Printf("%s EVENT: %s", server, event)
 }
@@ -94,8 +96,8 @@ func LogCEvent(server, event string) {
 	Logevent(server, "client", event)
 }
 
-func LogMEvent(event string) {
-	Logevent("", "master", event)
+func LogMEvent(server, event string) {
+	Logevent(server, "master", event)
 }
 
 func LogMsg(server, servType, msgType, msg string, num int) {
