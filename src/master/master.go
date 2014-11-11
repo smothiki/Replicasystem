@@ -21,7 +21,7 @@ var recvNum, sendNum int
 var master string
 
 func logEvent(event string) {
-	utils.LogMEvent(master, event)
+	utils.LogMEvent("", event)
 }
 
 func logMsg(msgType, msg string) {
@@ -29,7 +29,7 @@ func logMsg(msgType, msg string) {
 		utils.LogMMsg("", msgType, sendNum, msg)
 		sendNum++
 	} else if msgType == "RECV" {
-		utils.LogMMsg("", msgType, sendNum, msg)
+		utils.LogMMsg("", msgType, recvNum, msg)
 		recvNum++
 	} else {
 		log.Println("LOG ERROR: UNKOWN MSG TYPE")
