@@ -142,7 +142,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		//fmt.Println(res)
 		logMsg("RECV", res.String("HISTORY"))
 		b.Set(res)
-		utils.LogServer(chain.Server, res.Requestid, res.Account, res.Outcome, res.Transaction, res.Balance)
+		//		utils.LogServer(chain.Server, res.Requestid, res.Account, res.Outcome, res.Transaction, res.Balance)
 		sleepTime := rand.Intn(1500)
 		fmt.Println("sleep for", sleepTime, "ms")
 		time.Sleep(time.Duration(sleepTime) * time.Millisecond)
@@ -369,7 +369,7 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 
 	for _, req := range sentList {
 		b.Set(&req)
-		utils.LogServer(chain.Server, req.Requestid, req.Account, req.Outcome, req.Transaction, req.Balance)
+		//		utils.LogServer(chain.Server, req.Requestid, req.Account, req.Outcome, req.Transaction, req.Balance)
 		//isleepTime := rand.Intn(1500)
 		//fmt.Println("sleep for", sleepTime, "ms")
 		//time.Sleep(time.Duration(sleepTime) * time.Millisecond)
@@ -444,7 +444,7 @@ func startUDPService(b *bank.Bank) {
 		reply.Client = rqst.Client
 		reply.Time = rqst.Time
 		//fmt.Println("dd", reply)
-		utils.LogServer(chain.Server, reply.Requestid, reply.Account, reply.Outcome, reply.Transaction, reply.Balance)
+		//		utils.LogServer(chain.Server, reply.Requestid, reply.Account, reply.Outcome, reply.Transaction, reply.Balance)
 		if chain.Istail {
 			SendReply(reply)
 		} else {

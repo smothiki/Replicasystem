@@ -55,7 +55,7 @@ func (r *Request) String(strType string) string {
 }
 
 func (req *Request) MakeKey() string {
-	return req.Requestid + " " + req.Time
+	return req.Requestid + "." + req.Time
 }
 
 func (c *Chain) String() string {
