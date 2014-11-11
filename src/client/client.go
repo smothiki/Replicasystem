@@ -143,7 +143,7 @@ func simulate(conn *net.UDPConn, port int) {
 		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
 			SendRequest(dest, &request, port)
-			//			fmt.Println("mYR", readResponse(conn))
+			fmt.Println("result", readResponse(conn))
 		})
 		if err != nil {
 			fmt.Println("timeout")
