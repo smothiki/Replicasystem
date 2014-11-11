@@ -96,9 +96,9 @@ func SendRequest(request *structs.Request) {
 	}
 }
 
-func SendAck(ack *structs.Ack) {
+func SendAck(ack *structs.Ack) error {
 	if chain.Ishead {
-		return
+		return nil
 	}
 	randomSleep(ACK_PROC_TIME, "before sending ack")
 	msg, _ := json.Marshal(ack)
@@ -115,7 +115,9 @@ func SendAck(ack *structs.Ack) {
 	_, err := client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR while sending ack", err)
+		return err
 	}
+	return nil
 }
 
 /* SendReply sends reply to client */
@@ -400,6 +402,15 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 			ack := structs.Ack{
 				ReqKey: req.MakeKey(),
 			}
+			/*for {
+				err := SendAck(&ack)
+				if err == nil {
+					break
+				} else {
+					time.Sleep(1000 * time.Millisecond)
+					SendAck(&ack)
+				}
+			}*/
 			SendAck(&ack)
 		} else {
 			SendRequest(&req)
