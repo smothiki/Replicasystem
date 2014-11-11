@@ -479,7 +479,6 @@ func main() {
 
 	if lifetime != 0 {
 		utils.SetTimer(lifetime, die)
-		//time.AfterFunc(time.Duration(lifetime*1000)*time.Millisecond, die)
 	}
 
 	connMaster := connectToMaster()

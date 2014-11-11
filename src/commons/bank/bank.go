@@ -117,7 +117,7 @@ func (b *Bank) AddAccount(id string, balance int) {
 func MakeTransaction(r *structs.Request) *Transaction {
 	t := &Transaction{
 		Tid:       r.Requestid,
-		Amount:    r.Balance,
+		Amount:    r.Amount,
 		AccountId: r.Account,
 		Operation: r.Transaction,
 	}

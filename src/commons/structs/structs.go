@@ -12,10 +12,10 @@ import (
 type Request struct {
 	Requestid   string
 	Account     string
-	Amount      int
 	Balance     int
 	Transaction string
 	Outcome     string
+	Amount      int
 	Client      net.UDPAddr
 	Time        string
 }

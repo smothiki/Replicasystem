@@ -58,7 +58,7 @@ func LogEventData(server, servType, msgType, msg string) {
 	case "master":
 		name += "mlogs"
 	default:
-		fmt.Println("ERROR while logging events/data, wrong msgType")
+		log.Fatal("ERROR while logging events/data, wrong msgType")
 	}
 
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
