@@ -84,7 +84,7 @@ func SendRequest(request *structs.Request) {
 	if err != nil {
 		log.Println("Error while sending request.", err)
 	}
-	logMsg("SENT", request.String())
+	logMsg("SENT", request.String("HISTORY"))
 	sent.PushBack(*request)
 	fmt.Println("pushed", chain.Server)
 }
@@ -129,7 +129,7 @@ func SendReply(request *structs.Request) {
 	if err != nil {
 		log.Println("ERROR while sending reply to client", err)
 	}
-	logMsg("SENT", request.String())
+	logMsg("SENT", request.String("REPLY"))
 }
 
 func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int) {
@@ -140,7 +140,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
 		//fmt.Println(res)
-		logMsg("RECV", res.String())
+		logMsg("RECV", res.String("HISTORY"))
 		b.Set(res)
 		utils.LogServer(chain.Server, res.Requestid, res.Account, res.Outcome, res.Transaction, res.Balance)
 		sleepTime := rand.Intn(1500)
@@ -316,8 +316,8 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	lastReq := &structs.Request{}
 	json.Unmarshal(body, &lastReq)
-	logMsg("RECV", lastReq.String())
-	fmt.Println("RECV", lastReq.String())
+	logMsg("RECV", lastReq.String("HISTORY"))
+	fmt.Println("RECV", lastReq.String("HISTORY"))
 	//l := list.New()
 	var sendList []structs.Request
 
@@ -356,8 +356,8 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 	if err != nil {
 		log.Println("ERROR", err)
 	}
-	logMsg("SENT", r.String())
-	fmt.Println("SENT", r.String())
+	logMsg("SENT", r.String("HISTORY"))
+	fmt.Println("SENT", r.String("HISTORY"))
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -425,7 +425,7 @@ func startUDPService(b *bank.Bank) {
 
 		rqst := &structs.Request{}
 		json.Unmarshal(buf[:n], &rqst)
-		logMsg("RECV", rqst.String())
+		logMsg("RECV", rqst.String("REQUEST"))
 
 		reply := &structs.Request{}
 		switch rqst.Transaction {
@@ -523,7 +523,7 @@ func sprtReqSlice(rs *[]structs.Request) string {
 	r := "["
 	l := len(*rs)
 	for idx, req := range *rs {
-		r += req.String()
+		r += req.String("HISTORY")
 		if idx < l-1 {
 			r += ","
 		}

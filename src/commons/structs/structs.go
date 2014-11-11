@@ -41,9 +41,17 @@ type Ack struct {
 	ReqKey string
 }
 
-func (r *Request) String() string {
-	return fmt.Sprintf("reqID %s, a/c %s, balance %d, %s, %s, reqTime %s",
-		r.Requestid, r.Account, r.Balance, r.Transaction, r.Outcome, r.Time)
+func (r *Request) String(strType string) string {
+	switch strType {
+	case "REPLY":
+		return fmt.Sprintf("reqID %s, a/c %s, %s, balance %d, %s, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time)
+	case "REQUEST":
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%d) %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
+	case "HISTORY":
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%d), balance %d, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Balance, r.Time)
+	default:
+		return ""
+	}
 }
 
 func (req *Request) MakeKey() string {

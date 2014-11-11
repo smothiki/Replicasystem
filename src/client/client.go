@@ -60,7 +60,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
 
 	_, err = conn.Write(res1B)
-	logMsg("SENT", request.String())
+	logMsg("SENT", request.String("REQUEST"))
 }
 
 func createUDPSocket(client string) *net.UDPConn {
@@ -88,7 +88,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
-	logMsg("RECV", rqst.String())
+	logMsg("RECV", rqst.String("REPLY"))
 	//go utils.LogClient(chain.Server, rqst.Requestid, rqst.Account, rqst.Outcome, rqst.Transaction, rqst.Balance)
 
 	return rqst
