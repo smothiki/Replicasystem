@@ -96,9 +96,9 @@ func SendRequest(request *structs.Request) {
 	}
 }
 
-func SendAck(ack *structs.Ack) error {
+func SendAck(ack *structs.Ack) {
 	if chain.Ishead {
-		return nil
+		return
 	}
 	randomSleep(ACK_PROC_TIME, "before sending ack")
 	msg, _ := json.Marshal(ack)
@@ -115,9 +115,7 @@ func SendAck(ack *structs.Ack) error {
 	_, err := client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR while sending ack", err)
-		return err
 	}
-	return nil
 }
 
 /* SendReply sends reply to client */
@@ -175,14 +173,15 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	newChain := &structs.Chain{}
 	json.Unmarshal(body, &newChain)
 	logMsg("RECV", newChain.String(), "master")
-	if chain.Prev != newChain.Prev && !newChain.Ishead {
+	hasNewPrev := chain.Prev != newChain.Prev && !newChain.Ishead
+	chain = *newChain
+	if hasNewPrev {
 		// if current server has new predecessor, send it the
 		// last record in sent, and wait for sent records
 		// after that entry
 		sendLastSentToPrev(newChain.Prev, b)
 	}
 	//if chain.Next != newChain.Next && !newChain.Istail {}
-	chain = *newChain
 }
 
 func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
@@ -402,15 +401,6 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 			ack := structs.Ack{
 				ReqKey: req.MakeKey(),
 			}
-			/*for {
-				err := SendAck(&ack)
-				if err == nil {
-					break
-				} else {
-					time.Sleep(1000 * time.Millisecond)
-					SendAck(&ack)
-				}
-			}*/
 			SendAck(&ack)
 		} else {
 			SendRequest(&req)
