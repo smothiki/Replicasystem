@@ -78,11 +78,11 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 		for serverIdx, chain := range *statMap {
 			if chain.MsgCnt == 0 && chain.Online {
 				//failure
-				logEvent("server" + serverIdx + " failed")
+				logEvent("server " + serverIdx + " failed")
 				alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				logEvent("new server" + serverIdx + " online")
+				logEvent("new server " + serverIdx + " online")
 				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)

@@ -131,7 +131,7 @@ func (b *Bank) Deposit(req *structs.Request) *structs.Request {
 	resp := b.T.checkTransaction(newTrans)
 	if resp == "new" {
 		resp = "processed"
-		a.deposit(req.Balance)
+		a.deposit(req.Amount)
 		b.T.RecordTransaction(newTrans)
 	}
 	return structs.Makereply(req.Requestid, req.Account, resp, "deposit", req.Amount, a.getbalance())
@@ -145,7 +145,7 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 	if resp == "new" {
 		resp = "processed"
 		b.T.RecordTransaction(newTrans)
-		if err := a.withdraw(req.Balance); err != nil {
+		if err := a.withdraw(req.Amount); err != nil {
 			return structs.Makereply(req.Requestid, req.Account, "insufficientfunds", "withdraw", req.Amount, a.getbalance())
 		}
 	}

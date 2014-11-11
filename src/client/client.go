@@ -27,6 +27,7 @@ func logMsg(msgType, msg, counterServer string) {
 		utils.LogCMsg(chain.Server, msgType, sendNum, msg)
 		sendNum++
 	} else if msgType == "RECV" {
+		msg += " (from " + counterServer + ")"
 		utils.LogCMsg(chain.Server, msgType, recvNum, msg)
 		recvNum++
 	} else {
@@ -117,15 +118,15 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
 	newHeadTail := &structs.ClientNotify{}
-	logMsg("RECV", string(body), "MASTER")
+	json.Unmarshal(body, &newHeadTail)
 	if newHeadTail.Head != "" {
 		chain.Head = newHeadTail.Head
 		fmt.Println("newHead", chain.Head)
-		logMsg("RECV", "New head is "+chain.Head, "MASTER")
+		logMsg("RECV", "New head is "+chain.Head, r.RemoteAddr)
 	} else if newHeadTail.Tail != "" {
 		chain.Tail = newHeadTail.Tail
 		fmt.Println("newTail", chain.Tail)
-		logMsg("RECV", "New tail is "+chain.Tail, "MASTER")
+		logMsg("RECV", "New tail is "+chain.Tail, r.RemoteAddr)
 	}
 }
 

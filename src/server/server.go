@@ -142,7 +142,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
 		//fmt.Println(res)
-		logMsg("RECV", res.String("HISTORY"), r.RemoteAddr)
+		logMsg("RECV", res.String("HISTORY"), chain.Prev)
 		b.Set(res)
 		utils.LogEventData(chain.Server, "server", "PROC", res.String("REPLY"))
 		sleepTime := rand.Intn(1500)
@@ -306,7 +306,7 @@ func ackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	fmt.Println("RECV ack: " + ack.ReqKey)
-	logMsg("RECV", "ack: "+ack.ReqKey, r.RemoteAddr)
+	logMsg("RECV", "ack: "+ack.ReqKey, chain.Next)
 
 	sleepTime := rand.Intn(1500)
 	fmt.Println("sleep for", sleepTime, "ms")
@@ -427,8 +427,7 @@ func startUDPService(b *bank.Bank) {
 
 		rqst := &structs.Request{}
 		json.Unmarshal(buf[:n], &rqst)
-		//logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
-		logMsg("RECV", "BB", "AA")
+		logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
 
 		reply := &structs.Request{}
 		switch rqst.Transaction {
