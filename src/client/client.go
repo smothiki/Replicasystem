@@ -21,8 +21,9 @@ const MAXLINE = 1024
 var chain structs.Chain
 var recvNum, sendNum int
 
-func logMsg(msgType, msg string) {
+func logMsg(msgType, msg, counterServer string) {
 	if msgType == "SENT" {
+		msg += " (to " + counterServer + ")"
 		utils.LogCMsg(chain.Server, msgType, sendNum, msg)
 		sendNum++
 	} else if msgType == "RECV" {
@@ -60,7 +61,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 	res1B, err := json.Marshal(request)
 
 	_, err = conn.Write(res1B)
-	logMsg("SENT", request.String("REQUEST"))
+	logMsg("SENT", request.String("REQUEST"), server)
 }
 
 func createUDPSocket(client string) *net.UDPConn {
@@ -88,7 +89,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
-	logMsg("RECV", rqst.String("REPLY"))
+	logMsg("RECV", rqst.String("REPLY"), "SERVER")
 	//go utils.LogClient(chain.Server, rqst.Requestid, rqst.Account, rqst.Outcome, rqst.Transaction, rqst.Balance)
 
 	return rqst
@@ -113,15 +114,15 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
 	newHeadTail := &structs.ClientNotify{}
-	logMsg("RECV", string(body))
+	logMsg("RECV", string(body), "MASTER")
 	if newHeadTail.Head != "" {
 		chain.Head = newHeadTail.Head
 		fmt.Println("newHead", chain.Head)
-		logMsg("RECV", "New head is "+chain.Head)
+		logMsg("RECV", "New head is "+chain.Head, "MASTER")
 	} else if newHeadTail.Tail != "" {
 		chain.Tail = newHeadTail.Tail
 		fmt.Println("newTail", chain.Tail)
-		logMsg("RECV", "New tail is "+chain.Tail)
+		logMsg("RECV", "New tail is "+chain.Tail, "MASTER")
 	}
 }
 
@@ -135,7 +136,6 @@ func simulate(conn *net.UDPConn, port int) {
 		} else {
 			dest = chain.Head
 		}
-		fmt.Println("dest", dest)
 
 		// SendRequest(chain.tail, "GET", "query", &request)
 		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {

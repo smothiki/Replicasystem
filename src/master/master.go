@@ -24,11 +24,13 @@ func logEvent(event string) {
 	utils.LogMEvent("", event)
 }
 
-func logMsg(msgType, msg string) {
+func logMsg(msgType, msg, counterServer string) {
 	if msgType == "SENT" {
+		msg += " (to " + counterServer + ")"
 		utils.LogMMsg("", msgType, sendNum, msg)
 		sendNum++
 	} else if msgType == "RECV" {
+		msg += " (from " + counterServer + ")"
 		utils.LogMMsg("", msgType, recvNum, msg)
 		recvNum++
 	} else {
@@ -65,7 +67,7 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 			keyPort := strconv.Itoa(sourceAddr.Port - 100)
 			key := "127.0.0.1:" + keyPort
 			(*statMap)[key].MsgCnt++
-			logMsg("RECV", "ONLINE (from "+key+")")
+			logMsg("RECV", "ONLINE", key)
 		}
 	}
 }
@@ -80,7 +82,7 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 				alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				logEvent("new server" + serverIdx + "online")
+				logEvent("new server" + serverIdx + " online")
 				extendChain(serverIdx, statMap)
 			}
 			//fmt.Println(serverIdx, chain)
@@ -134,7 +136,7 @@ func notifyServer(dest, action string, newChain *structs.Chain) {
 	if err != nil {
 		log.Println("ERROR whiile notifying server chain modification", err)
 	}
-	logMsg("SENT", newChain.String())
+	logMsg("SENT", newChain.String(), dest)
 }
 
 func notifyClient(dest string, data *structs.ClientNotify) {
@@ -148,7 +150,11 @@ func notifyClient(dest string, data *structs.ClientNotify) {
 	if err != nil {
 		log.Println("ERROR while notifying client chain modification", err)
 	}
-	logMsg("SENT", string(msg))
+	if data.Head != "" {
+		logMsg("SENT", "New head is "+data.Head, dest)
+	} else {
+		logMsg("SENT", "New tail is "+data.Tail, dest)
+	}
 }
 
 func notifyClients(data *structs.ClientNotify) {
