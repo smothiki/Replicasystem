@@ -365,7 +365,7 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	lastReq := &structs.Request{}
 	json.Unmarshal(body, &lastReq)
-	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), chain.Next)
+	logMsg("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"), "new successor")
 	fmt.Println("RECV", "Last entry in 'Sent': "+lastReq.String("HISTORY"))
 	var sendList []structs.Request
 
@@ -392,7 +392,7 @@ func requestSentHandler(w http.ResponseWriter, r *http.Request) {
 
 	enc := json.NewEncoder(w)
 	enc.Encode(sendList)
-	logMsg("SENT", "'Sent': "+sprtReqSlice(&sendList), chain.Next)
+	logMsg("SENT", "'Sent': "+sprtReqSlice(&sendList), "new sucessor")
 	fmt.Println("SENT", "'Sent': "+sprtReqSlice(&sendList))
 }
 
