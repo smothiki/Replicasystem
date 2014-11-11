@@ -19,7 +19,7 @@ var config, request *gson.Json
 
 func SetConfigFile(filename string) {
 	configFile := GetWorkDir() + "config/" + filename
-	requestFile := GetWorkDir() + "config/request.json"
+	requestFile := GetWorkDir() + "config/request01.json"
 	config, _ = gson.NewJson(GetFileBytes(configFile))
 	request, _ = gson.NewJson(GetFileBytes(requestFile))
 }

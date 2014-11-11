@@ -1,1 +1,2 @@
-2014/11/11 00:29:44 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4003
+2014/11/11 00:38:02 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4003
+2014/11/11 00:38:14 127.0.0.1:4999 RECV:#6 New tail is 127.0.0.1:4004

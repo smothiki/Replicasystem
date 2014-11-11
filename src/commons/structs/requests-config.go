@@ -10,7 +10,7 @@ import (
 
 func gettypeList(prob int, typet string) *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request01.json"))
 	getReqs := js.Get("requests").Get(typet)
 	a, _ := getReqs.Array()
 	fmt.Println(len(a))
@@ -22,21 +22,21 @@ func gettypeList(prob int, typet string) *[]Request {
 		for i := 0; i < len(a); i++ {
 			reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
 			account, _ := getReqs.GetIndex(i).Get("account").String()
-			balances, _ := getReqs.GetIndex(i).Get("balance").String()
-			balance, _ := strconv.Atoi(balances)
+			amounts, _ := getReqs.GetIndex(i).Get("amount").String()
+			amount, _ := strconv.Atoi(amounts)
 			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
 			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
-			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance, 0))
+			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, amount, 0))
 		}
 	} else {
 		for i := 0; i < prob; i++ {
 			reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
 			account, _ := getReqs.GetIndex(i).Get("account").String()
-			balances, _ := getReqs.GetIndex(i).Get("balance").String()
-			balance, _ := strconv.Atoi(balances)
+			amounts, _ := getReqs.GetIndex(i).Get("amount").String()
+			amount, _ := strconv.Atoi(amounts)
 			typet, _ := getReqs.GetIndex(i).Get("transaction").String()
 			outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
-			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance, 0))
+			listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, amount, 0))
 		}
 	}
 	return &listreqs
@@ -76,17 +76,17 @@ func GetrequestList(prob int, typet string) *[]Request {
 
 func GetTestreqs() *[]Request {
 	listreqs := make([]Request, 0, 1)
-	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request.json"))
+	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/request01.json"))
 	getReqs := js.Get("requests").Get("tests")
 	a, _ := getReqs.Array()
 	for i := 0; i < len(a); i++ {
 		reqid, _ := getReqs.GetIndex(i).Get("requestid").String()
 		account, _ := getReqs.GetIndex(i).Get("account").String()
-		balances, _ := getReqs.GetIndex(i).Get("balance").String()
-		balance, _ := strconv.Atoi(balances)
+		amounts, _ := getReqs.GetIndex(i).Get("amount").String()
+		amount, _ := strconv.Atoi(amounts)
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
 		outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
-		listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, balance, 0))
+		listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, amount, 0))
 	}
 	return &listreqs
 }
