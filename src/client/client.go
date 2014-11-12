@@ -67,6 +67,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("SENT", request.String("REQUEST"))
 	logMsg("SENT", request.String("REQUEST"), server)
 }
 
@@ -99,6 +100,7 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
+	fmt.Println("RECV", rqst.String("REPLY"))
 	logMsg("RECV", rqst.String("REPLY"), "SERVER")
 
 	return rqst
@@ -143,10 +145,10 @@ func simulate(conn *net.UDPConn, port, clientIdx int) {
 		err := utils.Timeout("Request", 5000*time.Millisecond,
 			func() {
 				SendRequest(dest, &request, port)
-				fmt.Println("result", readResponse(conn))
+				fmt.Println("result", *readResponse(conn))
 			})
 		if err != nil {
-			//fmt.Println(err)
+			fmt.Println(err)
 		}
 	}
 }
@@ -167,11 +169,9 @@ func main() {
 	utils.LogCEvent(chain.Server, "Client started!"+m)
 	conn := createUDPSocket("127.0.0.1:" + os.Args[1])
 	clientIdx := 999 - port%1000
-	//go simulate(chain, conn)
+	//wait for servers to start up
+	time.Sleep(2000 * time.Millisecond)
 	go simulate(conn, port, clientIdx)
-	//re := structs.Request{"1.1.1", "12", 5, "deposit", ""}
-	//SendRequest("127.0.0.1:4001", &re)
-	//readResponse(conn)
 	http.HandleFunc("/alterChain", alterChainHandler)
 	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)
 	if err != nil {

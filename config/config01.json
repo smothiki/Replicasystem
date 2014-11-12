@@ -3,7 +3,7 @@
   "chainlength": "4",
   "chain1series": "4",
   "MaxRequests":"20",
-  "msgLossProb": "0.2",
+  "msgLossProb": "0.0",
   "testcases" : ["predefined"],
   "testrequests" : ["request01.json"],
   "master" : "127.0.0.1:65535",

@@ -1,5 +1,0 @@
-2014/11/11 21:38:41 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4004
-2014/11/11 21:38:41 127.0.0.1:4999 EVENT: UDP Socket connected!
-2014/11/11 21:38:41 127.0.0.1:4999 SENT:#0 reqID 123, a/c 1, deposit(5) 1415759921 (to 127.0.0.1:4001)
-2014/11/11 21:38:44 127.0.0.1:4999 RECV:#0 reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921 (from SERVER)
-2014/11/11 21:38:44 127.0.0.1:4999 SENT:#1 reqID 124, a/c 2, deposit(10) 1415759924 (to 127.0.0.1:4001)

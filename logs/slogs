@@ -1,50 +1,12 @@
-2014/11/11 21:38:41 127.0.0.1:4001 EVENT: Server started! Prev: , Next: 127.0.0.1:4002, isHead: true, isTail: false, isOnline: true
-2014/11/11 21:38:41 127.0.0.1:4001 EVENT: Connected to master
-2014/11/11 21:38:41 127.0.0.1:4001 SENT:#0 ONLINE (to master)
-2014/11/11 21:38:41 127.0.0.1:4002 EVENT: Server started! Prev: 127.0.0.1:4001, Next: 127.0.0.1:4003, isHead: false, isTail: false, isOnline: true
-2014/11/11 21:38:41 127.0.0.1:4002 EVENT: Connected to master
-2014/11/11 21:38:41 127.0.0.1:4002 SENT:#0 ONLINE (to master)
-2014/11/11 21:38:41 127.0.0.1:4003 EVENT: Server started! Prev: 127.0.0.1:4002, Next: 127.0.0.1:4004, isHead: false, isTail: false, isOnline: true
-2014/11/11 21:38:41 127.0.0.1:4003 EVENT: Connected to master
-2014/11/11 21:38:41 127.0.0.1:4003 SENT:#0 ONLINE (to master)
-2014/11/11 21:38:41 127.0.0.1:4001 RECV:#0 reqID 123, a/c 1, deposit(5) 1415759921 (from 127.0.0.1:4999)
-2014/11/11 21:38:41 127.0.0.1:4001 PROC: reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921
-2014/11/11 21:38:41 127.0.0.1:4004 EVENT: Server started! Prev: 127.0.0.1:4003, Next: , isHead: false, isTail: true, isOnline: true
-2014/11/11 21:38:41 127.0.0.1:4004 EVENT: Connected to master
-2014/11/11 21:38:41 127.0.0.1:4004 SENT:#0 ONLINE (to master)
-2014/11/11 21:38:42 127.0.0.1:4001 SENT:#1 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (to 127.0.0.1:4002)
-2014/11/11 21:38:42 127.0.0.1:4001 EVENT: Added 123.1415759921 into 'Sent'
-2014/11/11 21:38:42 127.0.0.1:4002 RECV:#0 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (from 127.0.0.1:4001)
-2014/11/11 21:38:42 127.0.0.1:4002 PROC: reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921
-2014/11/11 21:38:42 127.0.0.1:4001 SENT:#2 ONLINE (to master)
-2014/11/11 21:38:42 127.0.0.1:4002 SENT:#1 ONLINE (to master)
-2014/11/11 21:38:42 127.0.0.1:4003 SENT:#1 ONLINE (to master)
-2014/11/11 21:38:42 127.0.0.1:4004 SENT:#1 ONLINE (to master)
-2014/11/11 21:38:42 127.0.0.1:4002 SENT:#2 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (to 127.0.0.1:4003)
-2014/11/11 21:38:42 127.0.0.1:4002 EVENT: Added 123.1415759921 into 'Sent'
-2014/11/11 21:38:42 127.0.0.1:4003 RECV:#0 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (from 127.0.0.1:4002)
-2014/11/11 21:38:42 127.0.0.1:4003 PROC: reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921
-2014/11/11 21:38:43 127.0.0.1:4003 SENT:#2 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (to 127.0.0.1:4004)
-2014/11/11 21:38:43 127.0.0.1:4003 EVENT: Added 123.1415759921 into 'Sent'
-2014/11/11 21:38:43 127.0.0.1:4004 RECV:#0 reqID 123, a/c 1, deposit(5), balance 5, reqTime 1415759921 (from 127.0.0.1:4003)
-2014/11/11 21:38:43 127.0.0.1:4004 PROC: reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921
-2014/11/11 21:38:43 127.0.0.1:4001 SENT:#3 ONLINE (to master)
-2014/11/11 21:38:43 127.0.0.1:4002 SENT:#3 ONLINE (to master)
-2014/11/11 21:38:43 127.0.0.1:4003 SENT:#3 ONLINE (to master)
-2014/11/11 21:38:43 127.0.0.1:4004 SENT:#2 ONLINE (to master)
-2014/11/11 21:38:44 127.0.0.1:4004 SENT:#3 reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921 (to 127.0.0.1:4999)
-2014/11/11 21:38:44 127.0.0.1:4001 SENT:#4 ONLINE (to master)
-2014/11/11 21:38:44 127.0.0.1:4002 SENT:#4 ONLINE (to master)
-2014/11/11 21:38:44 127.0.0.1:4003 SENT:#4 ONLINE (to master)
-2014/11/11 21:38:44 127.0.0.1:4004 SENT:#4 ONLINE (to master)
-2014/11/11 21:38:45 127.0.0.1:4001 SENT:#5 ONLINE (to master)
-2014/11/11 21:38:45 127.0.0.1:4002 SENT:#5 ONLINE (to master)
-2014/11/11 21:38:45 127.0.0.1:4003 SENT:#5 ONLINE (to master)
-2014/11/11 21:38:45 127.0.0.1:4004 SENT:#5 ONLINE (to master)
-2014/11/11 21:38:45 127.0.0.1:4004 SENT:#6 ack: 123.1415759921 (to 127.0.0.1:4003)
-2014/11/11 21:38:45 127.0.0.1:4003 EVENT: Removed 123.1415759921 from 'Sent'
-2014/11/11 21:38:45 127.0.0.1:4003 RECV:#1 ack: 123.1415759921 (from 127.0.0.1:4004)
-2014/11/11 21:38:46 127.0.0.1:4001 SENT:#6 ONLINE (to master)
-2014/11/11 21:38:46 127.0.0.1:4002 SENT:#6 ONLINE (to master)
-2014/11/11 21:38:46 127.0.0.1:4003 SENT:#6 ONLINE (to master)
-2014/11/11 21:38:46 127.0.0.1:4004 SENT:#7 ONLINE (to master)
+2014/11/12 08:14:24 127.0.0.1:4004 EVENT: Server started! Prev: 127.0.0.1:4003, Next: , isHead: false, isTail: true, isOnline: true
+2014/11/12 08:14:24 127.0.0.1:4004 EVENT: Connected to master
+2014/11/12 08:14:24 127.0.0.1:4004 SENT:#0 ONLINE (to master)
+2014/11/12 08:14:24 127.0.0.1:4003 EVENT: Server started! Prev: 127.0.0.1:4002, Next: 127.0.0.1:4004, isHead: false, isTail: false, isOnline: true
+2014/11/12 08:14:24 127.0.0.1:4003 EVENT: Connected to master
+2014/11/12 08:14:24 127.0.0.1:4003 SENT:#0 ONLINE (to master)
+2014/11/12 08:14:24 127.0.0.1:4001 EVENT: Server started! Prev: , Next: 127.0.0.1:4002, isHead: true, isTail: false, isOnline: true
+2014/11/12 08:14:24 127.0.0.1:4001 EVENT: Connected to master
+2014/11/12 08:14:24 127.0.0.1:4001 SENT:#0 ONLINE (to master)
+2014/11/12 08:14:24 127.0.0.1:4002 EVENT: Server started! Prev: 127.0.0.1:4001, Next: 127.0.0.1:4003, isHead: false, isTail: false, isOnline: true
+2014/11/12 08:14:24 127.0.0.1:4002 EVENT: Connected to master
+2014/11/12 08:14:24 127.0.0.1:4002 SENT:#0 ONLINE (to master)
