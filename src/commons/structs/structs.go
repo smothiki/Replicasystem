@@ -21,17 +21,19 @@ type Request struct {
 }
 
 type Chain struct {
-	Head           string
-	Tail           string
-	Prev           string
-	Next           string
-	Server         string
-	Ishead         bool
-	Istail         bool
-	MsgCnt         int
-	Online         bool
-	FailOnReqSent  bool
-	FailOnRecvSent bool
+	Head            string
+	Tail            string
+	Prev            string
+	Next            string
+	Server          string
+	Ishead          bool
+	Istail          bool
+	MsgCnt          int
+	Online          bool
+	FailOnReqSent   bool
+	FailOnRecvSent  bool
+	FailOnExtension bool
+	Available       bool
 }
 
 type ClientNotify struct {
@@ -83,17 +85,19 @@ func (c *Chain) SetChain(cc *Chain) {
 func Makechain(series, server, length int) *Chain {
 	chain := &Chain{
 		//next two fields are used only by client
-		Head:           "",
-		Tail:           "",
-		Prev:           "",
-		Next:           "",
-		Server:         "127.0.0.1:" + strconv.Itoa(server),
-		Ishead:         false,
-		Istail:         false,
-		MsgCnt:         0,
-		Online:         true,
-		FailOnReqSent:  false,
-		FailOnRecvSent: false,
+		Head:            "",
+		Tail:            "",
+		Prev:            "",
+		Next:            "",
+		Server:          "127.0.0.1:" + strconv.Itoa(server),
+		Ishead:          false,
+		Istail:          false,
+		MsgCnt:          0,
+		Online:          true,
+		FailOnReqSent:   false,
+		FailOnRecvSent:  false,
+		FailOnExtension: false,
+		Available:       true,
 	}
 
 	if utils.GetStartDelay(server%1000-1) > 0 {

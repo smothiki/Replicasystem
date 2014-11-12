@@ -74,7 +74,9 @@ func sendOnlineMsg(conn *net.UDPConn) {
 	for {
 		msg, _ := json.Marshal(1)
 		_, err := conn.Write(msg)
-		logMsg("SENT", "ONLINE", "master")
+		if chain.Available {
+			logMsg("SENT", "ONLINE", "master")
+		}
 		if err != nil {
 			log.Println("ERROR while sending online msg to master.", err)
 		}
@@ -199,7 +201,6 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 //indicates new tail being added to chain. Both old and new tail
 //show deal with extendChain request
 func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
-	fmt.Fprintf(w, "extended")
 	body, _ := ioutil.ReadAll(r.Body)
 	newChain := &structs.Chain{}
 	json.Unmarshal(body, &newChain)
@@ -208,8 +209,18 @@ func extendChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 		//old tail
 		sendBankToTail(b, newChain)
 		sendSentToTail(newChain)
+		fmt.Fprintf(w, "extended")
+	} else {
+		//new tail
+		if chain.FailOnExtension {
+			utils.LogSEvent(chain.Server, "Failed during extension")
+			chain.Available = false
+			fmt.Fprintf(w, "failed")
+		} else {
+			fmt.Fprintf(w, "extended")
+		}
 	}
-	chain = *newChain
+	chain.SetChain(newChain)
 }
 
 //sendBankToTail sends bank information in old tail to new tail
@@ -523,6 +534,7 @@ func main() {
 	chain = *structs.Makechain(series, port, lenservers)
 	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)
 	chain.FailOnRecvSent = utils.GetFailOnRecvSent(port%1000 - 1)
+	chain.FailOnExtension = utils.GetFailOnExtension(port%1000 - 1)
 
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)

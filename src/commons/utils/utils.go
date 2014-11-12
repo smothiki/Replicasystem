@@ -146,16 +146,19 @@ func GetTestRequestFile(index int) string {
 }
 
 func GetFailOnReqSent(index int) bool {
-	v, _ := config.Get("failOnReqSent").GetIndex(index).Int()
-	if v == 1 {
-		return true
-	} else {
-		return false
-	}
+	return getBoolInArray(index, "failOnReqSent")
 }
 
 func GetFailOnRecvSent(index int) bool {
-	v, _ := config.Get("failOnRecvSent").GetIndex(index).Int()
+	return getBoolInArray(index, "failOnRecvSent")
+}
+
+func GetFailOnExtension(index int) bool {
+	return getBoolInArray(index, "failOnExtension")
+}
+
+func getBoolInArray(index int, key string) bool {
+	v, _ := config.Get(key).GetIndex(index).Int()
 	if v == 1 {
 		return true
 	} else {

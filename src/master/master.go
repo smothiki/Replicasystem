@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/replicasystem/src/commons/structs"
 	"github.com/replicasystem/src/commons/utils"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -73,6 +74,9 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 		if r == 1 {
 			keyPort := strconv.Itoa(sourceAddr.Port - 100)
 			key := "127.0.0.1:" + keyPort
+			if !(*statMap)[key].Available {
+				continue
+			}
 			(*statMap)[key].MsgCnt++
 			logMsg("RECV", "ONLINE", key)
 		}
@@ -86,14 +90,18 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 	for {
 		time.Sleep(CHECK_CYCLE * time.Millisecond)
 		for serverIdx, chain := range *statMap {
+			if !chain.Available {
+				continue
+			}
 			if chain.MsgCnt == 0 && chain.Online {
 				//failure
 				logEvent("server " + serverIdx + " failed")
 				alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				logEvent("new server " + serverIdx + " online")
-				extendChain(serverIdx, statMap)
+				if extendChain(serverIdx, statMap) {
+					logEvent("new server " + serverIdx + " online")
+				}
 			}
 			//fmt.Println(serverIdx, chain)
 			(*statMap)[serverIdx].MsgCnt = 0
@@ -102,7 +110,7 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 }
 
 //extendChain
-func extendChain(newTail string, statMap *map[string]*structs.Chain) {
+func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 	// find tail
 	var oldTail string
 	for serverIdx, chain := range *statMap {
@@ -120,7 +128,12 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) {
 	(*statMap)[newTail].Prev = oldTail
 	(*statMap)[newTail].Next = ""
 	(*statMap)[newTail].Online = true
-	notifyServer(newTail, "extendChain", (*statMap)[newTail])
+	r := notifyServer(newTail, "extendChain", (*statMap)[newTail])
+	if !r {
+		logEvent("Server " + newTail + " failed during extension. Stop extending chain.")
+		(*statMap)[newTail].Available = false
+		return false
+	}
 
 	// notify old tail
 	(*statMap)[oldTail].Istail = false
@@ -133,9 +146,10 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) {
 		Tail: newTail,
 	}
 	notifyClients(&newHeadTail)
+	return true
 }
 
-func notifyServer(dest, action string, newChain *structs.Chain) {
+func notifyServer(dest, action string, newChain *structs.Chain) bool {
 	msg, _ := json.Marshal(newChain)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST",
@@ -143,11 +157,24 @@ func notifyServer(dest, action string, newChain *structs.Chain) {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
-	_, err := client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("ERROR whiile notifying server chain modification", err)
 	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	logMsg("SENT", newChain.String(), dest)
+
+	if action == "extendChain" && string(body) == "failed" {
+		//handle failure
+		return false
+	}
+	return true
 }
 
 func notifyClient(dest string, data *structs.ClientNotify) {
