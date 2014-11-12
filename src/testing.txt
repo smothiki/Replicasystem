@@ -1,0 +1,26 @@
+config01.json
+  Remove failed internal process S, including forward updates in Sent^S
+
+config02.json
+  Removal of head and tail server
+
+config03.json
+  Remove failed internal process S, and remove its predecessor S- when S- fails
+  during removal of S, immediately after learning which updates in Sent^S
+  should be forwarded to S+
+
+config04.json
+  Remove failed internal process S and remove its successor S+ when S+ fails
+  during removal of S, immediately after receiving the updates in Sent^S-
+
+config05.json
+  Chain extension
+
+config06.json
+  Chain extension when current tail fails during chain extension
+
+config07.json
+  Abort of chain extension when new server fails during chain extension
+
+config08.json
+  Message loss
