@@ -85,8 +85,7 @@ IV. BUGS AND LIMITATIONS
 
 1. Hard coded IP addresses
 2. Hard coded random requests generation
-3. Balance / Amount int
-4. Doesn't resend requests on time out
+3. Doesn't resend requests on time out
 
 ============================================================
 

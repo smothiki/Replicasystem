@@ -166,18 +166,19 @@ func getBoolInArray(index int, key string) bool {
 	}
 }
 
-func Timeout(msg string, seconds time.Duration, f func()) error {
-	c := make(chan bool)
-	go func() {
-		time.Sleep(seconds)
-		c <- true
-	}()
+func Timeout(msg string, seconds time.Duration, f func(), xxx int) error {
+	tmr := time.NewTimer(seconds)
+	exp := true
 	go func() {
 		f()
-		c <- false
+		tmr.Reset(1 * time.Millisecond)
+		exp = false
 	}()
-	if <-c && msg != "" {
-		return errors.New(msg + "timed out")
+	<-tmr.C
+
+	if exp {
+		fmt.Println("EXP", xxx)
+		return errors.New(msg + " timeout")
 	}
 	return nil
 }

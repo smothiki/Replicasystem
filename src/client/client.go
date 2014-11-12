@@ -135,6 +135,7 @@ func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
 		listreqs = structs.GetrequestList(3, "getbalance", reqFile)
 	}
 	var dest string
+	xxx := 0
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
 			dest = chain.Tail
@@ -144,12 +145,18 @@ func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
 
 		err := utils.Timeout("Request", waitTime*time.Millisecond,
 			func() {
+				fmt.Println("ENTER LOOP", xxx)
 				SendRequest(dest, &request, port)
-				fmt.Println("result", *readResponse(conn))
-			})
+				fmt.Println("MID   LOOP", xxx)
+				fmt.Println("result", xxx, *readResponse(conn))
+				fmt.Println("LEAVE LOOP", xxx)
+				fmt.Println()
+				return
+			}, xxx)
 		if err != nil {
-			fmt.Println(err)
+			//fmt.Println(xxx, err)
 		}
+		xxx++
 	}
 }
 

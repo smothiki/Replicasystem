@@ -8,7 +8,7 @@ import (
 
 type Transaction struct {
 	Tid       string
-	Amount    int
+	Amount    float32
 	AccountId string
 	Operation string
 }
@@ -47,19 +47,19 @@ func (t1 *Transaction) equals(t2 *Transaction) bool {
 
 type Account struct {
 	Accountid string
-	Balance   int
+	Balance   float32
 }
 
-func (a *Account) getbalance() int {
+func (a *Account) getbalance() float32 {
 
 	return a.Balance
 }
 
-func (a *Account) deposit(amount int) {
+func (a *Account) deposit(amount float32) {
 	a.Balance = a.Balance + amount
 }
 
-func (a *Account) withdraw(amount int) error {
+func (a *Account) withdraw(amount float32) error {
 	temp := a.Balance - amount
 	if temp < 0 {
 		err := errors.New("no funds")
@@ -105,7 +105,7 @@ func (b *Bank) CheckId(accountId string) {
 	//TODO:log
 }
 
-func (b *Bank) AddAccount(id string, balance int) {
+func (b *Bank) AddAccount(id string, balance float32) {
 	acc := &Account{
 		Accountid: id,
 		Balance:   balance,
