@@ -148,18 +148,19 @@ func simulate(conn *net.UDPConn, port, clientIdx int) {
 			dest = chain.Head
 		}
 
-		// SendRequest(chain.tail, "GET", "query", &request)
-		err := utils.Timeout("timeout", time.Duration(5)*time.Second, func() {
-			SendRequest(dest, &request, port)
-			fmt.Println("result", readResponse(conn))
-		})
+		err := utils.Timeout("Request", 5000*time.Millisecond,
+			func() {
+				SendRequest(dest, &request, port)
+				fmt.Println("result", readResponse(conn))
+			})
 		if err != nil {
-			fmt.Println("timeout")
+			//fmt.Println(err)
 		}
 	}
 }
 
 func main() {
+	//read configuration
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
 	series := utils.GetConfigInt("chain1series")
@@ -169,6 +170,7 @@ func main() {
 	chain = *structs.Makechain(series, port, lenservers)
 	recvNum = 0
 	sendNum = 0
+
 	m := "Head server: " + chain.Head + ", Tail server:" + chain.Tail
 	utils.LogCEvent(chain.Server, "Client started!"+m)
 	conn := createUDPSocket("127.0.0.1:" + os.Args[1])

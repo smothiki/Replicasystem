@@ -25,9 +25,10 @@ const SENT_HEALTH_INTERVAL = 1000 // frequency of sending online msg to master
 const ACK_PROC_TIME = 3000        // time of (simulated) ack processing
 const RQST_PROC_TIME = 1500       // time of (simulated) request processing
 
-var sent list.List       // 'Sent'
-var chain structs.Chain  // info of current server
-var recvNum, sendNum int // msg counters for logging
+var sent list.List                // 'Sent'
+var chain structs.Chain           // info of current server
+var recvNum, sendNum, lossNum int // msg counters for logging
+var lossProb float32              //probability of message loss
 
 //logMsg logs sent/received message msg into log file,
 //msgType is "SENT" or "RECV", counterServer is receiving / sender
@@ -40,6 +41,9 @@ func logMsg(msgType, msg, counterServer string) {
 		msg += " (from " + counterServer + ")"
 		utils.LogSMsg(chain.Server, msgType, recvNum, msg)
 		recvNum++
+	} else if msgType == "LOSS" {
+		utils.LogSMsg(chain.Server, msgType, lossNum, msg)
+		lossNum++
 	} else {
 		log.Println("LOG ERROR: UNKOWN MSG TYPE")
 	}
@@ -129,6 +133,10 @@ func SendAck(ack *structs.Ack) {
 
 //SendReply sends reply (request) to client
 func SendReply(request *structs.Request) {
+	if rand.Float32() < lossProb {
+		logMsg("LOSS", request.String("REPLY"), request.Client.String())
+		return
+	}
 	randomSleep(RQST_PROC_TIME, "before sending request")
 	res1B, err := json.Marshal(request)
 	/*localAddr := net.UDPAddr{
@@ -356,8 +364,6 @@ func ackHandler(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &ack)
 	for e := sent.Front(); e != nil; e = e.Next() {
 		req := e.Value.(structs.Request)
-		fmt.Println("makeKey", req.MakeKey())
-		fmt.Println("ackKey", ack.ReqKey)
 		if req.MakeKey() == ack.ReqKey {
 			utils.LogSEvent(chain.Server, "Removed "+req.MakeKey()+" from 'Sent'")
 			sent.Remove(e)
@@ -486,6 +492,10 @@ func startUDPService(b *bank.Bank) {
 
 		rqst := &structs.Request{}
 		json.Unmarshal(buf[:n], &rqst)
+		if rand.Float32() < lossProb {
+			logMsg("LOSS", rqst.String("REQUEST"), rqst.Client.String())
+			continue
+		}
 		logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
 
 		reply := &structs.Request{}
@@ -524,6 +534,7 @@ func die() {
 func main() {
 	recvNum = 0
 	sendNum = 0
+	lossNum = 0
 	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
@@ -535,6 +546,8 @@ func main() {
 	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)
 	chain.FailOnRecvSent = utils.GetFailOnRecvSent(port%1000 - 1)
 	chain.FailOnExtension = utils.GetFailOnExtension(port%1000 - 1)
+	r, _ := strconv.ParseFloat(utils.Getconfig("msgLossProb"), 32)
+	lossProb = float32(r)
 
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)

@@ -131,6 +131,7 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 	r := notifyServer(newTail, "extendChain", (*statMap)[newTail])
 	if !r {
 		logEvent("Server " + newTail + " failed during extension. Stop extending chain.")
+		fmt.Println(newTail + " failed during extension")
 		(*statMap)[newTail].Available = false
 		return false
 	}
