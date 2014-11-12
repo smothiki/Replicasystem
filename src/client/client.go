@@ -16,11 +16,14 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
-const MAXLINE = 1024
+const MAXLINE = 1024 //max size of char buffer
 
-var chain structs.Chain
-var recvNum, sendNum int
+var chain structs.Chain  //info of chain
+var recvNum, sendNum int //msg counter for logging
 
+//logMsg logs msg to log file, msgType can be "SENT"
+//or "RECV", counterServer is corresponding receiver
+//or sender
 func logMsg(msgType, msg, counterServer string) {
 	if msgType == "SENT" {
 		msg += " (to " + counterServer + ")"
@@ -35,7 +38,7 @@ func logMsg(msgType, msg, counterServer string) {
 	}
 }
 
-/* SendRequest sends request (query/update) to server */
+//SendRequest sends request (query/update) to server
 func SendRequest(server string, request *structs.Request, port int) {
 	destIP, destPort := structs.GetIPAndPort(server)
 	destAddr := net.UDPAddr{
@@ -57,7 +60,6 @@ func SendRequest(server string, request *structs.Request, port int) {
 	defer conn.Close()
 
 	request.Client = localAddr
-	//request.Time = time.Now().String()
 	request.Time = fmt.Sprintf("%d", (time.Now().Unix()))
 	res1B, err := json.Marshal(request)
 
@@ -68,6 +70,8 @@ func SendRequest(server string, request *structs.Request, port int) {
 	logMsg("SENT", request.String("REQUEST"), server)
 }
 
+//createUDPSocket creates and listen UDP socket, through
+//which servers send responses
 func createUDPSocket(client string) *net.UDPConn {
 	ip, port := structs.GetIPAndPort(client)
 	fmt.Println("createUDP", client)
@@ -83,6 +87,8 @@ func createUDPSocket(client string) *net.UDPConn {
 	return conn
 }
 
+//readResponses read response and returns *structs.Request
+//from conn sent by servers
 func readResponse(conn *net.UDPConn) *structs.Request {
 	buf := make([]byte, MAXLINE)
 	n, _, err := conn.ReadFromUDP(buf)
@@ -94,26 +100,12 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
 	logMsg("RECV", rqst.String("REPLY"), "SERVER")
-	//go utils.LogClient(chain.Server, rqst.Requestid, rqst.Account, rqst.Outcome, rqst.Transaction, rqst.Balance)
 
 	return rqst
 }
 
-// http handler function for listening to sync requests
-/*
-func synchandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, client")
-	if r.Method == "POST" {
-		body, _ := ioutil.ReadAll(r.Body)
-		res := &structs.Request{}
-		json.Unmarshal(body, &res)
-		fmt.Println("SYNC")
-		fmt.Println(res)
-		utils.Logoutput("client", res.Requestid, res.Outcome, res.Balance, res.Transaction)
-	}
-}
-*/
-
+//alterChainHandler handles change of chain by setting
+//new header or tail
 func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "changed")
 	body, _ := ioutil.ReadAll(r.Body)
@@ -130,7 +122,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// simulates the client and sends request to server
+//simulate simulates the client and sends request to servers
 func simulate(conn *net.UDPConn, port, clientIdx int) {
 	reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
 	reqFile := utils.GetTestRequestFile(clientIdx)

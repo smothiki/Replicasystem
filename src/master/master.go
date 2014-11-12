@@ -109,7 +109,9 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 	}
 }
 
-//extendChain
+//extendChain notify clients and servers the change of chain,
+//sets server status map statMap to new status. It returns true if no errors,
+//returns false if new server fails
 func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 	// find tail
 	var oldTail string
@@ -150,6 +152,10 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 	return true
 }
 
+//notifyServer notifies dest change of chain by sending newChain
+//structure, action can be either "alterChain" or "extendChain"
+//Returns true if no errors, returns false if new server fails
+//when extending chains
 func notifyServer(dest, action string, newChain *structs.Chain) bool {
 	msg, _ := json.Marshal(newChain)
 	client := &http.Client{}
@@ -178,6 +184,8 @@ func notifyServer(dest, action string, newChain *structs.Chain) bool {
 	return true
 }
 
+//notifyClient notifies client dest new head and tail by sending
+//data structure
 func notifyClient(dest string, data *structs.ClientNotify) {
 	msg, _ := json.Marshal(data)
 	client := &http.Client{}
@@ -196,6 +204,8 @@ func notifyClient(dest string, data *structs.ClientNotify) {
 	}
 }
 
+//notifyClients notifies all clients of new head and tail
+//by calling notifyClient() with data structure
 func notifyClients(data *structs.ClientNotify) {
 	var serverPort int
 	if data.Head != "" {
@@ -211,6 +221,9 @@ func notifyClients(data *structs.ClientNotify) {
 	}
 }
 
+//set server status map statMap according to change of chain.
+//It's called when server fails, and the function notifies
+//servers and clients the change
 func alterChain(server string, statMap *map[string]*structs.Chain) {
 	curNode := (*statMap)[server]
 	nextKey := (*statMap)[server].Next
@@ -269,5 +282,4 @@ func main() {
 	conn := createUDPSocket()
 	go readOnlineMsg(conn, &servStatus)
 	checkStatus(&servStatus)
-	//fmt.Println(servStatus)
 }
