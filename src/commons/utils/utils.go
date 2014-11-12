@@ -166,7 +166,7 @@ func getBoolInArray(index int, key string) bool {
 	}
 }
 
-func Timeout(msg string, seconds time.Duration, f func(), xxx int) error {
+func Timeout(msg string, seconds time.Duration, f func() /*, xxx int*/) error {
 	tmr := time.NewTimer(seconds)
 	exp := true
 	go func() {
@@ -177,7 +177,7 @@ func Timeout(msg string, seconds time.Duration, f func(), xxx int) error {
 	<-tmr.C
 
 	if exp {
-		fmt.Println("EXP", xxx)
+		//fmt.Println("EXP", xxx)
 		return errors.New(msg + " timeout")
 	}
 	return nil
@@ -196,4 +196,9 @@ func GetWorkDir() string {
 
 func GetBinDir() string {
 	return os.Getenv("GOBIN") + "/"
+}
+
+func ParseFloat32(n string) float32 {
+	s, _ := strconv.ParseFloat(n, 32)
+	return float32(s)
 }

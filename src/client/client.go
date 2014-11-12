@@ -126,16 +126,17 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 
 //simulate simulates the client and sends request to servers
 func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
-	reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
+	//reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
 	reqFile := utils.GetTestRequestFile(clientIdx)
-	var listreqs *[]structs.Request
+	/*var listreqs *[]structs.Request
 	if reqGenMethod == "predefined" {
 		listreqs = structs.GetTestreqs(reqFile)
 	} else {
 		listreqs = structs.GetrequestList(3, "getbalance", reqFile)
-	}
+	}*/
+	listreqs := structs.GenRequestList(reqFile)
 	var dest string
-	xxx := 0
+	//xxx := 0
 	for _, request := range *listreqs {
 		if request.Transaction == "getbalance" {
 			dest = chain.Tail
@@ -145,18 +146,18 @@ func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
 
 		err := utils.Timeout("Request", waitTime*time.Millisecond,
 			func() {
-				fmt.Println("ENTER LOOP", xxx)
+				//fmt.Println("ENTER LOOP", xxx)
 				SendRequest(dest, &request, port)
-				fmt.Println("MID   LOOP", xxx)
-				fmt.Println("result", xxx, *readResponse(conn))
-				fmt.Println("LEAVE LOOP", xxx)
+				//fmt.Println("MID   LOOP", xxx)
+				fmt.Println("result", *readResponse(conn))
+				//fmt.Println("LEAVE LOOP", xxx)
 				fmt.Println()
 				return
-			}, xxx)
+			} /*, xxx*/)
 		if err != nil {
 			//fmt.Println(xxx, err)
 		}
-		xxx++
+		//xxx++
 	}
 }
 

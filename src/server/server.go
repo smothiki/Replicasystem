@@ -202,7 +202,14 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	}
 	//if chain.Next != newChain.Next && !newChain.Istail {}
 	if isNewTail {
-		sent.Init()
+		for e := sent.Front(); e != nil; {
+			r := e.Value.(structs.Request)
+			ack := structs.Ack{
+				ReqKey: r.MakeKey(),
+			}
+			SendAck(&ack)
+			sent.Remove(e)
+		}
 	}
 }
 
