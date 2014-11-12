@@ -15,11 +15,11 @@ import (
 	"time"
 )
 
-const MAXLINE = 1024     //max length of char buffer
-const CHECK_CYCLE = 3000 //interval of checking servers' status
+const MAXLINE = 1024 //max length of char buffer
 
-var recvNum, sendNum int //msg counter for logging
-var master string        //master server information
+var checkCycle time.Duration //interval of checking servers' status
+var recvNum, sendNum int     //msg counter for logging
+var master string            //master server information
 
 //logEvent logs event to log file
 func logEvent(event string) {
@@ -83,12 +83,12 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 	}
 }
 
-//checkStatus checks message counter in statMap every CHECK_CYCLE
+//checkStatus checks message counter in statMap every checkCycle
 //milliseconds and sends alterChain or extendChain requests to
 //servers based on message counts
 func checkStatus(statMap *map[string]*structs.Chain) {
 	for {
-		time.Sleep(CHECK_CYCLE * time.Millisecond)
+		time.Sleep(checkCycle * time.Millisecond)
 		for serverIdx, chain := range *statMap {
 			if !chain.Available {
 				continue
@@ -266,7 +266,8 @@ func main() {
 	chainNum := utils.GetConfigInt("chains")
 	chain1Series := utils.GetConfigInt("chain1series")
 	chainLen := utils.GetConfigInt("chainlength")
-	//key: port number, value : msgs received within timeframe
+	checkCycle = time.Duration(utils.GetConfigInt("checkOnlineCycle"))
+	//key: server addr, value : msgs received within timeframe
 	servStatus := make(map[string]*structs.Chain)
 
 	//init

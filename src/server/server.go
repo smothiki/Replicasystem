@@ -20,10 +20,11 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
-const MAXLINE = 1024              // max length of char buffer
-const SENT_HEALTH_INTERVAL = 1000 // frequency of sending online msg to master
-const ACK_PROC_TIME = 3000        // time of (simulated) ack processing
-const RQST_PROC_TIME = 1500       // time of (simulated) request processing
+const MAXLINE = 1024                 // max length of char buffer
+var sendOnlineCycle time.Duration    // frequency of sending online msg to master
+var ackProcMaxTime int               // time of (simulated) ack processing
+var rqstProcMaxTime int              // time of (simulated) request processing
+var extendSendInterval time.Duration // interval of sending histories to new tail during extension
 
 var sent list.List                // 'Sent'
 var chain structs.Chain           // info of current server
@@ -84,13 +85,13 @@ func sendOnlineMsg(conn *net.UDPConn) {
 		if err != nil {
 			log.Println("ERROR while sending online msg to master.", err)
 		}
-		time.Sleep(SENT_HEALTH_INTERVAL * time.Millisecond)
+		time.Sleep(sendOnlineCycle * time.Millisecond)
 	}
 }
 
 //SendRequest send request to successor
 func SendRequest(request *structs.Request) {
-	randomSleep(RQST_PROC_TIME, "before sending request")
+	randomSleep(rqstProcMaxTime, "before sending request")
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sync", bytes.NewBuffer(res1B))
@@ -113,7 +114,7 @@ func SendAck(ack *structs.Ack) {
 	if chain.Ishead {
 		return
 	}
-	randomSleep(ACK_PROC_TIME, "before sending ack")
+	randomSleep(ackProcMaxTime, "before sending ack")
 	msg, _ := json.Marshal(ack)
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://"+chain.Prev+"/ack", bytes.NewBuffer(msg))
@@ -137,7 +138,7 @@ func SendReply(request *structs.Request) {
 		logMsg("LOSS", request.String("REPLY"), request.Client.String())
 		return
 	}
-	randomSleep(RQST_PROC_TIME, "before sending request")
+	randomSleep(rqstProcMaxTime, "before sending request")
 	res1B, err := json.Marshal(request)
 	/*localAddr := net.UDPAddr{
 		Port: port,
@@ -249,6 +250,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 	if err != nil {
 		log.Println(err)
 	}
+	time.Sleep(extendSendInterval * time.Millisecond)
 
 	//send accounts info
 	acMap := b.Accounts()
@@ -268,6 +270,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		if err != nil {
 			log.Println(err)
 		}
+		time.Sleep(extendSendInterval * time.Millisecond)
 	}
 
 	//send transactions
@@ -287,6 +290,7 @@ func sendBankToTail(b *bank.Bank, newChain *structs.Chain) {
 		if err != nil {
 			log.Println(err)
 		}
+		time.Sleep(extendSendInterval * time.Millisecond)
 	}
 }
 
@@ -532,6 +536,7 @@ func die() {
 }
 
 func main() {
+	//read config
 	recvNum = 0
 	sendNum = 0
 	lossNum = 0
@@ -548,12 +553,18 @@ func main() {
 	chain.FailOnExtension = utils.GetFailOnExtension(port%1000 - 1)
 	r, _ := strconv.ParseFloat(utils.Getconfig("msgLossProb"), 32)
 	lossProb = float32(r)
+	ackProcMaxTime = utils.GetConfigInt("ackProcMaxTime")
+	rqstProcMaxTime = utils.GetConfigInt("rqstProcMaxTime")
+	sendOnlineCycle = time.Duration(utils.GetConfigInt("sendOnlineCycle"))
+	extendSendInterval = time.Duration(utils.GetConfigInt("extendSendInterval"))
 
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)
 	if startDelay != 0 {
 		time.Sleep(time.Duration(startDelay*1000) * time.Millisecond)
 	}
+
+	//service startup
 	utils.LogSEvent(chain.Server, "Server started! "+chain.String())
 
 	if lifetime != 0 {
@@ -563,7 +574,6 @@ func main() {
 	connMaster := connectToMaster()
 	go sendOnlineMsg(connMaster)
 	defer connMaster.Close()
-
 	go startUDPService(b)
 
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {

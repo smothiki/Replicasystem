@@ -125,7 +125,7 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //simulate simulates the client and sends request to servers
-func simulate(conn *net.UDPConn, port, clientIdx int) {
+func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
 	reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
 	reqFile := utils.GetTestRequestFile(clientIdx)
 	var listreqs *[]structs.Request
@@ -142,7 +142,7 @@ func simulate(conn *net.UDPConn, port, clientIdx int) {
 			dest = chain.Head
 		}
 
-		err := utils.Timeout("Request", 5000*time.Millisecond,
+		err := utils.Timeout("Request", waitTime*time.Millisecond,
 			func() {
 				SendRequest(dest, &request, port)
 				fmt.Println("result", *readResponse(conn))
@@ -169,9 +169,11 @@ func main() {
 	utils.LogCEvent(chain.Server, "Client started!"+m)
 	conn := createUDPSocket("127.0.0.1:" + os.Args[1])
 	clientIdx := 999 - port%1000
+	waitTime := time.Duration(utils.GetConfigInt("requestTimeout"))
+
 	//wait for servers to start up
 	time.Sleep(2000 * time.Millisecond)
-	go simulate(conn, port, clientIdx)
+	go simulate(conn, port, clientIdx, waitTime)
 	http.HandleFunc("/alterChain", alterChainHandler)
 	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)
 	if err != nil {
