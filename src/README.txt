@@ -83,9 +83,8 @@ launcher.sh (replicasystem/src/launcher.sh)
 
 IV. BUGS AND LIMITATIONS
 
-1. Hard coded IP addresses
-2. Hard coded random requests generation
-3. Doesn't resend requests on time out
+1. Hard coded IP addresses for ease of demonstration
+2. Doesn't resend requests on time out
 
 ============================================================
 
@@ -116,6 +115,9 @@ port numbers. The logics we use here are as follows.
 * Port numbers assigned to clients are series*1000+999, series*1000+998 ...
   For example, if chain1series=4 and there is only one client, then its
   port number is 4999
+* If there are multiple chains, starting from chain1series, port number of the
+  first server if each chain is chain1series*1000+1, (chain1series+1)*1000+1,
+  (chain1series+2)*1000+1 ...
 
 Since designated ports are binded to the UDP socket through which clients send
 requested to servers, servers cannot use the same ports to send UDP packets
@@ -131,5 +133,9 @@ Request.String() function, which prints different fields according to the
 parameter, which is determined based on need.
 
 Additionally, we use UDP protocol for communcations between clients and servers,
-but HTTP protocol for communcations between servers to simplify our work. ~since
+but HTTP protocol for communcations between servers to simplify our work. Since
 the underlying implementation of HTTP is TCP, this does not incur any limitations.
+
+Explanation of configure file. Take config01.json for example
+
+

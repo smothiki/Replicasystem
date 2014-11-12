@@ -4,7 +4,6 @@
   "chain1series": "4",
   "MaxRequests":"20",
   "msgLossProb":"0.2",
-  "testcases" : ["predefined"],
   "testrequests" : ["request02.json"],
   "master" : "127.0.0.1:65535",
   "checkOnlineCycle" : "3000",

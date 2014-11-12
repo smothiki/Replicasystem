@@ -1,6 +1,9 @@
 {
   "requests": {
-    
+    "seed" : "1093",
+    "getbalanceProb" : "0.2",
+    "depositProb" : "0.5",
+    "withdrawProb" : "0.3",
     "tests": [
       {
         "requestid": "123",
