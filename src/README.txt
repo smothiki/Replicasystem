@@ -119,9 +119,11 @@ port numbers. The logics we use here are as follows.
   port number is 4999
 
 Since designated ports are binded to the UDP socket through which clients send
-requested to servers, servers cannot use the same port to send UDP packets
+requested to servers, servers cannot use the same ports to send UDP packets
 to master. Therefore, the sockets used to send message to master server are
-bounded to ports whose numbers are desginated port numbers plus 100.
+bounded to ports whose numbers are desginated port numbers plus 100. For
+instance, if a server is designated to 127.0.0.1:4002, it sends online message
+to master via port 4102.
 
 Requests and replies share the same structure (defined as structs.Request),
 since they share some common fields. This makes it easy to transfer data
@@ -129,5 +131,6 @@ between clients are servers and servers themselves, but there is a
 Request.String() function, which prints different fields according to the
 parameter, which is determined based on need.
 
-Additionally, we use HTTP protocol to simplify our work, but since the
-underlying implementation of HTTP is TCP, this does not incur any limitations.
+Additionally, we use UDP protocol for communcations between clients and servers,
+but HTTP protocol for communcations between servers to simplify our work. ~since
+the underlying implementation of HTTP is TCP, this does not incur any limitations.
