@@ -1,9 +1,5 @@
-2014/11/11 21:10:09 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4003
-2014/11/11 21:10:09 127.0.0.1:4999 EVENT: UDP Socket connected!
-2014/11/11 21:10:09 127.0.0.1:4999 SENT:#0 reqID 123, a/c 1, getbalance(0) 1415758209 (to 127.0.0.1:4003)
-2014/11/11 21:10:14 127.0.0.1:4999 SENT:#1 reqID 124, a/c 2, deposit(10) 1415758214 (to 127.0.0.1:4001)
-2014/11/11 21:10:16 127.0.0.1:4999 RECV:#0 reqID 124, a/c 2, deposit, balance 10, processed, reqTime 1415758214 (from SERVER)
-2014/11/11 21:10:19 127.0.0.1:4999 SENT:#2 reqID 125, a/c 1, getbalance(0) 1415758219 (to 127.0.0.1:4003)
-2014/11/11 21:10:20 127.0.0.1:4999 RECV:#1 reqID 125, a/c 1, getbalance, balance 0, processed, reqTime 1415758219 (from SERVER)
-2014/11/11 21:10:24 127.0.0.1:4999 SENT:#3 reqID 126, a/c 2, deposit(10) 1415758224 (to 127.0.0.1:4001)
-2014/11/11 21:10:26 127.0.0.1:4999 RECV:#2 reqID 126, a/c 2, deposit, balance 20, processed, reqTime 1415758224 (from SERVER)
+2014/11/11 21:38:41 127.0.0.1:4999 EVENT: Client started!Head server: 127.0.0.1:4001, Tail server:127.0.0.1:4004
+2014/11/11 21:38:41 127.0.0.1:4999 EVENT: UDP Socket connected!
+2014/11/11 21:38:41 127.0.0.1:4999 SENT:#0 reqID 123, a/c 1, deposit(5) 1415759921 (to 127.0.0.1:4001)
+2014/11/11 21:38:44 127.0.0.1:4999 RECV:#0 reqID 123, a/c 1, deposit, balance 5, processed, reqTime 1415759921 (from SERVER)
+2014/11/11 21:38:44 127.0.0.1:4999 SENT:#1 reqID 124, a/c 2, deposit(10) 1415759924 (to 127.0.0.1:4001)

@@ -23,9 +23,18 @@ func exe_cmd(cmd string, wg *sync.WaitGroup) {
 }
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: go run start.go <config file>")
+		return
+	}
+	logPath := os.Getenv("GOPATH") + "/src/github.com/replicasystem/logs/"
+	os.Remove(logPath + "mlogs")
+	os.Remove(logPath + "slogs")
+	os.Remove(logPath + "clogs")
+
 	utils.SetConfigFile(os.Args[1])
 	totalchains, _ := strconv.Atoi(utils.Getconfig("chains"))
-	series, _ := strconv.Atoi(utils.Getconfig("chian1series"))
+	series, _ := strconv.Atoi(utils.Getconfig("chain1series"))
 	lenservers, _ := strconv.Atoi(utils.Getconfig("chainlength"))
 	clientNum := utils.GetConfigInt("clientNum")
 

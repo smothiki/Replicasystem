@@ -3,10 +3,14 @@
   "chainlength": "4",
   "chain1series": "4",
   "MaxRequests":"20",
+  "msgLossProb":"0.2",
   "testcases" : ["predefined"],
   "testrequests" : ["request01.json"],
   "master" : "127.0.0.1:65535",
   "clientNum" : "1",
   "startDelay" : [0, 0, 0, 0],
-  "lifetime" : [5, 0, 0, 9]
+  "lifetime" : [5, 0, 0, 9],
+  "failOnReqSent" : [0, 0, 0, 0],
+  "failOnRecvSent" : [0, 0, 0, 0],
+  "failOnExtension" : [0, 0, 0, 0]
 }
