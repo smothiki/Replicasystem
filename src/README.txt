@@ -5,6 +5,7 @@ THIS SECTION IS FOR GO VERSION ONLY
 1. Install GO compiler
 2. Set $GOPATH and $GOBIN
 3. Put code into $GOPATH/src/github.com/replicasystem/
+4. Put dependency go-simplejson in $GOPATH/src/github.com/bitly/go-simplejson
 
 Example:
 My $GOPATH is ~/gowork/, and server.go file can be found in 
@@ -84,7 +85,7 @@ launcher.sh (replicasystem/src/launcher.sh)
 IV. BUGS AND LIMITATIONS
 
 1. Hard coded IP addresses for ease of demonstration
-2. Doesn't resend requests on time out
+2. Client doesn't resend requests on time out
 
 ============================================================
 
@@ -94,6 +95,9 @@ V. LANGUAGE COMPARISON
 ============================================================
 
 VI. CONTRIBUTIONS
+
+Sivaram Mothiki - DistAlgo Version
+Yansong Wang    - Go Version
 
 ============================================================
 
@@ -136,6 +140,37 @@ Additionally, we use UDP protocol for communcations between clients and servers,
 but HTTP protocol for communcations between servers to simplify our work. Since
 the underlying implementation of HTTP is TCP, this does not incur any limitations.
 
-Explanation of configure file. Take config01.json for example
+Explanation of configure file. Take config01.json for example.
 
+{
+  "chains" : "1",                       //Number of chains
+  "chainlength": "4",                   //Length of each chain
+  "chain1series": "4",                  //Port numbers of first chain is 4XXX
+  "MaxRequests":"20",                   //Each client send 20 queries, including
+                                        //  those defined in config/request01.json
+                                        //  and random ones generated based on
+                                        //  parameters in config/request01.json
+  "msgLossProb": "0.0",                 //  message loss probability
+  "testrequests" : ["request01.json"],  //Quries are defined in config/request01.json
+  "master" : "127.0.0.1:65535",         //Master address
+  "checkOnlineCycle" : "3000",          //Master checks servers' status every 3000ms
+  "sendOnlineCycle" : "1000",           //Servers send online(health) message every 1000ms
+  "requestTimeout" : "5000",            //Client times out if does not receive
+                                        //  response in 5000ms, not in use now
+  "ackProcMaxTime" : "3000",            //Simulated ack processing max time
+  "rqstProcMaxTime" : "1500",           //Simulated request process max time
+  "extendSendInterval" : "500",         //Old tail sends bank information every
+                                        //  500ms to new tail during extension
+  "clientNum" : "1",                    //Number of clients
+  "startDelay" : [0, 0, 0, 0],          //Start delay of each server in seconds,
+                                        //  each element corresponds to a
+                                        //  server, same below
+  "lifetime" : [0, 11, 0, 0],           //Life time of each server
+  "failOnReqSent" : [0, 0, 0, 0],       //Whether a server fails on determining
+                                        //  what should be sent in 'Sent' to 
+                                        //  successor. 1 for yes, 0 for no, same below
+  "failOnRecvSent" : [0, 0, 0, 0],      //Whether a server fails on receiving
+                                        //  'Sent' from predecessor
+  "failOnExtension" : [0, 0, 0, 0]      //Whether a new server fails during extension
+}
 

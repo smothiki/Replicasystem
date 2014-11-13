@@ -40,7 +40,7 @@ func logMsg(msgType, msg, counterServer string) {
 
 //SendRequest sends request (query/update) to server
 func SendRequest(server string, request *structs.Request, port int) {
-	destIP, destPort := structs.GetIPAndPort(server)
+	destIP, destPort := utils.GetIPAndPort(server)
 	destAddr := net.UDPAddr{
 		Port: destPort,
 		IP:   net.ParseIP(destIP),
@@ -74,7 +74,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 //createUDPSocket creates and listen UDP socket, through
 //which servers send responses
 func createUDPSocket(client string) *net.UDPConn {
-	ip, port := structs.GetIPAndPort(client)
+	ip, port := utils.GetIPAndPort(client)
 	fmt.Println("createUDP", client)
 	localAddr := net.UDPAddr{
 		Port: port,

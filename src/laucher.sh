@@ -5,6 +5,8 @@ if [ "$#" -ne 1 ]; then
 fi
 
 pkill server
+pkill master
+pkill client
 rm ../logs/*
 gnome-terminal -e "go run master/master.go config0$1.json"
 for i in `seq 4001 4004`; do

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"strings"
 
 	"github.com/replicasystem/src/commons/utils"
 )
 
+//Request and Reply
 type Request struct {
 	Requestid   string
 	Account     string
@@ -82,6 +82,7 @@ func (c *Chain) SetChain(cc *Chain) {
 	c.Online = cc.Online
 }
 
+//Makechain returns pointer of a chain structure constructed from parameters
 func Makechain(series, server, length int) *Chain {
 	chain := &Chain{
 		//next two fields are used only by client
@@ -170,11 +171,4 @@ func Makereply(reqid, account, outcome, typet string, amount, balance float32) *
 		Transaction: typet,
 		Balance:     balance}
 	return rep
-}
-
-func GetIPAndPort(server string) (string, int) {
-	r := strings.Split(server, ":")
-	ip := r[0]
-	port, _ := strconv.Atoi(r[1])
-	return ip, port
 }

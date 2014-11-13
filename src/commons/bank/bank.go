@@ -102,7 +102,6 @@ func (b *Bank) CheckId(accountId string) {
 		}
 		b.amap[accountId] = newaccnt
 	}
-	//TODO:log
 }
 
 func (b *Bank) AddAccount(id string, balance float32) {

@@ -9,78 +9,67 @@
         "requestid": "123",
         "account": "1",
         "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
+        "transaction": "getbalance"
       },
       {
         "requestid": "124",
         "account": "2",
         "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
+        "transaction": "deposit"
       },
       {
         "requestid": "125",
         "account": "1",
         "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
+        "transaction": "getbalance"
       },
       {
         "requestid": "126",
         "account": "2",
         "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
+        "transaction": "deposit"
       },
       {
         "requestid": "126",
         "account": "2",
         "amount": "10",
-        "transaction": "deposit",
-        "outcome": "none"
+        "transaction": "deposit"
       },
       {
         "requestid": "127",
         "account": "1",
         "amount": "11",
-        "transaction": "withdraw",
-        "outcome": "none"
+        "transaction": "withdraw"
       },
       {
         "requestid": "128",
         "account": "3",
         "amount": "1",
-        "transaction": "withdraw",
-        "outcome": "none"
+        "transaction": "withdraw"
       },
       {
         "requestid": "129",
         "account": "1",
         "amount": "0",
-        "transaction": "deposit",
-        "outcome": "none"
+        "transaction": "deposit"
       },
       {
         "requestid": "130",
         "account": "1",
         "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
+        "transaction": "getbalance"
       },
       {
         "requestid": "131",
         "account": "2",
         "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
+        "transaction": "getbalance"
       },
       {
         "requestid": "132",
         "account": "3",
         "amount": "0",
-        "transaction": "getbalance",
-        "outcome": "none"
+        "transaction": "getbalance"
       }
     ]
   }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -28,22 +27,6 @@ func NewID() string {
 	uuid[8] = uuid[8]&^0xc0 | 0x80
 	uuid[6] = uuid[6]&^0xf0 | 0x40
 	return fmt.Sprintf("%x", uuid[0:4])
-}
-
-func GetCount() string {
-	id, err := ioutil.ReadFile(GetWorkDir() + "src/server/counter")
-	if err != nil {
-		return "0"
-	}
-	return strings.TrimSpace(string(id))
-}
-
-func PutCount(version string) error {
-	err := ioutil.WriteFile(GetWorkDir()+"src/server/counter", []byte(version), 0644)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func LogEventData(server, servType, msgType, msg string) {
@@ -201,4 +184,11 @@ func GetBinDir() string {
 func ParseFloat32(n string) float32 {
 	s, _ := strconv.ParseFloat(n, 32)
 	return float32(s)
+}
+
+func GetIPAndPort(server string) (string, int) {
+	r := strings.Split(server, ":")
+	ip := r[0]
+	port, _ := strconv.Atoi(r[1])
+	return ip, port
 }

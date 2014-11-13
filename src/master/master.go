@@ -46,7 +46,7 @@ func logMsg(msgType, msg, counterServer string) {
 //servers send online (health) message to master
 func createUDPSocket() *net.UDPConn {
 	s := utils.Getconfig("master")
-	ip, port := structs.GetIPAndPort(s)
+	ip, port := utils.GetIPAndPort(s)
 	localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP(ip),
@@ -169,6 +169,9 @@ func notifyServer(dest, action string, newChain *structs.Chain) bool {
 		log.Println("ERROR whiile notifying server chain modification", err)
 	}
 
+	if resp == nil {
+		return true
+	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -209,9 +212,9 @@ func notifyClient(dest string, data *structs.ClientNotify) {
 func notifyClients(data *structs.ClientNotify) {
 	var serverPort int
 	if data.Head != "" {
-		_, serverPort = structs.GetIPAndPort(data.Head)
+		_, serverPort = utils.GetIPAndPort(data.Head)
 	} else {
-		_, serverPort = structs.GetIPAndPort(data.Tail)
+		_, serverPort = utils.GetIPAndPort(data.Tail)
 	}
 	clientPortStart := serverPort - serverPort%1000 + 999
 	numClient := utils.GetConfigInt("clientNum")

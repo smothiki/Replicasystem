@@ -53,13 +53,13 @@ func logMsg(msgType, msg, counterServer string) {
 //connectToMaster connects UDP socket to master server,
 //returning socket descriptor
 func connectToMaster() *net.UDPConn {
-	ip, port := structs.GetIPAndPort(chain.Server)
+	ip, port := utils.GetIPAndPort(chain.Server)
 	masterAddr := utils.Getconfig("master")
 	localAddr := net.UDPAddr{
 		Port: port + 100,
 		IP:   net.ParseIP(ip),
 	}
-	destIP, destPort := structs.GetIPAndPort(masterAddr)
+	destIP, destPort := utils.GetIPAndPort(masterAddr)
 	destAddr := net.UDPAddr{
 		Port: destPort,
 		IP:   net.ParseIP(destIP),
@@ -111,12 +111,15 @@ func SendRequest(request *structs.Request) {
 
 //SendAck sends acknowledgement ack to predecessor
 func SendAck(ack *structs.Ack) {
-	if chain.Ishead {
+	if chain.Ishead || chain.Prev == "" {
 		return
 	}
 	randomSleep(ackProcMaxTime, "before sending ack")
 	msg, _ := json.Marshal(ack)
 	client := &http.Client{}
+	if chain.Ishead || chain.Prev == "" {
+		return
+	}
 	req, _ := http.NewRequest("POST", "http://"+chain.Prev+"/ack", bytes.NewBuffer(msg))
 	req.Close = true
 	req.Header = http.Header{
@@ -483,7 +486,7 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 //request, and process the incoming requests, and then sends
 //requests either to clients or successor server
 func startUDPService(b *bank.Bank) {
-	ip, port := structs.GetIPAndPort(chain.Server)
+	ip, port := utils.GetIPAndPort(chain.Server)
 	localAddr := net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP(ip),

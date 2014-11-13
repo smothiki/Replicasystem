@@ -8,6 +8,11 @@ import (
 	"github.com/replicasystem/src/commons/utils"
 )
 
+//GenRequestList generates a slice of requests. It reads parameters and
+//predefined requests from rqstFile. The returned slice contains maxRequests of
+//requests. If the number of predefined requests is less than maxRequests,
+//remaining requests are generated randomly based on the probabilities given
+//in rqstFile.
 func GenRequestList(rqstFile string) *[]Request {
 	listreqs := make([]Request, 0, 1)
 	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/" + rqstFile))
@@ -27,8 +32,7 @@ func GenRequestList(rqstFile string) *[]Request {
 		amount64, _ := strconv.ParseFloat(amounts, 32)
 		amount := float32(amount64)
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
-		outcome, _ := getReqs.GetIndex(i).Get("outcome").String()
-		listreqs = append(listreqs, *Makereply(reqid, account, outcome, typet, amount, 0))
+		listreqs = append(listreqs, *Makereply(reqid, account, "", typet, amount, 0))
 	}
 
 	//fill rest vacancies with random requests
@@ -75,6 +79,7 @@ func GenRequestList(rqstFile string) *[]Request {
 	return &listreqs
 }
 
+//getRequestProb read probability of request from js and  convert it to float32
 func getRequestProb(js *gson.Json, request string) float32 {
 	strRes, _ := js.Get("requests").Get(request + "Prob").String()
 	return utils.ParseFloat32(strRes)
