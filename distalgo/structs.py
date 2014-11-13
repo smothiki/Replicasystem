@@ -36,10 +36,10 @@ class Requests():
     else:
       for i in range(counts):
         self.requests.append(Request(getReqs[i]["requestid"],getReqs[i]["account"],int(getReqs[i]["balance"]),getReqs[i]["transaction"],getReqs[i]["outcome"]))
-# generated requests according to probalilty 
+# generated requests according to probalilty
 
   def getRequestList(self):
-    configs = json.loads(open("/Users/ram/deistests/src/github.com/replicasystem/config/config.json").read())
+    configs = json.loads(open("/Users/ram/deistests/src/github.com/replicasystem/config/config01.json").read())
     MaxReqs = int(configs["MaxRequests"])
     print(MaxReqs)
     types = ["getbalance", "deposit", "withdraw"]
