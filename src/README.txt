@@ -64,9 +64,9 @@ structs/structs.go (replicasystem/src/commons/structs/structs.go)
   request, chain and generates the request and chain objects.
 
 structs/request-config.go (replicasystem/src/commons/structs/request-config.go) 
-  This file deals with generating requests according to probability . It takes 
-  probability of a request type and adjusts the number of various
-  requests according to the probabity and maxrequests = 20
+  This file generates a request list according to config file. It reads queries
+  from a query file. If there are not enough queries, it generates queires
+  randomly based on the probabilities read from config file.
 
 utils.go (replicasystem/src/commons/utils/utils.go)
   Various utility functions that generates random UUIDs , utility functions that 
