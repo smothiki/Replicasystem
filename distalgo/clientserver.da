@@ -13,51 +13,49 @@ class Master(process):
         self.head=0
         self.tail=Nlength-1
         for i, s in enumerate(list(servers)):
-            serverisAlive[i]= 0
+            serverisAlive[i]= 1
 
     def checkHealthmsg(threadName, delay):
         while True:
-             time.sleep(delay)
-             output("moon %r."%(serverisAlive))
-             for i, s in enumerate(list(servers)):
+             time.sleep(1)
+             output("state %r."%(serverisAlive))
+             for i, s in enumerate(servers):
                 if serverisAlive[i] == 0:
                     if i == head:
-                        output("here1")
+                        output("killing head")
                         newHead = i+1
                         send(('ImHead', newHead), to=client)
                     elif i == tail:
-                        output("here2")
+                        output("killing tail")
                         newTail = i-1
-                        send(('ImTail', newTail), to=s[i-2])
+                        send(('ImTail', newTail), to=servers[i-2])
                         send(('ImTail', newTail), to=client)
                     else:
-                        send(('urnext', i+1), to=s[i-1])
+                        output("killing inter server")
+                        send(('urnext', i+1), to=servers[i-1])
 
     def messuphead(threadName,headkill):
         time.sleep(headkill)
-        output("killing head")
         serverisAlive[0]=0
 
     def messuptail(threadName,tailkill):
         time.sleep(tailkill)
-        output("killing tail")
         serverisAlive[Nlength-1]=0
 
     def messupserver(threadName,index,timetokill):
         time.sleep(timetokill)
-        output("killing server")
         serverisAlive[index]=0
 
     def receive(msg=('HealthCheckmsg', serverId), from_=p):
-        output("healthcheck received%r."%(serverId))
+        #output("healthcheck received%r."%(serverId))
         serverisAlive[serverId] = 1
 
     def main():
         output("%r."%(self.serverisAlive))
-        _thread.start_new_thread( checkHealthmsg, ("Thread", 15))
+        _thread.start_new_thread( checkHealthmsg, ("Thread", 6))
         _thread.start_new_thread( messuphead, ("Thread1", 4))
-        _thread.start_new_thread( messuptail, ("Thread2", 7))
-        _thread.start_new_thread( messupserver, ("Thread3",1,9))
+        _thread.start_new_thread( messuptail, ("Thread2", 8))
+        _thread.start_new_thread( messupserver, ("Thread3",1,6))
         await(False)
 
 # server process that handles request form client
@@ -77,7 +75,7 @@ class Server(process):
      output("serverindex"+str(index))
 
    def main():
-     _thread.start_new_thread(sendHealthCheck, ("Thread", 5, self.index, self.master) )
+     _thread.start_new_thread(sendHealthCheck, ("Thread", 3, self.index, self.master) )
      await(some(received(("request",request),from_=p)))
      await(False)
 
@@ -113,8 +111,8 @@ class Server(process):
        send(("request",request),to=self.next)
        output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
      else :
-       output("sending reply to client")
-      #  output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
+       #output("sending reply to client")
+       #output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
        send(("reply",request),to=client)
 
 # client process that sends request to server
@@ -133,14 +131,14 @@ class Client(process):
        if request.requestid in waitfor:
          waitfor.remove(request.requestid)
        waitfor.add(request.requestid)
-       time.sleep(2)
+       time.sleep(1)
        if request.transaction == "getbalance" :
          send(("request",request,),to=self.tail)
        else :
          send(("request",request),to=self.head)
 
      if await(False):pass
-     elif timeout(20):
+     elif timeout(40):
        output("timeout")
      output("finished request")
 
@@ -150,6 +148,7 @@ class Client(process):
        self.head=chain[index]
 
    def receive(msg=('ImTail',index),from_=p):
+       output("new head updated")
        self.tail=chain[index]
 
    def receive(msg=('reply',request),from_=p):
