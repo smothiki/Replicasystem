@@ -15,6 +15,10 @@ class Master(process):
         for i, s in enumerate(list(servers)):
             serverisAlive[i]= 1
 
+# check health message function check the health of the serves and send update messages accordingly
+
+
+
     def checkHealthmsg(threadName, delay):
         while True:
              time.sleep(1)
@@ -33,6 +37,8 @@ class Master(process):
                     else:
                         output("killing inter server")
                         send(('urnext', i+1), to=servers[i-1])
+
+# threee function to kill head tail and some intermittent server runs in three different threads
 
     def messuphead(threadName,headkill):
         time.sleep(headkill)
@@ -79,6 +85,7 @@ class Server(process):
      await(some(received(("request",request),from_=p)))
      await(False)
 
+#sends health check message for every 3 seconds
 
    def sendHealthCheck( threadName, delay, index, master):
      output("inside sendHealthCheck")
@@ -142,6 +149,7 @@ class Client(process):
        output("timeout")
      output("finished request")
 
+#receives update messages from master
 
    def receive(msg=('ImHead',index),from_=p):
        output("new head updated")

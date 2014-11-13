@@ -14,6 +14,8 @@ class Request():
     self.balance=balance
     self.outcome=outcome
 
+#generates a random request
+
 def Randomreq(balance,typet):
   uid=str(uuid.uuid4())
   return Request(uid[0:4],uid[4:8],balance,typet,"none")
