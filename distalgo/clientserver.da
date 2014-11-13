@@ -4,17 +4,85 @@ from bank import Bank
 import json
 import sys
 import time
+import _thread
+
+class Master(process):
+
+    def setup(servers,client,Nlength):
+        self.serverisAlive={}
+        self.head=0
+        self.tail=Nlength-1
+        for i, s in enumerate(list(servers)):
+            serverisAlive[i]= 0
+
+    def checkHealthmsg(threadName, delay):
+        while True:
+             time.sleep(delay)
+             output("moon %r."%(serverisAlive))
+             for i, s in enumerate(list(servers)):
+                if serverisAlive[i] == 0:
+                    if i == head:
+                        output("here1")
+                        newHead = i+1
+                        send(('ImHead', newHead), to=client)
+                    elif i == tail:
+                        output("here2")
+                        newTail = i-1
+                        send(('ImTail', newTail), to=s[i-2])
+                        send(('ImTail', newTail), to=client)
+                    else:
+                        send(('urnext', i+1), to=s[i-1])
+
+
+    def receive(msg=('HealthCheckmsg', serverId), from_=p):
+        output("*****%r."%(serverId))
+        serverisAlive[serverId] = 1
+
+    def main():
+        output("%r."%(self.serverisAlive))
+        _thread.start_new_thread( checkHealthmsg, ("Thread", 20))
+        await(some(received(('HealthCheckmsg', self.id))))
 
 # server process that handles request form client
 
 class Server(process):
-   def setup(servers,index,client,name,id1):
-     self.bankobj=Bank(name,id1)
+   def setup(servers,index,client,Nlength,Nchain,master):
+     self.bankobj=Bank("wells","123")
+     tempindex=index
+     self.startindex=0
+     self.head=servers[0]
+     self.next=servers[index+1]
+     self.endindex=Nlength*Nchain-1
+    #  j=1
+    #  oldindex=0
+    #  while((tempindex-self.startindex)>0):
+    #      oldindex=self.startindex
+    #      self.startindex=j*Nlength
+    #      j=j+1
+    #  self.startindex=oldindex
+     #self.endindex=self.startindex+Nlength
      output(str(index))
 
    def main():
+     _thread.start_new_thread(sendHealthCheck, ("Thread", 5, self.index, self.master) )
      await(some(received(("request",request),from_=p)))
      await(False)
+
+
+   def sendHealthCheck( threadName, delay, index, master):
+     output("inside sendHealthCheck")
+     output(" %r."%(index))
+     while True:
+       time.sleep(delay)
+       send(('HealthCheckmsg', index),to=master)
+
+
+   def receive(msg=('ImTail',tindex),from_=p):
+      self.endindex=tindex
+
+
+   def receive(msg=('urnext',tindex),from_=p):
+      self.next=servers[tindex]
 
    # when receiving request from others, enque and reply
    def receive(msg=("request",request),from_=p):
@@ -26,8 +94,8 @@ class Server(process):
        request=self.bankobj.withdraw(request)
      elif request.transaction == "getbalance":
        request=self.bankobj.getbalance(request)
-     if index != 2:
-       send(("request",request),to=servers[index+1])
+     if index < self.endindex:
+       send(("request",request),to=self.next)
       #  output("<%r,%s,%r>"%(request.requestid,request.outcome,request.balance))
      else :
       #  output("sending reply to client")
@@ -37,10 +105,12 @@ class Server(process):
 # client process that sends request to server
 
 class Client(process):
-   def setup(chain,timed):
+   def setup(chain,master,Nlength):
      self.waitfor = set()
      self.requests=Requests(3,"getbalance")
      requests.getRequestList()
+     self.head=chain[0]
+     self.tail=chain[Nlength-1]
      self.done = False
 
    def main():
@@ -49,15 +119,21 @@ class Client(process):
          waitfor.remove(request.requestid)
        waitfor.add(request.requestid)
        if request.transaction == "getbalance" :
-         send(("request",request,),to=chain[2])
+         send(("request",request,),to=self.tail)
        else :
-         send(("request",request),to=chain[0])
+         send(("request",request),to=self.head)
 
      if await(False):pass
-     elif timeout(timed):
+     elif timeout(20):
        output("timeout")
      output("finished request")
 
+
+   def receive(msg=('ImHead',index),from_=p):
+       self.head=chain[index]
+
+   def receive(msg=('ImTail',index),from_=p):
+       self.tail=chain[index]
 
    def receive(msg=('reply',request),from_=p):
      if request.requestid in waitfor:
@@ -68,17 +144,17 @@ class Client(process):
        done =True
 
 
-
 def main():
    configs = json.loads(open("/Users/ram/deistests/src/github.com/replicasystem/config/config.json").read())
    Nserver = int(configs["chainlength"])
-   Nclient = int(configs["clients"])
    timeout = 1
    config(channel="fifo")
    servers = list(new(Server, num=Nserver))
-   client = list(new(Client, num=Nclient))
+   client = new(Client, num=1)
+   master = new(Master, num=1)
    for i,p in enumerate(list(servers)):
-     setup(p,(servers,i,client,"wells","123"))
+     setup(p,(servers,i,client,master))
    start(servers)
-   setup(client, [servers,timeout])
+   setup(client, [servers,master,Nserver])
+   setup(master,[servers, client,Nserver])
    start(client)
