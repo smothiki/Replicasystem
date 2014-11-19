@@ -32,6 +32,7 @@ func GenRequestList(rqstFile string) *[]Request {
 		amount64, _ := strconv.ParseFloat(amounts, 32)
 		amount := float32(amount64)
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
+		//TODO: add destAccount & destBank field
 		listreqs = append(listreqs, *Makereply(reqid, account, "", typet, amount, 0))
 	}
 
@@ -40,18 +41,19 @@ func GenRequestList(rqstFile string) *[]Request {
 		js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/" + rqstFile))
 		getbalanceProb := getRequestProb(js, "getbalance")
 		depositProb := getRequestProb(js, "deposit")
-		//withdrawProb := getRequestProb(js, "withdraw")
+		withdrawProb := getRequestProb(js, "withdraw")
 		sseed, _ := js.Get("requests").Get("seed").String()
 		seed, _ := strconv.ParseInt(sseed, 10, 64)
 		rand.Seed(seed)
 
 		remainReqNum := maxNumReq - numReqTest
-		types := []string{"getbalance", "deposit", "withdraw"}
+		types := []string{"getbalance", "deposit", "withdraw", "transfer"}
 		counter := []int{0, 0, 0}
 		numTypes := []int{0, 0, 0}
 		numTypes[0] = int(getbalanceProb * float32(remainReqNum))
 		numTypes[1] = int(depositProb * float32(remainReqNum))
-		numTypes[2] = remainReqNum - numTypes[0] - numTypes[1]
+		numTypes[2] = int(withdrawProb * float32(remainReqNum))
+		numTypes[3] = remainReqNum - numTypes[0] - numTypes[1] - numTypes[2]
 		numAccounts := remainReqNum / 4
 		accounts := make([]string, numAccounts)
 		for i := 0; i < numAccounts; i++ {
@@ -67,6 +69,7 @@ func GenRequestList(rqstFile string) *[]Request {
 			}
 			id := utils.NewID()
 			amount := r.Float32() * 30
+			//TODO: add destAccount & destBank field randomly to random rquest list
 			listreqs = append(listreqs, *Makereply(id, accounts[accIdx], "none", types[typeIdx], amount, 0))
 			counter[typeIdx]++
 			numReqTest++

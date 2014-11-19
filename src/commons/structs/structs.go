@@ -18,6 +18,7 @@ type Request struct {
 	Amount      float32
 	Client      net.UDPAddr
 	Time        string
+	//TODO: destBank & destAccount fields
 }
 
 type Chain struct {

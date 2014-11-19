@@ -523,7 +523,12 @@ func startUDPService(b *bank.Bank) {
 			reply = b.Deposit(rqst)
 			fmt.Println("inside deposit" + chain.Next)
 		case "transfer":
-			//TODO: phase 4
+			//TODO:
+			//retrieve head of other chain from master via http
+			//send reply to other chain using modified SendRequest()
+			//handle transfer on current account
+
+			//in sructs/request-config.go add corresponding fields
 		}
 
 		reply.Client = rqst.Client
