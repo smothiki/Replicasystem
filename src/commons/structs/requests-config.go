@@ -32,8 +32,12 @@ func GenRequestList(rqstFile string) *[]Request {
 		amount64, _ := strconv.ParseFloat(amounts, 32)
 		amount := float32(amount64)
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
-		//TODO: add destAccount & destBank field
-		listreqs = append(listreqs, *Makereply(reqid, account, "", typet, amount, 0))
+		var destAccount, destBank string
+		if typet == "transfer" {
+			destAccount, _ = getReqs.GetIndex(i).Get("destAccount").String()
+			destBank, _ = getReqs.GetIndex(i).Get("destBank").String()
+		}
+		listreqs = append(listreqs, *Makereply(reqid, account, "", typet, destAccount, destBank, amount, 0))
 	}
 
 	//fill rest vacancies with random requests
@@ -48,8 +52,8 @@ func GenRequestList(rqstFile string) *[]Request {
 
 		remainReqNum := maxNumReq - numReqTest
 		types := []string{"getbalance", "deposit", "withdraw", "transfer"}
-		counter := []int{0, 0, 0}
-		numTypes := []int{0, 0, 0}
+		counter := []int{0, 0, 0, 0}
+		numTypes := []int{0, 0, 0, 0}
 		numTypes[0] = int(getbalanceProb * float32(remainReqNum))
 		numTypes[1] = int(depositProb * float32(remainReqNum))
 		numTypes[2] = int(withdrawProb * float32(remainReqNum))
@@ -70,7 +74,9 @@ func GenRequestList(rqstFile string) *[]Request {
 			id := utils.NewID()
 			amount := r.Float32() * 30
 			//TODO: add destAccount & destBank field randomly to random rquest list
-			listreqs = append(listreqs, *Makereply(id, accounts[accIdx], "none", types[typeIdx], amount, 0))
+			var destAccount, destBank string
+			listreqs = append(listreqs, *Makereply(id, accounts[accIdx],
+				"none", types[typeIdx], destAccount, destBank, amount, 0))
 			counter[typeIdx]++
 			numReqTest++
 			if numReqTest == maxNumReq {

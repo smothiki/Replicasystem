@@ -18,7 +18,8 @@ type Request struct {
 	Amount      float32
 	Client      net.UDPAddr
 	Time        string
-	//TODO: destBank & destAccount fields
+	DestBank    string
+	DestAccount string
 }
 
 type Chain struct {
@@ -163,13 +164,16 @@ func Genrequest(balance float32, typet string) *Request {
 	return req
 }
 
-func Makereply(reqid, account, outcome, typet string, amount, balance float32) *Request {
+func Makereply(reqid, account, outcome, typet, destAccount, destBank string, amount, balance float32) *Request {
 	rep := &Request{
 		Requestid:   reqid,
 		Account:     account,
 		Amount:      amount,
 		Outcome:     outcome,
 		Transaction: typet,
-		Balance:     balance}
+		Balance:     balance,
+		DestBank:    destBank,
+		DestAccount: destAccount,
+	}
 	return rep
 }

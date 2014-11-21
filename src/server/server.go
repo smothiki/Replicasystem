@@ -90,16 +90,16 @@ func sendOnlineMsg(conn *net.UDPConn) {
 }
 
 //SendRequest send request to successor
-func SendRequest(request *structs.Request) {
+func SendRequest(request *structs.Request, dest string) {
 	randomSleep(rqstProcMaxTime, "before sending request")
 	res1B, err := json.Marshal(request)
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "http://"+chain.Next+"/sync", bytes.NewBuffer(res1B))
+	req, _ := http.NewRequest("POST", "http://"+dest+"/sync", bytes.NewBuffer(res1B))
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
 
-	logMsg("SENT", request.String("HISTORY"), chain.Next)
+	logMsg("SENT", request.String("HISTORY"), dest)
 	sent.PushBack(*request)
 	utils.LogSEvent(chain.Server, "Added "+request.MakeKey()+" into 'Sent'")
 
@@ -181,7 +181,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 			}
 			SendAck(&ack)
 		} else {
-			SendRequest(res)
+			SendRequest(res, chain.Next)
 		}
 	}
 }
@@ -477,7 +477,7 @@ func sendLastSentToPrev(destServer string, b *bank.Bank) {
 			}
 			SendAck(&ack)
 		} else {
-			SendRequest(&req)
+			SendRequest(&req, chain.Next)
 		}
 	}
 }
@@ -525,10 +525,11 @@ func startUDPService(b *bank.Bank) {
 		case "transfer":
 			//TODO:
 			//retrieve head of other chain from master via http
-			//send reply to other chain using modified SendRequest()
+			//dest := queryDestBankHead()
 			//handle transfer on current account
-
-			//in sructs/request-config.go add corresponding fields
+			//reply := b.Transfer(rqst)
+			//send reply to other chain using modified SendRequest()
+			//SendRequest(reply, dest)
 		}
 
 		reply.Client = rqst.Client
@@ -538,7 +539,7 @@ func startUDPService(b *bank.Bank) {
 		if chain.Istail {
 			SendReply(reply)
 		} else {
-			SendRequest(reply)
+			SendRequest(reply, chain.Next)
 		}
 
 	}

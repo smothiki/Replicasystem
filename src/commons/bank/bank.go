@@ -7,10 +7,12 @@ import (
 )
 
 type Transaction struct {
-	Tid       string
-	Amount    float32
-	AccountId string
-	Operation string
+	Tid         string
+	Amount      float32
+	AccountId   string
+	Operation   string
+	DestBank    string
+	DestAccount string
 }
 
 type transactions struct {
@@ -42,7 +44,9 @@ func (t1 *Transaction) equals(t2 *Transaction) bool {
 	return t1.Tid == t2.Tid &&
 		t1.Amount == t2.Amount &&
 		t1.AccountId == t2.AccountId &&
-		t1.Operation == t2.Operation
+		t1.Operation == t2.Operation &&
+		t1.DestBank == t2.DestBank &&
+		t1.DestAccount == t2.DestAccount
 }
 
 type Account struct {
@@ -114,10 +118,12 @@ func (b *Bank) AddAccount(id string, balance float32) {
 
 func MakeTransaction(r *structs.Request) *Transaction {
 	t := &Transaction{
-		Tid:       r.Requestid,
-		Amount:    r.Amount,
-		AccountId: r.Account,
-		Operation: r.Transaction,
+		Tid:         r.Requestid,
+		Amount:      r.Amount,
+		AccountId:   r.Account,
+		Operation:   r.Transaction,
+		DestAccount: r.DestAccount,
+		DestBank:    r.DestBank,
 	}
 	return t
 }
@@ -132,7 +138,8 @@ func (b *Bank) Deposit(req *structs.Request) *structs.Request {
 		a.deposit(req.Amount)
 		b.T.RecordTransaction(newTrans)
 	}
-	return structs.Makereply(req.Requestid, req.Account, resp, "deposit", req.Amount, a.getbalance())
+	return structs.Makereply(req.Requestid, req.Account, resp, "deposit",
+		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
 
 func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
@@ -144,10 +151,12 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 		resp = "processed"
 		b.T.RecordTransaction(newTrans)
 		if err := a.withdraw(req.Amount); err != nil {
-			return structs.Makereply(req.Requestid, req.Account, "insufficientfunds", "withdraw", req.Amount, a.getbalance())
+			return structs.Makereply(req.Requestid, req.Account, "insufficientfunds",
+				"withdraw", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 		}
 	}
-	return structs.Makereply(req.Requestid, req.Account, resp, "withdraw", req.Amount, a.getbalance())
+	return structs.Makereply(req.Requestid, req.Account, resp, "withdraw",
+		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
 
 func (b *Bank) Set(req *structs.Request) {
@@ -161,5 +170,6 @@ func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
 	//b.T.recordtransaction(req.Requestid, "getbalance")
-	return structs.Makereply(req.Requestid, req.Account, "processed", "getbalance", req.Amount, a.getbalance())
+	return structs.Makereply(req.Requestid, req.Account, "processed",
+		"getbalance", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
