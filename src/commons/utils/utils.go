@@ -192,3 +192,9 @@ func GetIPAndPort(server string) (string, int) {
 	port, _ := strconv.Atoi(r[1])
 	return ip, port
 }
+
+func GetChainNum(addr string) int {
+	a := strings.Split(addr, ":")
+	port, _ := strconv.Atoi(a[1])
+	return int(port / 1000)
+}

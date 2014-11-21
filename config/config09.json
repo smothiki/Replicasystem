@@ -13,8 +13,8 @@
   "rqstProcMaxTime" : "1500",
   "extendSendInterval" : "500",
   "clientNum" : "1",
-  "startDelay" : [0, 0, 0, 0],
-  "lifetime" : [0, 11, 0, 0],
+  "startDelay" : [10, 0, 0, 0],
+  "lifetime" : [2, 11, 0, 0],
   "failOnReqSent" : [0, 0, 0, 0],
   "failOnRecvSent" : [0, 0, 0, 0],
   "failOnExtension" : [0, 0, 0, 0]

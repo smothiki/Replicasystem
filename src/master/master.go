@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,8 @@ const MAXLINE = 1024 //max length of char buffer
 var checkCycle time.Duration //interval of checking servers' status
 var recvNum, sendNum int     //msg counter for logging
 var master string            //master server information
+var chainInfo map[int]*structs.ChainInfo
+var isChainInfoInit bool
 
 //logEvent logs event to log file
 func logEvent(event string) {
@@ -79,6 +82,22 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 			}
 			(*statMap)[key].MsgCnt++
 			logMsg("RECV", "ONLINE", key)
+			if !isChainInfoInit {
+				pt := sourceAddr.Port - 100
+				ch := int(pt / 1000)
+				if _, ex := chainInfo[ch]; !ex {
+					chainInfo[ch] = &structs.ChainInfo{
+						Head: pt,
+						Tail: pt,
+					}
+				}
+				if pt < chainInfo[ch].Head {
+					chainInfo[ch].Head = pt
+				}
+				if pt > chainInfo[ch].Tail {
+					chainInfo[ch].Tail = pt
+				}
+			}
 		}
 	}
 }
@@ -89,6 +108,7 @@ func readOnlineMsg(conn *net.UDPConn, statMap *map[string]*structs.Chain) {
 func checkStatus(statMap *map[string]*structs.Chain) {
 	for {
 		time.Sleep(checkCycle * time.Millisecond)
+		isChainInfoInit = true
 		for serverIdx, chain := range *statMap {
 			if !chain.Available {
 				continue
@@ -114,13 +134,20 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 //returns false if new server fails
 func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 	// find tail
-	var oldTail string
-	for serverIdx, chain := range *statMap {
-		if chain.Online && chain.Istail {
-			oldTail = serverIdx
-			break
+	a := strings.Split(newTail, ":")
+	strPort := a[1]
+	iPort, _ := strconv.Atoi(strPort)
+	ch := int(iPort / 1000)
+	oldTail := a[0] + ":" + strconv.Itoa(chainInfo[ch].Tail)
+	/*
+		var oldTail string
+		for serverIdx, chain := range *statMap {
+			if chain.Online && chain.Istail {
+				oldTail = serverIdx
+				break
+			}
 		}
-	}
+	*/
 
 	fmt.Println("oldTail", oldTail)
 	fmt.Println("newTail", newTail)
@@ -149,6 +176,9 @@ func extendChain(newTail string, statMap *map[string]*structs.Chain) bool {
 		Tail: newTail,
 	}
 	notifyClients(&newHeadTail)
+
+	_, newPort := utils.GetIPAndPort(newTail)
+	chainInfo[ch].Tail = newPort
 	return true
 }
 
@@ -242,6 +272,10 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 		}
 		logEvent("Head becomes " + nextKey)
 		notifyClients(&newHeadTail)
+
+		ch := utils.GetChainNum(server)
+		_, newPort := utils.GetIPAndPort(nextKey)
+		chainInfo[ch].Head = newPort
 	} else if !curNode.Ishead && curNode.Istail {
 		(*statMap)[prevKey].Next = ""
 		(*statMap)[prevKey].Istail = true
@@ -250,8 +284,12 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 			Head: "",
 			Tail: prevKey,
 		}
-		logEvent("Head becomes " + prevKey)
+		logEvent("Tail becomes " + prevKey)
 		notifyClients(&newHeadTail)
+
+		ch := utils.GetChainNum(server)
+		_, newPort := utils.GetIPAndPort(prevKey)
+		chainInfo[ch].Tail = newPort
 	} else if !curNode.Ishead && !curNode.Istail {
 		(*statMap)[prevKey].Next = curNode.Next
 		(*statMap)[nextKey].Prev = curNode.Prev
@@ -268,8 +306,11 @@ func transferDestHeadHandler(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &rqst)
 	logMsg("RECV", "Query head server of Bank "+rqst.DestBank, rqst.SrcServer)
 	fmt.Println("RECV Query head server of Bank", rqst.DestBank, rqst.SrcServer)
-	fmt.Fprint(w, "127.0.0.1:5001")
-	logMsg("SENT", "Head of Bank "+rqst.DestBank+": "+"5001", rqst.SrcServer)
+	destBankNum, _ := strconv.Atoi(rqst.DestBank)
+	sDestPort := strconv.Itoa(chainInfo[destBankNum].Head)
+	destBankAddr := "127.0.0.1:" + sDestPort
+	fmt.Fprint(w, destBankAddr)
+	logMsg("SENT", "Head of Bank "+rqst.DestBank+": "+destBankAddr, rqst.SrcServer)
 }
 
 func main() {
@@ -282,6 +323,8 @@ func main() {
 	checkCycle = time.Duration(utils.GetConfigInt("checkOnlineCycle"))
 	//key: server addr, value : msgs received within timeframe
 	servStatus := make(map[string]*structs.Chain)
+	chainInfo = make(map[int]*structs.ChainInfo)
+	isChainInfoInit = false
 
 	//init
 	for i := chain1Series; i < chain1Series+chainNum; i++ {

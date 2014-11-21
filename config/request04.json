@@ -47,7 +47,9 @@
         "requestid": "127",
         "account": "3",
         "amount": "1",
-        "transaction": "withdraw"
+        "transaction": "transfer",
+        "destBank" : "5",
+        "destAccount" : "124"
       },
       {
         "requestid": "128",

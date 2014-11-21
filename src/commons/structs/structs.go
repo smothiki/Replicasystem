@@ -55,6 +55,12 @@ type DestHeadRqst struct {
 	SrcServer string
 }
 
+//for master use
+type ChainInfo struct {
+	Head int
+	Tail int
+}
+
 func (r *Request) String(strType string) string {
 	switch strType {
 	case "REPLY":
