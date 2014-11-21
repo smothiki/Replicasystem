@@ -262,6 +262,14 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 	}
 }
 
+func transferDestHeadHandler(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+	logMsg("RECV", "Query head server of Bank "+string(body), "XXX")
+	fmt.Println("RECV Query head server of Bank", string(body))
+	fmt.Fprint(w, "127.0.0.1:5001")
+	logMsg("SENT", "Head of Bank "+string(body)+": "+"5001", "XXX")
+}
+
 func main() {
 	log.Println("master started!")
 	utils.SetConfigFile(os.Args[1])
@@ -285,5 +293,12 @@ func main() {
 
 	conn := createUDPSocket()
 	go readOnlineMsg(conn, &servStatus)
+	http.HandleFunc("/transfer/destHead", transferDestHeadHandler)
+	/*	go func() {
+		err := http.ListenAndServe(master, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()*/
 	checkStatus(&servStatus)
 }

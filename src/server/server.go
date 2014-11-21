@@ -525,9 +525,10 @@ func startUDPService(b *bank.Bank) {
 		case "transfer":
 			//TODO:
 			//retrieve head of other chain from master via http
-			//dest := queryDestBankHead()
+			dest := queryDestBankHead(rqst.DestBank)
+			fmt.Println(dest)
 			//handle transfer on current account
-			reply, replyDest := b.Transfer(rqst)
+			//reply, replyDest := b.Transfer(rqst)
 			//send reply to other chain using modified SendRequest()
 			//SendRequest(replyDest, dest)
 		}
@@ -543,6 +544,30 @@ func startUDPService(b *bank.Bank) {
 		}
 
 	}
+}
+
+//queryDestBankHead queries from masterhead server address of
+//the destination bank during transfer
+func queryDestBankHead(destBank string) string {
+	client := &http.Client{}
+	master := utils.Getconfig("master")
+	req, _ := http.NewRequest("POST", "http://"+master+"/transfer/destHead", bytes.NewBuffer([]byte(destBank)))
+	req.Header = http.Header{
+		"accept": {"text/plain"},
+	}
+
+	fmt.Println("SENT Query dest bank head", destBank)
+	logMsg("SENT", "Query Bank "+destBank+" head server", master)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("ERROR", err)
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("RECV dest head", string(body))
+	return string(body)
 }
 
 //die terminate current server to simulate server failure
