@@ -527,9 +527,9 @@ func startUDPService(b *bank.Bank) {
 			//retrieve head of other chain from master via http
 			//dest := queryDestBankHead()
 			//handle transfer on current account
-			//reply := b.Transfer(rqst)
+			reply, replyDest := b.Transfer(rqst)
 			//send reply to other chain using modified SendRequest()
-			//SendRequest(reply, dest)
+			//SendRequest(replyDest, dest)
 		}
 
 		reply.Client = rqst.Client

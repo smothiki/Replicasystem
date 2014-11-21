@@ -142,6 +142,10 @@ func (b *Bank) Deposit(req *structs.Request) *structs.Request {
 		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
 
+func (b *Bank) Transfer(req *structs.Request) *structs.Request , *structs.Request {
+	//TODO
+}
+
 func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
