@@ -551,7 +551,12 @@ func startUDPService(b *bank.Bank) {
 func queryDestBankHead(destBank string) string {
 	client := &http.Client{}
 	master := utils.Getconfig("master")
-	req, _ := http.NewRequest("POST", "http://"+master+"/transfer/destHead", bytes.NewBuffer([]byte(destBank)))
+	rqstHead := structs.DestHeadRqst{
+		DestBank:  destBank,
+		SrcServer: chain.Server,
+	}
+	msg, _ := json.Marshal(&rqstHead)
+	req, _ := http.NewRequest("POST", "http://"+master+"/transfer/destHead", bytes.NewBuffer(msg))
 	req.Header = http.Header{
 		"accept": {"text/plain"},
 	}
@@ -567,6 +572,7 @@ func queryDestBankHead(destBank string) string {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("RECV dest head", string(body))
+	logMsg("RECV", "Head server of bank "+destBank+": "+string(body), "master")
 	return string(body)
 }
 

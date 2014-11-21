@@ -50,6 +50,11 @@ type Ack struct {
 	ReqKey string
 }
 
+type DestHeadRqst struct {
+	DestBank  string
+	SrcServer string
+}
+
 func (r *Request) String(strType string) string {
 	switch strType {
 	case "REPLY":
