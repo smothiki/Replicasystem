@@ -523,10 +523,18 @@ func startUDPService(b *bank.Bank) {
 			reply = b.Deposit(rqst)
 			fmt.Println("inside deposit" + chain.Next)
 		case "transfer":
-			//TODO:
-			//retrieve head of other chain from master via http
-			dest := queryDestBankHead(rqst.DestBank)
-			fmt.Println(dest)
+
+			//transfer operation will check the dst bank and perform the necessary action
+			//if current bank is not the dst bank it will withdraw the amount else deposit the amount
+			reply := b.Transfer(rqst)
+			fmt.Println(reply)
+			if rqst.DestBank != b.Bankid {
+				dest := queryDestBankHead(rqst.DestBank)
+				fmt.Println(dest)
+				//Todo 1: send reply struct to the head of the bank
+			} else {
+				//Todo 2: send reply struct to the othre chain memebr to sync the object state
+			}
 			//handle transfer on current account
 			//reply, replyDest := b.Transfer(rqst)
 			//send reply to other chain using modified SendRequest()
@@ -587,12 +595,15 @@ func main() {
 	recvNum = 0
 	sendNum = 0
 	lossNum = 0
-	b := bank.Initbank("wellsfargo", "wells")
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
 	series := utils.GetConfigInt("chain1series")
 	lenservers := utils.GetConfigInt("chainlength")
 	curseries := int(port / 1000)
+
+	//bank name and bank ID will have th current chain series to identify unique bank
+
+	b := bank.Initbank("wells", strconv.Itoa(curseries))
 	series = series + (curseries - series)
 	chain = *structs.Makechain(series, port, lenservers)
 	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)

@@ -177,3 +177,30 @@ func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
 	return structs.Makereply(req.Requestid, req.Account, "processed",
 		"getbalance", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
+
+/*bank Id identifies the current series of chain . If dest bank and bank id are same we have add the
+* balance to the account . If dest bank and bank id are different we have to subtract the amount from the bank
+ */
+
+func (b *Bank) Transfer(req *structs.Request) *structs.Request {
+	b.CheckId(req.Account)
+	a := b.amap[req.Account]
+	newTrans := MakeTransaction(req)
+	resp := b.T.checkTransaction(newTrans)
+	if resp == "new" {
+		resp = "processed"
+		b.T.RecordTransaction(newTrans)
+		if req.DestBank != b.Bankid {
+			if (a.Balance - req.Amount) < 0 {
+				return structs.Makereply(req.Requestid, req.Account, "insufficientfunds",
+					"Transfer", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
+			}
+			a.Balance = a.Balance - req.Amount
+		} else {
+			a.Balance = a.Balance + req.Amount
+		}
+
+	}
+	return structs.Makereply(req.Requestid, req.Account, resp, "Trasnfer",
+		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
+}
