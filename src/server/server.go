@@ -5,6 +5,7 @@ import (
 	"container/list"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	//"io"
 	"io/ioutil"
 	"log"
@@ -12,7 +13,7 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strconv"
+
 	"time"
 
 	bank "github.com/replicasystem/src/commons/bank"
@@ -527,11 +528,18 @@ func startUDPService(b *bank.Bank) {
 			//transfer operation will check the dst bank and perform the necessary action
 			//if current bank is not the dst bank it will withdraw the amount else deposit the amount
 			reply := b.Transfer(rqst)
-			fmt.Println(reply)
-			if rqst.DestBank != b.Bankid {
-				dest := queryDestBankHead(rqst.DestBank)
-				fmt.Println(dest)
-				//Todo 1: send reply struct to the head of the bank
+			if reply.Outcome == "processed" {
+				fmt.Println(reply)
+				if rqst.DestBank != b.Bankid {
+					dest := queryDestBankHead(rqst.DestBank)
+					fmt.Println(dest)
+					// rep := sendtransfer(reply)
+					//Todo 1: send reply struct to the head of the bank
+					//sendsynctochain(rep)
+					// sync the reply object across the chain
+				} else {
+					//Todo 2: send reply struct to the othre chain memebr to sync the object state
+				}
 			} else {
 				//Todo 2: send reply struct to the othre chain memebr to sync the object state
 			}
