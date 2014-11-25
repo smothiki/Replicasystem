@@ -100,7 +100,13 @@ func SendRequest(request *structs.Request, dest string) {
 		"accept": {"application/json"},
 	}
 
-	logMsg("SENT", request.String("HISTORY"), dest)
+	var format string
+	if request.Transaction == "transfer" {
+		format = "TRANS_HIST"
+	} else {
+		format = "HISTORY"
+	}
+	logMsg("SENT", request.String(format), dest)
 	sent.PushBack(*request)
 	utils.LogSEvent(chain.Server, "Added "+request.MakeKey()+" into 'Sent'")
 
@@ -139,7 +145,7 @@ func SendAck(ack *structs.Ack) {
 //SendReply sends reply (request) to client
 func SendReply(request *structs.Request) {
 	if rand.Float32() < lossProb {
-		logMsg("LOSS", request.String("REPLY"), request.Client.String())
+		logMsg("LOSS", request.String("REPLY"), request.Receiver.String())
 		return
 	}
 	randomSleep(rqstProcMaxTime, "before sending request")
@@ -148,8 +154,8 @@ func SendReply(request *structs.Request) {
 		Port: port,
 		IP:   net.ParseIP("127.0.0.1"),
 	}*/
-	log.Println("cient addr", request.Client)
-	conn, err := net.DialUDP("udp", nil, &request.Client)
+	log.Println("cient addr", request.Receiver)
+	conn, err := net.DialUDP("udp", nil, &request.Receiver)
 
 	if err != nil {
 		log.Println("ERROR while connecting to client", err)
@@ -161,7 +167,7 @@ func SendReply(request *structs.Request) {
 	if err != nil {
 		log.Println("ERROR while sending reply to client", err)
 	}
-	logMsg("SENT", request.String("REPLY"), request.Client.String())
+	logMsg("SENT", request.String("REPLY"), request.Receiver.String())
 }
 
 //sync handler processes request sent by predecessor and sends it
@@ -172,7 +178,13 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		body, _ := ioutil.ReadAll(r.Body)
 		res := &structs.Request{}
 		json.Unmarshal(body, &res)
-		logMsg("RECV", res.String("HISTORY"), chain.Prev)
+		var format string
+		if res.Transaction == "transfer" {
+			format = "TRANS_HIST"
+		} else {
+			format = "HISTORY"
+		}
+		logMsg("RECV", res.String(format), chain.Prev)
 		b.Set(res)
 		utils.LogEventData(chain.Server, "server", "PROC", res.String("REPLY"))
 		if chain.Istail {
@@ -508,50 +520,73 @@ func startUDPService(b *bank.Bank) {
 		rqst := &structs.Request{}
 		json.Unmarshal(buf[:n], &rqst)
 		if rand.Float32() < lossProb {
-			logMsg("LOSS", rqst.String("REQUEST"), rqst.Client.String())
+			logMsg("LOSS", rqst.String("REQUEST"), rqst.Receiver.String())
+			//TODO
 			continue
 		}
-		logMsg("RECV", rqst.String("REQUEST"), rqst.Client.String())
+		if rqst.Transaction == "transfer" {
+			var sender string
+			if rqst.Sender.String() == "0.0.0.0:0" {
+				sender = rqst.Receiver.String()
+			} else {
+				sender = rqst.Sender.String()
+			}
+			logMsg("RECV", rqst.String("TRANS_REQ"), sender)
+		} else {
+			logMsg("RECV", rqst.String("REQUEST"), rqst.Receiver.String())
+		}
 
 		reply := &structs.Request{}
 		switch rqst.Transaction {
 		case "getbalance":
 			reply = b.GetBalance(rqst)
+			reply.Receiver = rqst.Receiver
 		case "withdraw":
 			reply = b.Withdraw(rqst)
-			fmt.Println("inside withdraw" + chain.Next)
+			reply.Receiver = rqst.Receiver
 		case "deposit":
 			reply = b.Deposit(rqst)
-			fmt.Println("inside deposit" + chain.Next)
+			reply.Receiver = rqst.Receiver
 		case "transfer":
 
 			//transfer operation will check the dst bank and perform the necessary action
 			//if current bank is not the dst bank it will withdraw the amount else deposit the amount
-			reply := b.Transfer(rqst)
-			if reply.Outcome == "processed" {
-				fmt.Println(reply)
-				if rqst.DestBank != b.Bankid {
+			if rqst.DestBank != b.Bankid &&
+				rqst.Receiver.String() != chain.Server {
+				//initially Receiver is client
+				//srcBank received request sent by client
+				reply = b.Transfer(rqst)
+				fmt.Println("reply result", reply)
+				if reply.Outcome == "processed" {
 					dest := queryDestBankHead(rqst.DestBank)
-					fmt.Println(dest)
-					// rep := sendtransfer(reply)
-					//Todo 1: send reply struct to the head of the bank
-					//sendsynctochain(rep)
-					// sync the reply object across the chain
-				} else {
-					//Todo 2: send reply struct to the othre chain memebr to sync the object state
+					fmt.Println("dest", dest)
+					ip, port := utils.GetIPAndPort(chain.Server)
+					rqst.Sender = net.UDPAddr{
+						Port: port,
+						IP:   net.ParseIP(ip),
+					}
+					sendTransferToDest(rqst, dest)
+					continue
 				}
-			} else {
-				//Todo 2: send reply struct to the othre chain memebr to sync the object state
+			} else if rqst.DestBank == b.Bankid {
+				//destBank received rqst sent by srcBank
+				reply = b.Transfer(rqst)
+				//make "client" src bank head server
+				reply.Receiver = rqst.Sender
+				ip, port := utils.GetIPAndPort(chain.Server)
+				reply.Sender = net.UDPAddr{
+					Port: port,
+					IP:   net.ParseIP(ip),
+				}
+				reply.Client = rqst.Client
+			} else if rqst.Receiver.String() == chain.Server {
+				//srcBank received reply from destBank
+				reply = b.Transfer(rqst)
+				reply.Receiver = rqst.Client
 			}
-			//handle transfer on current account
-			//reply, replyDest := b.Transfer(rqst)
-			//send reply to other chain using modified SendRequest()
-			//SendRequest(replyDest, dest)
 		}
 
-		reply.Client = rqst.Client
 		reply.Time = rqst.Time
-		//fmt.Println("dd", reply)
 		utils.LogEventData(chain.Server, "server", "PROC", reply.String("REPLY"))
 		if chain.Istail {
 			SendReply(reply)
@@ -562,14 +597,45 @@ func startUDPService(b *bank.Bank) {
 	}
 }
 
+func sendTransferToDest(request *structs.Request, dest string) {
+	msg, _ := json.Marshal(request)
+	ip, port := utils.GetIPAndPort(dest)
+	remoteAddr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP(ip),
+	}
+	ip, port = utils.GetIPAndPort(chain.Server)
+	conn, err := net.DialUDP("udp", nil, &remoteAddr)
+	if err != nil {
+		log.Println("ERROR while connecting to transfer dest bank.")
+	}
+	defer conn.Close()
+
+	_, err = conn.Write(msg)
+	if err != nil {
+		log.Println("Error while sending transfer request to dest bank")
+	}
+	logMsg("SENT", request.String("TRANS_REQ"), dest)
+}
+
+/*
+func transferHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
+	fmt.Fprintf(w, "dealing")
+	body, _ := ioutil.ReadAll(r.Body)
+	rqst := &structs.Request{}
+	json.Unmarshal(body, &rqst)
+	logMsg("RECV", rqst.String("TODO"), r.RemoteAddr)
+	//resp := b.Transfer(rqst)
+}*/
+
 //queryDestBankHead queries from masterhead server address of
 //the destination bank during transfer
 func queryDestBankHead(destBank string) string {
 	client := &http.Client{}
 	master := utils.Getconfig("master")
 	rqstHead := structs.DestHeadRqst{
-		DestBank:  destBank,
-		SrcServer: chain.Server,
+		DestBank: destBank,
+		Sender:   chain.Server,
 	}
 	msg, _ := json.Marshal(&rqstHead)
 	req, _ := http.NewRequest("POST", "http://"+master+"/transfer/destHead", bytes.NewBuffer(msg))
@@ -667,7 +733,14 @@ func main() {
 	http.HandleFunc("/extend/transactions", func(w http.ResponseWriter, r *http.Request) {
 		extendTransactionsHandler(w, r, b)
 	})
+
+	/*	http.HandleFunc("/transfer", func(w http.ResponseWriter, r *http.Request) {
+			transferHandler(w, r, b)
+		})
+	*/
+
 	http.HandleFunc("/requestSent", requestSentHandler)
+
 	err := http.ListenAndServe(chain.Server, nil)
 	if err != nil {
 		log.Fatal(err)

@@ -304,13 +304,13 @@ func transferDestHeadHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	rqst := &structs.DestHeadRqst{}
 	json.Unmarshal(body, &rqst)
-	logMsg("RECV", "Query head server of Bank "+rqst.DestBank, rqst.SrcServer)
-	fmt.Println("RECV Query head server of Bank", rqst.DestBank, rqst.SrcServer)
+	logMsg("RECV", "Query head server of Bank "+rqst.DestBank, rqst.Sender)
+	fmt.Println("RECV Query head server of Bank", rqst.DestBank, rqst.Sender)
 	destBankNum, _ := strconv.Atoi(rqst.DestBank)
 	sDestPort := strconv.Itoa(chainInfo[destBankNum].Head)
 	destBankAddr := "127.0.0.1:" + sDestPort
 	fmt.Fprint(w, destBankAddr)
-	logMsg("SENT", "Head of Bank "+rqst.DestBank+": "+destBankAddr, rqst.SrcServer)
+	logMsg("SENT", "Head of Bank "+rqst.DestBank+": "+destBankAddr, rqst.Sender)
 }
 
 func main() {

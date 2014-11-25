@@ -12,7 +12,7 @@ if [ $1 -le 10 ]; then
     N="0$1"
     echo $N
 fi
-gnome-terminal -e "go run master/master.go config$N.json"
+gnome-terminal -e "go run master/master.go config$N.json > m.txt"
 for i in `seq 0 $[$2-1]`; do
     for j in `seq $[(4+$i)*1000+1] $[(4+$i)*1000+4]`; do
         go run server/server.go $j config$N.json &

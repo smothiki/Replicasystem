@@ -21,8 +21,8 @@ type Request struct {
 	//for transfer
 	DestBank    string
 	DestAccount string
-	SrcBank     string
-	SrcAccount  string
+	Receiver    net.UDPAddr
+	Sender      net.UDPAddr
 }
 
 type Chain struct {
@@ -51,8 +51,8 @@ type Ack struct {
 }
 
 type DestHeadRqst struct {
-	DestBank  string
-	SrcServer string
+	DestBank string
+	Sender   string
 }
 
 //for master use
@@ -69,6 +69,12 @@ func (r *Request) String(strType string) string {
 		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f) %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
 	case "HISTORY":
 		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f), balance %.2f, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Balance, r.Time)
+	case "TRANS_REQ":
+		return fmt.Sprintf("reqID %s from a/c %s to a/c %s at Bank %s, %s(%.2f) %s",
+			r.Requestid, r.Account, r.DestAccount, r.DestBank, r.Transaction, r.Amount, r.Time)
+	case "TRANS_HIST":
+		return fmt.Sprintf("reqID %s , a/c %s to a/c %s at Bank %s, %s(%.2f), balance %.2f reqTime %s",
+			r.Requestid, r.Account, r.DestAccount, r.DestBank, r.Transaction, r.Amount, r.Balance, r.Time)
 	default:
 		return ""
 	}
@@ -168,16 +174,6 @@ func Makechain(series, server, length int) *Chain {
 	return chain
 }
 
-func Genrequest(balance float32, typet string) *Request {
-	req := &Request{
-		Balance:     balance,
-		Requestid:   utils.NewID(),
-		Account:     utils.NewID(),
-		Transaction: typet,
-		Outcome:     "none"}
-	return req
-}
-
 func Makereply(reqid, account, outcome, typet, destAccount, destBank string, amount, balance float32) *Request {
 	rep := &Request{
 		Requestid:   reqid,
@@ -188,6 +184,18 @@ func Makereply(reqid, account, outcome, typet, destAccount, destBank string, amo
 		Balance:     balance,
 		DestBank:    destBank,
 		DestAccount: destAccount,
+	}
+	rep.Sender = net.UDPAddr{
+		Port: 0,
+		IP:   net.ParseIP("0.0.0.0"),
+	}
+	rep.Receiver = net.UDPAddr{
+		Port: 0,
+		IP:   net.ParseIP("0.0.0.0"),
+	}
+	rep.Client = net.UDPAddr{
+		Port: 0,
+		IP:   net.ParseIP("0.0.0.0"),
 	}
 	return rep
 }

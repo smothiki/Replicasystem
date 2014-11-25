@@ -2,6 +2,7 @@ package bank
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/replicasystem/src/commons/structs"
 )
@@ -32,6 +33,8 @@ func (t *transactions) RecordTransaction(trans *Transaction) {
 func (t *transactions) checkTransaction(trans *Transaction) string {
 	if trans1, ok := t.tmap[trans.Tid]; ok {
 		if trans1.equals(trans) {
+			fmt.Println("==============p ro ===============")
+			fmt.Println("tid", trans.Tid)
 			return "processed"
 		} else {
 			return "inconsistent"
@@ -142,10 +145,6 @@ func (b *Bank) Deposit(req *structs.Request) *structs.Request {
 		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }
 
-/*func (b *Bank) Transfer(req *structs.Request) *structs.Request , *structs.Request {
-	//TODO
-}*/
-
 func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 	b.CheckId(req.Account)
 	a := b.amap[req.Account]
@@ -187,13 +186,18 @@ func (b *Bank) Transfer(req *structs.Request) *structs.Request {
 	a := b.amap[req.Account]
 	newTrans := MakeTransaction(req)
 	resp := b.T.checkTransaction(newTrans)
+	fmt.Println("===========================")
+	fmt.Println("amount", req.Amount)
+	fmt.Println("balance", a.Balance)
+	fmt.Println("resp", resp)
+	fmt.Println("===========================")
 	if resp == "new" {
 		resp = "processed"
 		b.T.RecordTransaction(newTrans)
 		if req.DestBank != b.Bankid {
 			if (a.Balance - req.Amount) < 0 {
 				return structs.Makereply(req.Requestid, req.Account, "insufficientfunds",
-					"Transfer", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
+					"transfer", req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 			}
 			a.Balance = a.Balance - req.Amount
 		} else {
@@ -201,6 +205,6 @@ func (b *Bank) Transfer(req *structs.Request) *structs.Request {
 		}
 
 	}
-	return structs.Makereply(req.Requestid, req.Account, resp, "Trasnfer",
+	return structs.Makereply(req.Requestid, req.Account, resp, "transfer",
 		req.DestAccount, req.DestBank, req.Amount, a.getbalance())
 }

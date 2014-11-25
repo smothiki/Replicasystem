@@ -59,6 +59,7 @@ func SendRequest(server string, request *structs.Request, port int) {
 
 	defer conn.Close()
 
+	request.Receiver = localAddr
 	request.Client = localAddr
 	request.Time = fmt.Sprintf("%d", (time.Now().Unix()))
 	res1B, err := json.Marshal(request)
