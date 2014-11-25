@@ -188,8 +188,14 @@ func (b *Bank) GetBalance(req *structs.Request) *structs.Request {
  */
 
 func (b *Bank) Transfer(req *structs.Request) *structs.Request {
-	b.CheckId(req.Account)
-	a := b.amap[req.Account]
+	var account string
+	if req.DestBank != b.Bankid {
+		account = req.Account
+	} else {
+		account = req.DestAccount
+	}
+	b.CheckId(account)
+	a := b.amap[account]
 	newTrans := MakeTransaction(req)
 	resp := b.T.checkTransaction(newTrans)
 	if resp == "new" {

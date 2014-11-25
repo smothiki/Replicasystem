@@ -66,12 +66,18 @@ type ChainInfo struct {
 func (r *Request) String(strType string) string {
 	switch strType {
 	case "REPLY":
-		return fmt.Sprintf("reqID %s, a/c %s, %s, balance %.2f, %s, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time)
+		return fmt.Sprintf("reqID %s, a/c %s, %s, balance %.2f, %s, reqTime %s",
+			r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time)
+	case "TRANS_REPLY":
+		return fmt.Sprintf("reqID %s, from a/c %s to a/c %s at Bank %s, %s, balance %.2f, %s, reqTime %s",
+			r.Requestid, r.Account, r.DestAccount, r.DestBank, r.Transaction, r.Balance, r.Outcome, r.Time)
 		//return fmt.Sprintf("reqID %s, a/c %s, %s, balance %.2f, %s, reqTime %s cli %s rec %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time, r.Client.String(), r.Receiver.String())
 	case "REQUEST":
-		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f) %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f) %s",
+			r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
 	case "HISTORY":
-		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f), balance %.2f, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Balance, r.Time)
+		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f), balance %.2f, reqTime %s",
+			r.Requestid, r.Account, r.Transaction, r.Amount, r.Balance, r.Time)
 	case "TRANS_REQ":
 		return fmt.Sprintf("reqID %s from a/c %s to a/c %s at Bank %s, %s(%.2f) %s",
 			r.Requestid, r.Account, r.DestAccount, r.DestBank, r.Transaction, r.Amount, r.Time)

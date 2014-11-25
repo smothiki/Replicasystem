@@ -68,8 +68,13 @@ func SendRequest(server string, request *structs.Request, port int) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("SENT", request.String("REQUEST"))
-	logMsg("SENT", request.String("REQUEST"), server)
+	format := "REQUEST"
+	if request.Transaction == "transfer" {
+		format = "TRANS_REQ"
+	} else {
+		fmt.Println("SENT", request.String(format))
+	}
+	logMsg("SENT", request.String(format), server)
 }
 
 //createUDPSocket creates and listen UDP socket, through
@@ -101,8 +106,12 @@ func readResponse(conn *net.UDPConn) *structs.Request {
 
 	rqst := &structs.Request{}
 	json.Unmarshal(buf[:n], &rqst)
-	fmt.Println("RECV", rqst.String("REPLY"))
-	logMsg("RECV", rqst.String("REPLY"), "SERVER")
+	format := "REPLY"
+	if rqst.Transaction == "transfer" {
+		format = "TRANS_REPLY"
+	}
+	fmt.Println("RECV", rqst.String(format))
+	logMsg("RECV", rqst.String(format), "SERVER")
 
 	return rqst
 }

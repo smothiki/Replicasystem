@@ -1,0 +1,11 @@
+{
+  "requests": {
+    "seed" : "1093",
+    "getbalanceProb" : "0.0",
+    "depositProb" : "0.7",
+    "withdrawProb" : "0.3",
+    "transferProb" : "0.0",
+    "randAccounts": ["123", "124", "125"],
+    "tests": []
+  }
+}

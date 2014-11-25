@@ -29,19 +29,27 @@ func NewID() string {
 	return fmt.Sprintf("%x", uuid[0:4])
 }
 
-func LogEventData(server, servType, msgType, msg string) {
+func getLogFileName(server, serverType string) string {
 	name := GetWorkDir() + "logs/"
-	switch servType {
+	switch serverType {
 	case "client":
-		name += "clogs"
+		_, port := GetIPAndPort(server)
+		chain := int(port / 1000)
+		name += "clogs_" + strconv.Itoa(chain)
 	case "server":
-		name += "slogs"
+		_, port := GetIPAndPort(server)
+		chain := int(port / 1000)
+		name += "slogs_" + strconv.Itoa(chain)
 	case "master":
 		name += "mlogs"
 	default:
-		log.Fatal("ERROR while logging events/data, wrong msgType")
+		log.Fatal("ERROR while logging events/data, wrong serverType")
 	}
+	return name
+}
 
+func LogEventData(server, servType, msgType, msg string) {
+	name := getLogFileName(server, servType)
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	//fmt.Printf("%s %s: %s\n", server, msgType, msg)
@@ -61,15 +69,7 @@ func LogMEvent(server, event string) {
 	LogEventData(server, "master", "EVENT", event)
 }
 func LogMsg(server, servType, msgType, msg string, num int) {
-	var name string
-	if servType == "client" {
-		name = GetWorkDir() + "logs/clogs"
-	} else if servType == "server" {
-		name = GetWorkDir() + "logs/slogs"
-	} else if servType == "master" {
-		name = GetWorkDir() + "logs/mlogs"
-	}
-
+	name := getLogFileName(server, servType)
 	f, _ := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer f.Close()
 	//log.Printf("%s %s:#%d %s", server, msgType, num, msg)

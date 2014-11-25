@@ -34,8 +34,12 @@ func GenRequestList(rqstFile string, minBankID, maxBankID, currentBankID int) *[
 		typet, _ := getReqs.GetIndex(i).Get("transaction").String()
 		var destAccount, destBank string
 		if typet == "transfer" {
+			if maxBankID == currentBankID {
+				destBank = strconv.Itoa(currentBankID - 1)
+			} else {
+				destBank = strconv.Itoa(currentBankID + 1)
+			}
 			destAccount, _ = getReqs.GetIndex(i).Get("destAccount").String()
-			destBank, _ = getReqs.GetIndex(i).Get("destBank").String()
 		}
 		listreqs = append(listreqs, *Makereply(reqid, account, "", typet, destAccount, destBank, amount, 0))
 	}
@@ -83,7 +87,10 @@ func GenRequestList(rqstFile string, minBankID, maxBankID, currentBankID int) *[
 				continue
 			}
 			id := utils.NewID()
-			amount := r.Float32() * 30
+			var amount float32
+			if typeIdx != 0 {
+				amount = r.Float32() * 30
+			}
 			destBankIdx := rand.Intn(len(destBanks))
 			destAccIdx := rand.Intn(numAccounts)
 			listreqs = append(listreqs, *Makereply(id, accounts[accIdx],
