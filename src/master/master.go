@@ -309,6 +309,7 @@ func alterChain(server string, statMap *map[string]*structs.Chain) {
 	}
 }
 
+//transferDestHandler handles transfer dest head request
 func transferDestHeadHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	rqst := &structs.DestHeadRqst{}

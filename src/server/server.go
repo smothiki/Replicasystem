@@ -143,7 +143,7 @@ func SendAck(ack *structs.Ack) {
 	}
 }
 
-//SendReply sends reply (request) to client
+//SendReply sends reply (request) to request.Receiver
 func SendReply(request *structs.Request) {
 	if rand.Float32() < lossProb {
 		logMsg("LOSS", request.String("REPLY"), request.Receiver.String())
@@ -680,6 +680,7 @@ func startUDPService(b *bank.Bank) {
 	}
 }
 
+//sendTransferToDest sends transfer request (by source tail) to dest (dest head)
 func sendTransferToDest(request *structs.Request, dest string) {
 	msg, _ := json.Marshal(request)
 	ip, port := utils.GetIPAndPort(dest)
@@ -818,11 +819,6 @@ func main() {
 	http.HandleFunc("/extend/transactions", func(w http.ResponseWriter, r *http.Request) {
 		extendTransactionsHandler(w, r, b)
 	})
-
-	/*	http.HandleFunc("/transfer", func(w http.ResponseWriter, r *http.Request) {
-			transferHandler(w, r, b)
-		})
-	*/
 
 	http.HandleFunc("/requestSent", requestSentHandler)
 

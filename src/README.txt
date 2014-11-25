@@ -111,6 +111,10 @@ tail, it sets the sender itself and Receiver source tail. In this way, messages
 status can be easily identified by the server.
 
 
+Additionally, source tail sends ack to predecessor only if destination head
+replies to it, so when source tail fails, new source tail can resend transfer
+requests in its 'Sent' list.
+
 
 ******[INHERITED FROM PHASE 3 BELOW]******
 
