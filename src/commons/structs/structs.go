@@ -39,6 +39,7 @@ type Chain struct {
 	FailOnRecvSent  bool
 	FailOnExtension bool
 	Available       bool
+	FailOnRecvTrans bool
 }
 
 type ClientNotify struct {

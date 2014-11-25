@@ -199,6 +199,18 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 				} else {
 					dest := queryDestBankHead(res.DestBank)
 					sendTransferToDest(res, dest)
+					if isFailOnRecvTrans(dest) {
+						var newdest string
+						for {
+							newdest = queryDestBankHead(res.DestBank)
+							if dest != newdest {
+								break
+							}
+							time.Sleep(2 * time.Second)
+						}
+						utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
+						sendTransferToDest(res, newdest)
+					}
 				}
 			} else {
 				SendReply(res)
@@ -584,6 +596,18 @@ func startUDPService(b *bank.Bank) {
 					if chain.Istail {
 						dest := queryDestBankHead(rqst.DestBank)
 						sendTransferToDest(rqst, dest)
+						if isFailOnRecvTrans(dest) {
+							var newdest string
+							for {
+								newdest = queryDestBankHead(rqst.DestBank)
+								if dest != newdest {
+									break
+								}
+								time.Sleep(2 * time.Second)
+							}
+							utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
+							sendTransferToDest(rqst, newdest)
+						}
 					} else {
 						SendRequest(reply, chain.Next)
 					}
@@ -599,6 +623,10 @@ func startUDPService(b *bank.Bank) {
 				reply.Sender = net.UDPAddr{
 					Port: port,
 					IP:   net.ParseIP(ip),
+				}
+				if chain.FailOnRecvTrans {
+					utils.LogSEvent(chain.Server, "Failed on receiving transfer request from source bank.")
+					os.Exit(0)
 				}
 			} else if rqst.Receiver.String() == chain.Server {
 				//srcBank received reply from destBank
@@ -638,6 +666,11 @@ func sendTransferToDest(request *structs.Request, dest string) {
 		log.Println("Error while sending transfer request to dest bank")
 	}
 	logMsg("SENT", request.String("TRANS_REQ"), dest)
+}
+
+func isFailOnRecvTrans(addr string) bool {
+	_, port := utils.GetIPAndPort(addr)
+	return utils.GetFailOnRecvTrans(port%1000 - 1)
 }
 
 /*
@@ -705,6 +738,7 @@ func main() {
 	chain.FailOnReqSent = utils.GetFailOnReqSent(port%1000 - 1)
 	chain.FailOnRecvSent = utils.GetFailOnRecvSent(port%1000 - 1)
 	chain.FailOnExtension = utils.GetFailOnExtension(port%1000 - 1)
+	chain.FailOnRecvTrans = utils.GetFailOnRecvTrans(port%100 - 1)
 	r, _ := strconv.ParseFloat(utils.Getconfig("msgLossProb"), 32)
 	lossProb = float32(r)
 	ackProcMaxTime = utils.GetConfigInt("ackProcMaxTime")

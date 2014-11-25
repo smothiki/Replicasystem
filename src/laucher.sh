@@ -14,12 +14,12 @@ if [ $1 -lt 10 ]; then
 else
     N="$1"
 fi
-gnome-terminal -e "go run master/master.go config$N.json > m.txt"
 for i in `seq 0 $[$2-1]`; do
     for j in `seq $[(4+$i)*1000+1] $[(4+$i)*1000+4]`; do
         go run server/server.go $j config$N.json &
     done
 done
+gnome-terminal -e "go run master/master.go config$N.json > m.txt"
 #for i in `seq 0 $[$2-1]`; do
 #    PORT=$[(4+$i)*1000+999]
 #    echo $PORT

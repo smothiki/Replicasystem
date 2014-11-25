@@ -2,7 +2,6 @@ package bank
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/replicasystem/src/commons/structs"
 )
@@ -33,9 +32,6 @@ func (t *transactions) RecordTransaction(trans *Transaction) {
 func (t *transactions) checkTransaction(trans *Transaction) string {
 	if trans1, ok := t.tmap[trans.Tid]; ok {
 		if trans1.equals(trans) {
-			fmt.Println("==============p ro ===============")
-			fmt.Println("tid", trans.Tid)
-			fmt.Println("amm", trans.Amount)
 			return "processed"
 		} else {
 			return "inconsistent"
@@ -43,8 +39,6 @@ func (t *transactions) checkTransaction(trans *Transaction) string {
 	}
 	return "new"
 }
-
-//func (t* transaction)
 
 func (t1 *Transaction) equals(t2 *Transaction) bool {
 	return t1.Tid == t2.Tid &&
@@ -190,11 +184,6 @@ func (b *Bank) Transfer(req *structs.Request) *structs.Request {
 	a := b.amap[req.Account]
 	newTrans := MakeTransaction(req)
 	resp := b.T.checkTransaction(newTrans)
-	fmt.Println("===========================")
-	fmt.Println("amount", req.Amount)
-	fmt.Println("balance", a.Balance)
-	fmt.Println("resp", resp)
-	fmt.Println("===========================")
 	if resp == "new" {
 		resp = "processed"
 		b.T.RecordTransaction(newTrans)

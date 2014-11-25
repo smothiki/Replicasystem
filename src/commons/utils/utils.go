@@ -140,6 +140,10 @@ func GetFailOnExtension(index int) bool {
 	return getBoolInArray(index, "failOnExtension")
 }
 
+func GetFailOnRecvTrans(index int) bool {
+	return getBoolInArray(index, "failOnRecvTrans")
+}
+
 func getBoolInArray(index int, key string) bool {
 	v, _ := config.Get(key).GetIndex(index).Int()
 	if v == 1 {
