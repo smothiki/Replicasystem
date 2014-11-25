@@ -211,6 +211,7 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 						utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
 						sendTransferToDest(res, newdest)
 					}
+					return
 				}
 			} else {
 				SendReply(res)
@@ -633,6 +634,13 @@ func startUDPService(b *bank.Bank) {
 				reply = b.Transfer(rqst)
 				reply.Client = rqst.Client
 				reply.Receiver = rqst.Client
+				reply.Time = rqst.Time
+				if chain.Istail && !chain.Ishead {
+					ack := structs.Ack{
+						ReqKey: reply.MakeKey(),
+					}
+					SendAck(&ack)
+				}
 			}
 		}
 
