@@ -126,16 +126,11 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //simulate simulates the client and sends request to servers
-func simulate(conn *net.UDPConn, port, clientIdx int, waitTime time.Duration) {
-	//reqGenMethod := utils.GetTestCaseGenMethod(clientIdx)
+func simulate(conn *net.UDPConn, port, clientIdx, minSeries, maxSeries, curSeries int, waitTime time.Duration) {
+	//Get requestXX.json
 	reqFile := utils.GetTestRequestFile(clientIdx)
-	/*var listreqs *[]structs.Request
-	if reqGenMethod == "predefined" {
-		listreqs = structs.GetTestreqs(reqFile)
-	} else {
-		listreqs = structs.GetrequestList(3, "getbalance", reqFile)
-	}*/
-	listreqs := structs.GenRequestList(reqFile)
+	//Get requests in requestXX.json
+	listreqs := structs.GenRequestList(reqFile, minSeries, maxSeries, curSeries)
 	var dest string
 	//xxx := 0
 	for _, request := range *listreqs {
@@ -166,11 +161,13 @@ func main() {
 	//read configuration
 	port, _ := strconv.Atoi(os.Args[1])
 	utils.SetConfigFile(os.Args[2])
-	series := utils.GetConfigInt("chain1series")
+	minseries := utils.GetConfigInt("chain1series")
 	lenservers := utils.GetConfigInt("chainlength")
+	seriesnum := utils.GetConfigInt("chains")
 	curseries := int(port / 1000)
-	series = series + (curseries - series)
-	chain = *structs.Makechain(series, port, lenservers)
+	maxseries := minseries + seriesnum - 1
+
+	chain = *structs.Makechain(curseries, port, lenservers)
 	recvNum = 0
 	sendNum = 0
 
@@ -182,7 +179,7 @@ func main() {
 
 	//wait for servers to start up
 	time.Sleep(2000 * time.Millisecond)
-	go simulate(conn, port, clientIdx, waitTime)
+	go simulate(conn, port, clientIdx, minseries, maxseries, curseries, waitTime)
 	http.HandleFunc("/alterChain", alterChainHandler)
 	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)
 	if err != nil {

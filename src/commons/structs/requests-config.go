@@ -13,7 +13,7 @@ import (
 //requests. If the number of predefined requests is less than maxRequests,
 //remaining requests are generated randomly based on the probabilities given
 //in rqstFile.
-func GenRequestList(rqstFile string) *[]Request {
+func GenRequestList(rqstFile string, minBankID, maxBankID, currentBankID int) *[]Request {
 	listreqs := make([]Request, 0, 1)
 	js, _ := gson.NewJson(utils.GetFileBytes(utils.GetWorkDir() + "config/" + rqstFile))
 	getReqs := js.Get("requests").Get("tests")
@@ -58,10 +58,21 @@ func GenRequestList(rqstFile string) *[]Request {
 		numTypes[1] = int(depositProb * float32(remainReqNum))
 		numTypes[2] = int(withdrawProb * float32(remainReqNum))
 		numTypes[3] = remainReqNum - numTypes[0] - numTypes[1] - numTypes[2]
-		numAccounts := remainReqNum / 4
+
+		jsAccArray := js.Get("requests").Get("randAccounts")
+		accArray, _ := jsAccArray.Array()
+		numAccounts := len(accArray)
 		accounts := make([]string, numAccounts)
 		for i := 0; i < numAccounts; i++ {
-			accounts[i] = utils.NewID()
+			accounts[i], _ = jsAccArray.GetIndex(i).String()
+		}
+
+		destBanks := make([]string, maxBankID-minBankID)
+		for i := minBankID; i <= maxBankID; i++ {
+			if i == currentBankID {
+				continue
+			}
+			destBanks = append(destBanks, strconv.Itoa(i))
 		}
 
 		r := rand.New(rand.NewSource(99))
@@ -73,10 +84,10 @@ func GenRequestList(rqstFile string) *[]Request {
 			}
 			id := utils.NewID()
 			amount := r.Float32() * 30
-			//TODO: add destAccount & destBank field randomly to random rquest list
-			var destAccount, destBank string
+			destBankIdx := rand.Intn(len(destBanks))
+			destAccIdx := rand.Intn(numAccounts)
 			listreqs = append(listreqs, *Makereply(id, accounts[accIdx],
-				"none", types[typeIdx], destAccount, destBank, amount, 0))
+				"none", types[typeIdx], accounts[destAccIdx], destBanks[destBankIdx], amount, 0))
 			counter[typeIdx]++
 			numReqTest++
 			if numReqTest == maxNumReq {
