@@ -26,6 +26,7 @@ var sendOnlineCycle time.Duration    // frequency of sending online msg to maste
 var ackProcMaxTime int               // time of (simulated) ack processing
 var rqstProcMaxTime int              // time of (simulated) request processing
 var extendSendInterval time.Duration // interval of sending histories to new tail during extension
+var checkOnlineCycle int             //frequency of master checking online msg
 
 var sent list.List                // 'Sent'
 var chain structs.Chain           // info of current server
@@ -197,19 +198,27 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 				if res.DestBank == b.Bankid {
 					SendReply(res)
 				} else {
-					dest := queryDestBankHead(res.DestBank)
-					sendTransferToDest(res, dest)
-					if isFailOnRecvTrans(dest) {
-						var newdest string
-						for {
-							newdest = queryDestBankHead(res.DestBank)
-							if dest != newdest {
-								break
-							}
-							time.Sleep(2 * time.Second)
+					if res.Outcome == "processed" {
+						dest := queryDestBankHead(res.DestBank)
+						sendTransferToDest(res, dest)
+						if chain.FailOnSendTrans {
+							utils.LogSEvent(chain.Server, "Server failed on sending request to dest bank")
+							os.Exit(0)
 						}
-						utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
-						sendTransferToDest(res, newdest)
+						if isFailOnRecvTrans(dest) {
+							var newdest string
+							time.Sleep(time.Duration(checkOnlineCycle+1) * time.Second)
+							newdest = queryDestBankHead(res.DestBank)
+							utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
+							sendTransferToDest(res, newdest)
+						}
+					} else {
+						res.Receiver = res.Client
+						SendReply(res)
+						ack := structs.Ack{
+							ReqKey: res.MakeKey(),
+						}
+						SendAck(&ack)
 					}
 					return
 				}
@@ -246,13 +255,29 @@ func alterChainHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
 	}
 	//if chain.Next != newChain.Next && !newChain.Istail {}
 	if isNewTail {
-		for e := sent.Front(); e != nil; {
+		time.Sleep(2 * time.Second)
+		e := sent.Front()
+		for e != nil {
 			r := e.Value.(structs.Request)
-			ack := structs.Ack{
-				ReqKey: r.MakeKey(),
+			if r.Transaction == "transfer" && b.Bankid != r.DestBank {
+				utils.LogSEvent(chain.Server, "Sending entry in 'Sent' to dest bank")
+				dest := queryDestBankHead(r.DestBank)
+				ip, port := utils.GetIPAndPort(chain.Server)
+				r.Sender = net.UDPAddr{
+					Port: port,
+					IP:   net.ParseIP(ip),
+				}
+				sendTransferToDest(&r, dest)
+				e = e.Next()
+			} else {
+				utils.LogSEvent(chain.Server, "Removing entry in 'Sent' and send ack")
+				ack := structs.Ack{
+					ReqKey: r.MakeKey(),
+				}
+				SendAck(&ack)
+				sent.Remove(e)
+				e = sent.Front()
 			}
-			SendAck(&ack)
-			sent.Remove(e)
 		}
 	}
 }
@@ -585,29 +610,29 @@ func startUDPService(b *bank.Bank) {
 				//srcBank received request sent by client
 				reply = b.Transfer(rqst)
 				fmt.Println("reply result", reply)
+				reply.Time = rqst.Time
+				reply.Client = rqst.Client
 				if reply.Outcome == "processed" {
 					ip, port := utils.GetIPAndPort(chain.Server)
 					rqst.Sender = net.UDPAddr{
 						Port: port,
 						IP:   net.ParseIP(ip),
 					}
-					reply.Time = rqst.Time
-					reply.Client = rqst.Client
 					utils.LogEventData(chain.Server, "server", "PROC", reply.String("REPLY"))
 					if chain.Istail {
-						dest := queryDestBankHead(rqst.DestBank)
-						sendTransferToDest(rqst, dest)
-						if isFailOnRecvTrans(dest) {
-							var newdest string
-							for {
+						if reply.Outcome == "processed" {
+							dest := queryDestBankHead(rqst.DestBank)
+							sendTransferToDest(rqst, dest)
+							if isFailOnRecvTrans(dest) {
+								var newdest string
+								time.Sleep(time.Duration(checkOnlineCycle+1) * time.Second)
 								newdest = queryDestBankHead(rqst.DestBank)
-								if dest != newdest {
-									break
-								}
-								time.Sleep(2 * time.Second)
+								utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
+								sendTransferToDest(rqst, newdest)
+							} else {
+								reply.Receiver = reply.Client
+								SendReply(reply)
 							}
-							utils.LogSEvent(chain.Server, "dest bank head failed, retransmitting transfer request...")
-							sendTransferToDest(rqst, newdest)
 						}
 					} else {
 						SendRequest(reply, chain.Next)
@@ -681,16 +706,6 @@ func isFailOnRecvTrans(addr string) bool {
 	return utils.GetFailOnRecvTrans(port%1000 - 1)
 }
 
-/*
-func transferHandler(w http.ResponseWriter, r *http.Request, b *bank.Bank) {
-	fmt.Fprintf(w, "dealing")
-	body, _ := ioutil.ReadAll(r.Body)
-	rqst := &structs.Request{}
-	json.Unmarshal(body, &rqst)
-	logMsg("RECV", rqst.String("TODO"), r.RemoteAddr)
-	//resp := b.Transfer(rqst)
-}*/
-
 //queryDestBankHead queries from masterhead server address of
 //the destination bank during transfer
 func queryDestBankHead(destBank string) string {
@@ -705,6 +720,7 @@ func queryDestBankHead(destBank string) string {
 	req.Header = http.Header{
 		"accept": {"text/plain"},
 	}
+	req.Close = true
 
 	fmt.Println("SENT Query dest bank head", destBank)
 	logMsg("SENT", "Query Bank "+destBank+" head server", master)
@@ -714,11 +730,13 @@ func queryDestBankHead(destBank string) string {
 		log.Println("ERROR", err)
 	}
 
-	defer resp.Body.Close()
+	//defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("RECV dest head", string(body))
-	logMsg("RECV", "Head server of bank "+destBank+": "+string(body), "master")
-	return string(body)
+	result := string(body)
+	resp.Body.Close()
+	fmt.Println("RECV dest head", result)
+	logMsg("RECV", "Head server of bank "+destBank+": "+result, "master")
+	return result
 }
 
 //die terminate current server to simulate server failure
@@ -747,12 +765,15 @@ func main() {
 	chain.FailOnRecvSent = utils.GetFailOnRecvSent(port%1000 - 1)
 	chain.FailOnExtension = utils.GetFailOnExtension(port%1000 - 1)
 	chain.FailOnRecvTrans = utils.GetFailOnRecvTrans(port%100 - 1)
+	chain.FailOnSendTrans = utils.GetFailOnSendTrans(port%100 - 1)
+
 	r, _ := strconv.ParseFloat(utils.Getconfig("msgLossProb"), 32)
 	lossProb = float32(r)
 	ackProcMaxTime = utils.GetConfigInt("ackProcMaxTime")
 	rqstProcMaxTime = utils.GetConfigInt("rqstProcMaxTime")
 	sendOnlineCycle = time.Duration(utils.GetConfigInt("sendOnlineCycle"))
 	extendSendInterval = time.Duration(utils.GetConfigInt("extendSendInterval"))
+	checkOnlineCycle = utils.GetConfigInt("checkOnlineCycle")
 
 	lifetime := utils.GetLifeTime(port%1000 - 1)
 	startDelay := utils.GetStartDelay(port%1000 - 1)

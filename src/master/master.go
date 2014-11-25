@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	//"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -116,16 +117,20 @@ func checkStatus(statMap *map[string]*structs.Chain) {
 			if chain.MsgCnt == 0 && chain.Online {
 				//failure
 				logEvent("server " + serverIdx + " failed")
-				alterChain(serverIdx, statMap)
+				fmt.Println(serverIdx, "failed")
+				go alterChain(serverIdx, statMap)
 			} else if chain.MsgCnt > 0 && !chain.Online {
 				//extend
-				if extendChain(serverIdx, statMap) {
-					logEvent("new server " + serverIdx + " online")
-				}
+				go func() {
+					if extendChain(serverIdx, statMap) {
+						logEvent("new server " + serverIdx + " online")
+					}
+				}()
 			}
-			//fmt.Println(serverIdx, chain)
+			//fmt.Println(serverIdx, chain.MsgCnt)
 			(*statMap)[serverIdx].MsgCnt = 0
 		}
+		//fmt.Println("=============")
 	}
 }
 
@@ -194,6 +199,8 @@ func notifyServer(dest, action string, newChain *structs.Chain) bool {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+	req.Close = true
+	fmt.Println("dest", dest)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("ERROR while notifying server chain modification", err)
@@ -202,15 +209,16 @@ func notifyServer(dest, action string, newChain *structs.Chain) bool {
 	if resp == nil {
 		return true
 	}
-	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
 	}
+	rst := string(body)
+	resp.Body.Close()
 
 	logMsg("SENT", newChain.String(), dest)
 
-	if action == "extendChain" && string(body) == "failed" {
+	if action == "extendChain" && rst == "failed" {
 		//handle failure
 		return false
 	}
@@ -226,6 +234,7 @@ func notifyClient(dest string, data *structs.ClientNotify) {
 	req.Header = http.Header{
 		"accept": {"application/json"},
 	}
+	req.Close = true
 	_, err := client.Do(req)
 	if err != nil {
 		log.Println("ERROR while notifying client chain modification", err)
@@ -311,6 +320,7 @@ func transferDestHeadHandler(w http.ResponseWriter, r *http.Request) {
 	destBankAddr := "127.0.0.1:" + sDestPort
 	fmt.Fprint(w, destBankAddr)
 	logMsg("SENT", "Head of Bank "+rqst.DestBank+": "+destBankAddr, rqst.Sender)
+	//runtime.Gosched()
 }
 
 func main() {

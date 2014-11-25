@@ -40,6 +40,7 @@ type Chain struct {
 	FailOnExtension bool
 	Available       bool
 	FailOnRecvTrans bool
+	FailOnSendTrans bool
 }
 
 type ClientNotify struct {
@@ -66,6 +67,7 @@ func (r *Request) String(strType string) string {
 	switch strType {
 	case "REPLY":
 		return fmt.Sprintf("reqID %s, a/c %s, %s, balance %.2f, %s, reqTime %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time)
+		//return fmt.Sprintf("reqID %s, a/c %s, %s, balance %.2f, %s, reqTime %s cli %s rec %s", r.Requestid, r.Account, r.Transaction, r.Balance, r.Outcome, r.Time, r.Client.String(), r.Receiver.String())
 	case "REQUEST":
 		return fmt.Sprintf("reqID %s, a/c %s, %s(%.2f) %s", r.Requestid, r.Account, r.Transaction, r.Amount, r.Time)
 	case "HISTORY":

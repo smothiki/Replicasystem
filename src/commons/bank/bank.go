@@ -2,6 +2,7 @@ package bank
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/replicasystem/src/commons/structs"
 )
@@ -41,6 +42,11 @@ func (t *transactions) checkTransaction(trans *Transaction) string {
 }
 
 func (t1 *Transaction) equals(t2 *Transaction) bool {
+	fmt.Println("=== trans check ===")
+	fmt.Println("Current opt:", t2.Tid, t2.Operation)
+	fmt.Println(t1)
+	fmt.Println(t2)
+	fmt.Println("=== check end ===")
 	return t1.Tid == t2.Tid &&
 		t1.Amount == t2.Amount &&
 		t1.AccountId == t2.AccountId &&
@@ -164,7 +170,9 @@ func (b *Bank) Set(req *structs.Request) {
 	a := b.amap[req.Account]
 	a.Balance = req.Balance
 	newTrans := MakeTransaction(req)
-	b.T.RecordTransaction(newTrans)
+	if req.Outcome != "inconsistent" {
+		b.T.RecordTransaction(newTrans)
+	}
 }
 
 func (b *Bank) GetBalance(req *structs.Request) *structs.Request {

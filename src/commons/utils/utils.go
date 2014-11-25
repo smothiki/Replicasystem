@@ -144,6 +144,10 @@ func GetFailOnRecvTrans(index int) bool {
 	return getBoolInArray(index, "failOnRecvTrans")
 }
 
+func GetFailOnSendTrans(index int) bool {
+	return getBoolInArray(index, "failOnSendTrans")
+}
+
 func getBoolInArray(index int, key string) bool {
 	v, _ := config.Get(key).GetIndex(index).Int()
 	if v == 1 {
