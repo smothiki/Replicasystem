@@ -4,7 +4,7 @@
   "chain1series": "4",
   "MaxRequests":"20",
   "msgLossProb": "0.0",
-  "testrequests" : ["request07.json", "request10.json","request07.json", "request10.json","request07.json", "request10.json"],
+  "testrequests" : ["request11.json", "request12.json","request11.json", "request12.json","request07.json", "request10.json"],
   "master" : "127.0.0.1:65535",
   "checkOnlineCycle" : "5000",
   "sendOnlineCycle" : "1000",
@@ -17,5 +17,7 @@
   "lifetime" : [0, 0, 0, 0],
   "failOnReqSent" : [0, 0, 0, 0],
   "failOnRecvSent" : [0, 0, 0, 0],
-  "failOnExtension" : [0, 0, 0, 0]
+  "failOnExtension" : [0, 0, 0, 0],
+  "failOnRecvTrans" : [0, 0, 0, 0],
+  "failOnSendTrans" : [0, 0, 0, 0]
 }

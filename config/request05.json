@@ -3,7 +3,9 @@
     "seed" : "1093",
     "getbalanceProb" : "0.2",
     "depositProb" : "0.5",
-    "withdrawProb" : "0.3",
+    "withdrawProb" : "0.2",
+    "transferProb" : "0.1",
+    "randAccounts" : ["123", "156", "124", "142"]
     "tests": [
       {
         "requestid": "123",
@@ -22,8 +24,7 @@
         "account": "1",
         "amount": "10",
         "transaction": "transfer",
-        "destAccount" : "1",
-        "destBank" : "5"
+        "destAccount" : "1"
       },
       {
         "requestid": "142",
@@ -36,8 +37,7 @@
         "account": "1",
         "amount": "10",
         "transaction": "transfer",
-        "destAccount": "1",
-        "destBank" : "5"
+        "destAccount": "1"
       },
       {
         "requestid": "125",
@@ -56,7 +56,6 @@
         "account": "3",
         "amount": "1",
         "transaction": "transfer",
-        "destBank" : "5",
         "destAccount" : "124"
       },
       {

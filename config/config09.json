@@ -17,5 +17,7 @@
   "lifetime" : [0, 0, 0, 0],
   "failOnReqSent" : [0, 0, 0, 0],
   "failOnRecvSent" : [0, 0, 0, 0],
-  "failOnExtension" : [0, 0, 0, 0]
+  "failOnExtension" : [0, 0, 0, 0],
+  "failOnRecvTrans" : [0, 0, 0, 0],
+  "failOnSendTrans" : [0, 0, 0, 0]
 }

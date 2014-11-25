@@ -4,6 +4,8 @@
     "getbalanceProb" : "0.2",
     "depositProb" : "0.5",
     "withdrawProb" : "0.3",
+    "transferProb" : "0.0",
+    "randAccounts" : ["111", "112", "113", "142", "124"]
     "tests": [
       {
         "requestid": "111",
@@ -40,10 +42,10 @@
         "destBank" : "5"
       },
       {
-        "requestid": "125",
+        "requestid": "142",
         "account": "3",
-        "amount": "10",
-        "transaction": "deposit"
+        "amount": "100",
+        "transaction": "transfer"
       },
       {
         "requestid": "126",

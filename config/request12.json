@@ -1,0 +1,90 @@
+{
+  "requests": {
+    "seed" : "1093",
+    "getbalanceProb" : "0.2",
+    "depositProb" : "0.5",
+    "withdrawProb" : "0.3",
+    "transferProb" : "0",
+    "randAccounts" : ["123", "124", "125"],
+    "tests": [
+      {
+        "requestid": "101",
+        "account": "123",
+        "amount": "1000",
+        "transaction": "deposit"
+      },
+      {
+        "requestid": "102",
+        "account": "125",
+        "amount": "1000",
+        "transaction": "deposit"
+      },
+      {
+        "requestid": "103",
+        "account": "124",
+        "amount": "1000",
+        "transaction": "deposit"
+      },
+      {
+        "requestid": "104",
+        "account": "123",
+        "amount": "100",
+        "transaction": "transfer",
+        "destAccount" : "113"
+      },
+      {
+        "requestid": "105",
+        "account": "125",
+        "amount": "150",
+        "transaction": "transfer",
+        "destAccount" : "115"
+      },
+      {
+        "requestid": "106",
+        "account": "124",
+        "amount": "200",
+        "transaction": "transfer",
+        "destAccount" : "114"
+      },
+      {
+        "requestid": "107",
+        "account": "123",
+        "amount": "50",
+        "transaction": "transfer",
+        "destAccount" : "113"
+      },
+      {
+        "requestid": "108",
+        "account": "125",
+        "amount": "60",
+        "transaction": "transfer",
+        "destAccount" : "115"
+      },
+      {
+        "requestid": "109",
+        "account": "124",
+        "amount": "70",
+        "transaction": "transfer",
+        "destAccount" : "114"
+      },
+      {
+        "requestid": "110",
+        "account": "123",
+        "amount": "0",
+        "transaction": "getbalance"
+      },
+      {
+        "requestid": "111",
+        "account": "125",
+        "amount": "0",
+        "transaction": "getbalance"
+      },
+      {
+        "requestid": "111",
+        "account": "124",
+        "amount": "0",
+        "transaction": "getbalance"
+      }
+    ]
+  }
+}

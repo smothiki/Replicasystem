@@ -4,7 +4,7 @@
     "getbalanceProb" : "0.0",
     "depositProb" : "0.8",
     "withdrawProb" : "0.2",
-    "transfer" : "0.0",
+    "transferProb" : "0.0",
     "randAccounts": ["113", "114", "115", "123", "124", "125"],
     "tests": []
   }

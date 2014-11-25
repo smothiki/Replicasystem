@@ -1,3 +1,30 @@
+config09.json
+  Basic transfer operations, inConsistentWithHistory
+
+config10.json
+  Duplicate transfer requests
+
+config11.json
+  Transfer when head of bank2 fails immediately after receiving the transfer
+  request.
+
+config12.json
+  Transfer when sending transfer request to bank2, bank1 tail fails immediately
+  after sending, and bank2 head fails immediately fails after receiving it.
+
+config13.json
+  Insufficient funds
+
+config14.json
+config15.json
+  Pseudo-random deposits and withrawals during transfer
+
+config16.json
+  3 banks with 6 clients each
+
+============= Following test cases are used for Phase 3 only ===========
+(missing fields for Phase 4)
+
 config01.json
   Remove failed internal process S, including forward updates in Sent^S
 
