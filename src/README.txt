@@ -1,7 +1,5 @@
 I. SETUP
 
-THIS SECTION IS FOR GO VERSION ONLY
-
 1. Install GO compiler
 2. Set $GOPATH and $GOBIN
 3. Put code into $GOPATH/src/github.com/replicasystem/
@@ -16,34 +14,14 @@ My $GOPATH is ~/gowork/, and server.go file can be found in
 
 II. COMPILATION AND RUN
 
-
-A. GO VERSION
-
-There are two ways to run the programs.
-
-1. Make sure current directory is $GOPATH/src/github.com/replicasystem/src/
-   Then execute the following instructions:
-
-> go install client/client.go
-> go install master/master.go
-> go install server/server.go
-> go run start/start.go config0[1-8].json
-
-* config01.json - config08.json are test cases.
-* This method does NOT print real-time stdout information.
-
-2. Run $GOPATH/src/github.com/replicasystem/src/launcher.sh [1-8]
-This should start client, server and master with config01.json-config08.json
-
-* This method print real-time stdout information, and run client, servers
-  and master in 3 separate terminals
-
+Run $GOPATH/src/github.com/replicasystem/src/launcher.sh [1-16]
+This should start client, server and master with config01.json-config16.json
 
 All logs are in $GOPATH/src/github.com/replicasystem/logs/,
-where slog is log for servers, clog is for clients and mlog is for master
+where slog_X is log for servers, clog_X is for clients and mlog is for master
 
-
-B. DISTALGO VERSION
+* X indicates the chain number of a bank (see below), so each file corresponds
+  to a bank.
 
 
 ============================================================
@@ -76,34 +54,65 @@ bank.go (replicasystem/src/commons/bank/bank.go)
   Structs related to banking operation, such as Transaction, Account and Bank,
   and relevant functions.
 
-start.go (replicasystem/src/start/start.go)
-launcher.sh (replicasystem/src/launcher.sh)
-  Starts all clients, servers and master from one file. See Section II for details.
+start.go (replicasystem/src/start/start.go) ***** deprecated *****
+launcher (replicasystem/src/launcher)
+end (replicasystem/src/end)
+  launcher and start.go starts all clients, servers and master from one file. 
+  end terminates all running processes. See Section II for details.
 
 ============================================================
 
 IV. BUGS AND LIMITATIONS
 
-1. Hard coded IP addresses for ease of demonstration
-2. Client doesn't resend requests on time out
+No bugs have been observed by the time of submission.
+
+Limitations:
+  1. Hard coded IP addresses for ease of demonstration
+  2. All chain servers should finish startup befoer master server starts.
+     Otherwise, master may not receive any message from some servers during
+     the first round of healh checking, then the servers will be identified
+     died.
 
 ============================================================
 
-V. LANGUAGE COMPARISON
+V. CONTRIBUTIONS
 
-
-============================================================
-
-VI. CONTRIBUTIONS
-
-Sivaram Mothiki - DistAlgo Version
-Yansong Wang    - Go Version
+Sivaram Mothiki - Bank transfer operation
+Yansong Wang    - message syncronization among servers and master
 
 ============================================================
 
-VII. OTHER COMMENTS
+VI. OTHER COMMENTS
 
-A. GO VERSION
+******[UPDATED IN PHASE 4 BELOW]******
+
+A bank is identified as source bank or destination bank in a transfer
+transaction by determining whether it's the sender or receiver of the transfer.
+
+We make the tail server of source bank act as a client. Specifically, when
+a transfer request arrives at the tail of source bank along the source bank
+chain, tail query from master the current head of destination bank and sends
+the request to the destination head. The tail of source bank then waits for the
+tail of destination tail to reply. On receiving the reply, source tail replies
+client as usual.
+
+We added several fields to structure Reply/Request.
+
+1. destBank, destAccount
+These two fields are used to perform different actions on differ servers by
+identifying server addresses and account IDs.
+
+2. Sender, Receiver
+Initially, all the fields are set as the client address, and when a server
+received the message from client, it syncronizes the message to successor.
+When the message arrives at source tail, it sets Sender as source tail and
+Receiver as destination head. When destination head is about to reply source
+tail, it sets the sender itself and Receiver source tail. In this way, messages
+status can be easily identified by the server.
+
+
+
+******[INHERITED FROM PHASE 3 BELOW]******
 
 For purpose of demonstration, we don't read IP addresses from config file.
 Instead, they are all assigned to the IP address 127.0.0.1 with different
