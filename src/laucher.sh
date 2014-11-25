@@ -8,9 +8,11 @@ pkill server
 pkill master
 pkill client
 rm ../logs/*
-if [ $1 -le 10 ]; then
+if [ $1 -lt 10 ]; then
     N="0$1"
     echo $N
+else
+    N="$1"
 fi
 gnome-terminal -e "go run master/master.go config$N.json > m.txt"
 for i in `seq 0 $[$2-1]`; do

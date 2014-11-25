@@ -188,7 +188,22 @@ func synchandler(w http.ResponseWriter, r *http.Request, b *bank.Bank, port int)
 		b.Set(res)
 		utils.LogEventData(chain.Server, "server", "PROC", res.String("REPLY"))
 		if chain.Istail {
-			SendReply(res)
+			if res.Transaction == "transfer" {
+				ip, port := utils.GetIPAndPort(chain.Server)
+				res.Sender = net.UDPAddr{
+					Port: port,
+					IP:   net.ParseIP(ip),
+				}
+				if res.DestBank == b.Bankid {
+					SendReply(res)
+				} else {
+					dest := queryDestBankHead(res.DestBank)
+					sendTransferToDest(res, dest)
+				}
+			} else {
+				SendReply(res)
+			}
+
 			ack := structs.Ack{
 				ReqKey: res.MakeKey(),
 			}
@@ -558,30 +573,37 @@ func startUDPService(b *bank.Bank) {
 				reply = b.Transfer(rqst)
 				fmt.Println("reply result", reply)
 				if reply.Outcome == "processed" {
-					dest := queryDestBankHead(rqst.DestBank)
-					fmt.Println("dest", dest)
 					ip, port := utils.GetIPAndPort(chain.Server)
 					rqst.Sender = net.UDPAddr{
 						Port: port,
 						IP:   net.ParseIP(ip),
 					}
-					sendTransferToDest(rqst, dest)
+					reply.Time = rqst.Time
+					reply.Client = rqst.Client
+					utils.LogEventData(chain.Server, "server", "PROC", reply.String("REPLY"))
+					if chain.Istail {
+						dest := queryDestBankHead(rqst.DestBank)
+						sendTransferToDest(rqst, dest)
+					} else {
+						SendRequest(reply, chain.Next)
+					}
 					continue
 				}
 			} else if rqst.DestBank == b.Bankid {
 				//destBank received rqst sent by srcBank
 				reply = b.Transfer(rqst)
 				//make "client" src bank head server
+				reply.Client = rqst.Client
 				reply.Receiver = rqst.Sender
 				ip, port := utils.GetIPAndPort(chain.Server)
 				reply.Sender = net.UDPAddr{
 					Port: port,
 					IP:   net.ParseIP(ip),
 				}
-				reply.Client = rqst.Client
 			} else if rqst.Receiver.String() == chain.Server {
 				//srcBank received reply from destBank
 				reply = b.Transfer(rqst)
+				reply.Client = rqst.Client
 				reply.Receiver = rqst.Client
 			}
 		}

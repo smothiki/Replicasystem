@@ -35,6 +35,7 @@ func (t *transactions) checkTransaction(trans *Transaction) string {
 		if trans1.equals(trans) {
 			fmt.Println("==============p ro ===============")
 			fmt.Println("tid", trans.Tid)
+			fmt.Println("amm", trans.Amount)
 			return "processed"
 		} else {
 			return "inconsistent"
@@ -42,6 +43,8 @@ func (t *transactions) checkTransaction(trans *Transaction) string {
 	}
 	return "new"
 }
+
+//func (t* transaction)
 
 func (t1 *Transaction) equals(t2 *Transaction) bool {
 	return t1.Tid == t2.Tid &&
@@ -164,7 +167,8 @@ func (b *Bank) Withdraw(req *structs.Request) *structs.Request {
 
 func (b *Bank) Set(req *structs.Request) {
 	b.CheckId(req.Account)
-	//a := b.amap[rep.Account]
+	a := b.amap[req.Account]
+	a.Balance = req.Balance
 	newTrans := MakeTransaction(req)
 	b.T.RecordTransaction(newTrans)
 }
