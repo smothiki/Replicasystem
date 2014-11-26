@@ -601,7 +601,6 @@ func startUDPService(b *bank.Bank) {
 			reply = b.Deposit(rqst)
 			reply.Receiver = rqst.Receiver
 		case "transfer":
-
 			//transfer operation will check the dst bank and perform the necessary action
 			//if current bank is not the dst bank it will withdraw the amount else deposit the amount
 			if rqst.DestBank != b.Bankid &&
@@ -676,7 +675,6 @@ func startUDPService(b *bank.Bank) {
 		} else {
 			SendRequest(reply, chain.Next)
 		}
-
 	}
 }
 
@@ -689,7 +687,12 @@ func sendTransferToDest(request *structs.Request, dest string) {
 		IP:   net.ParseIP(ip),
 	}
 	ip, port = utils.GetIPAndPort(chain.Server)
-	conn, err := net.DialUDP("udp", nil, &remoteAddr)
+	localAddr := net.UDPAddr{
+		Port: port + 150,
+		IP:   net.ParseIP(ip),
+	}
+	ip, port = utils.GetIPAndPort(chain.Server)
+	conn, err := net.DialUDP("udp", &localAddr, &remoteAddr)
 	if err != nil {
 		log.Println("ERROR while connecting to transfer dest bank.")
 	}

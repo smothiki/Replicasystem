@@ -187,7 +187,7 @@ func main() {
 	waitTime := time.Duration(utils.GetConfigInt("requestTimeout"))
 
 	//wait for servers to start up
-	time.Sleep(2000 * time.Millisecond)
+	time.Sleep(time.Duration(port-3000) * time.Millisecond)
 	go simulate(conn, port, clientIdx, minseries, maxseries, curseries, waitTime)
 	http.HandleFunc("/alterChain", alterChainHandler)
 	err := http.ListenAndServe("127.0.0.1:"+os.Args[1], nil)

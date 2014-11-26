@@ -5,7 +5,7 @@
     "depositProb" : "0.5",
     "withdrawProb" : "0.3",
     "transferProb" : "0.0",
-    "randAccounts" : ["111", "112", "113", "142", "124"]
+    "randAccounts" : ["111", "112", "113", "142", "124"],
     "tests": [
       {
         "requestid": "111",

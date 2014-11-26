@@ -14,7 +14,10 @@ My $GOPATH is ~/gowork/, and server.go file can be found in
 
 II. COMPILATION AND RUN
 
-Run $GOPATH/src/github.com/replicasystem/src/launcher.sh [1-16]
+Run $GOPATH/src/github.com/replicasystem/src/launcher with parameters
+<config file #(1-16)> <# of banks> <# of clients each bank> 
+<# of banks whose clients run>
+
 This should start client, server and master with config01.json-config16.json
 
 All logs are in $GOPATH/src/github.com/replicasystem/logs/,
@@ -22,6 +25,8 @@ where slog_X is log for servers, clog_X is for clients and mlog is for master
 
 * X indicates the chain number of a bank (see below), so each file corresponds
   to a bank.
+
+Once servers and clients started, one can execute end file to terminate them.
 
 
 ============================================================
@@ -64,7 +69,11 @@ end (replicasystem/src/end)
 
 IV. BUGS AND LIMITATIONS
 
-No bugs have been observed by the time of submission.
+Bugs:
+  1. Multiple banks cannot transfer funds to each other at the same time,
+     otherwise the head of destination bank cannot receive any message. It my
+     relates to networking or Go language mechanisms, and we are still finding
+     the reasons.
 
 Limitations:
   1. Hard coded IP addresses for ease of demonstration

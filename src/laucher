@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ "$#" -ne 3 ]; then
-    echo Usage : $0 ' <Config File Number (1~8)> <number of banks> <number of clients each bank>'
+if [ "$#" -ne 4 ]; then
+    echo Usage : $0 ' <Config File #(1~16)> <# of banks> <# of clients each bank> <# of banks whose clients run>'
     exit
 fi
 
@@ -21,15 +21,20 @@ for i in `seq 0 $[$2-1]`; do
 done
 echo servers launched!
 sleep 2
-#gnome-terminal -e "go run master/master.go config$N.json > m.txt"
-go run master/master.go config$N.json > m.txt &
+#gnome-terminal -e "go run master/master.go config$N.json"
+go run master/master.go config$N.json &
 echo master launched!
+ctr=0
 for i in `seq 0 $[$2-1]`; do
-    for j in `seq 0 $[$3-1]`; do
-        PORT=$[(4+$i)*1000+999-$j]
-        echo $PORT
-#        gnome-terminal -e "go run client/client.go $PORT config$N.json"
-        go run client/client.go $PORT config$N.json &
-    done
+    if [ $ctr -lt $4 ]; then
+        for j in `seq 0 $[$3-1]`; do 
+            PORT=$[(4+$i)*1000+999-$j]
+            echo $PORT
+#           gnome-terminal -e "go run client/client.go $PORT config$N.json"
+            go run client/client.go $PORT config$N.json &
+        done
+    fi
+    ctr=$[$ctr+1]
 done
-echo client launched!
+#go run client/client.go 4999 config$N.json &
+echo clients launched!
